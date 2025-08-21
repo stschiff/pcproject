@@ -13,10 +13,7 @@ to generate this file without the comments in this block.
 { name = "pcproject"
 , dependencies =
   [ "aff"
-  , "either"
   , "web-events"
-  , "affjax"
-  , "affjax-web"
   , "effect"
   , "halogen"
   , "maybe"
