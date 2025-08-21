@@ -1,0 +1,9 @@
+.parcel-cache/
+node_modules/
+output/
+.psci_modules/
+.DS_Store
+.spago/
+dist/
+.psc-ide-port
+.purs-repl
