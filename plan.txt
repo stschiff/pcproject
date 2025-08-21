@@ -1,0 +1,11 @@
+SNP Weights für verschiedene Projektionen würden über dieses Repo bereitgestellt und vom Frontend geladen.
+
+Ein Datensatz mit genau den Samples die für die Projektion verwendet wurden, wird auch bereitgestellt und automatisch in den Browser geladen (das wären ja dann schon die Projektions-Koordinaten). 
+
+Ansonsten kann man einen Datensatz über das Frontend hochladen, der dann automatisch in die Projektion geladen wird.
+SNPs, die nicht in der Projektion sind, werden ignoriert.
+
+In Zukunft soll man auch Daten über die Poseidon Server laden können, die dann automatisch in die Projektion geladen werden. Dafür müssen wir aber die API erst noch erweitern so dass sie auch Genotyp-Daten ausliefert, z.B. über strukturierte Formate wie 
+
+Idee für ersten Schritt:
+simples interface: Hochladen von SNP weights und genotype matrix -> Plotten.
