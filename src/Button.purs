@@ -2,10 +2,8 @@ module Button where
 
 import Prelude
 
-import Affjax.ResponseFormat as AXRF
-import Affjax.Web as AX
-import Data.Either (hush)
 import Data.Maybe (Maybe(..))
+-- import Data.String (split, Pattern(..))
 import Effect.Aff.Class (class MonadAff)
 import Effect.Class (liftEffect)
 import Halogen as H
@@ -13,13 +11,13 @@ import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 import Web.Event.Event as WE
-import Web.File.File (File, name)
+import Web.File.File (File, name, size)
 import Web.File.FileList (item)
-import Web.HTML.Event.EventTypes (offline)
 import Web.HTML.HTMLInputElement (fromEventTarget, files)
 
 type State =
   { selectedFile :: Maybe File
+  , fileNrLines :: Maybe Int
   }
 
 data Action
@@ -34,7 +32,7 @@ component =
     }
 
 initialState :: forall input. input -> State
-initialState = const { selectedFile: Nothing }
+initialState = const { selectedFile: Nothing, fileNrLines : Nothing }
 
 render :: forall m. State -> H.ComponentHTML Action () m
 render st =
@@ -43,23 +41,30 @@ render st =
       [ HP.type_ HP.InputFile, HE.onChange GotFileEvent ]
     , case st.selectedFile of
         Nothing -> HH.text "No file selected"
-        Just file -> HH.text $ "Selected file: " <> name file
+        Just file -> HH.div_
+          [ HH.text $ "Selected file: " <> name file
+          , HH.br_
+          , HH.text $ "File size: " <> show (size file) <> " bytes"
+          ]
+    , case st.fileNrLines of
+        Nothing -> HH.text ""
+        Just nrLines -> HH.text $ "Lines: " <> show nrLines <> " lines"
     ]
 
 handleAction :: forall output m. MonadAff m => Action -> H.HalogenM State Action () output m Unit
-handleAction = case _ of
-  GotFileEvent ev -> do
-    case WE.target ev of
-      Nothing -> pure unit
-      Just t -> 
-        case fromEventTarget t of
-          Nothing -> pure unit
-          Just inputElem -> do
-            mFileList <- liftEffect $ files inputElem
-            case mFileList of
-              Nothing -> pure unit
-              Just fileList -> do
-                case item 0 fileList of
-                  Just file -> H.modify_ _ { selectedFile = Just file }
-                  Nothing -> pure unit
+handleAction (GotFileEvent ev) = do
+  let mInputElem = WE.target ev >>= fromEventTarget
+  mFile <- case mInputElem of
+    Nothing -> pure Nothing
+    Just inputElem -> do
+      mFileList <- liftEffect $ files inputElem
+      pure $ mFileList >>= item 0
+  case mFile of
+    Just file -> do
+      H.modify_ _ { selectedFile = Just file }
+      -- H.liftAff $ do
+      --   (contents, size) <- readFileAsText file
+      --   let lineCount = length $ split (Pattern "\n") contents
+      --   H.modify_ _ { fileNrLines = Just { size: size, lines: lineCount } }
+    Nothing -> pure unit
 
