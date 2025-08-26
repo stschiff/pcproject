@@ -52,13 +52,20 @@ readFileAsTextAff file = liftAff $ makeAff \callback -> do
   
   pure nonCanceler
 
+data GenoData = GenoDataPlink File File File
+              | GenoDataEigenstrat File File File
+              | GenoDataVcf File
+
 type State =
-  { selectedFile :: Maybe File
-  , fileNrLines :: Maybe Int
+  { selectedWeightFile :: Maybe File
+  , statusWeightFileLoading :: Boolean
+  , selectedGenoData :: Maybe GenoData
+  , nrSnps :: Maybe Int
   }
 
 data Action
-  = GotFileEvent WE.Event
+  = GotWeightFileEvent WE.Event
+  | GotGenoDataFileEvent WE.Event
 
 component :: forall query input output m. MonadAff m => H.Component query input output m
 component =
@@ -69,27 +76,46 @@ component =
     }
 
 initialState :: forall input. input -> State
-initialState = const { selectedFile: Nothing, fileNrLines : Nothing }
+initialState = const
+  { selectedWeightFile: Nothing
+  , statusWeightFileLoading : false
+  , selectedGenoData : Nothing
+  , nrSnps : Nothing }
 
 render :: forall m. State -> H.ComponentHTML Action () m
 render st =
-  HH.form_
-    [ HH.input 
-      [ HP.type_ HP.InputFile, HE.onChange GotFileEvent ]
-    , case st.selectedFile of
-        Nothing -> HH.text "No file selected"
+  HH.div_
+    [ HH.h3_ [ HH.text "Upload files" ]
+    , fileInputForm
+    , case st.selectedWeightFile of
+        Nothing -> HH.text "No weight file selected"
         Just file -> HH.div_
-          [ HH.text $ "Selected file: " <> name file
+          [ HH.text $ "Selected weight file: " <> name file
           , HH.br_
-          , HH.text $ "File size: " <> show (size file) <> " bytes"
+          , HH.text $ "Weight File size: " <> show (size file) <> " bytes"
           ]
-    , case st.fileNrLines of
+    , if st.statusWeightFileLoading then
+        HH.div_ [ HH.text "Loading weight file...", HH.br_ ]
+      else
+        HH.text ""
+    , case st.nrSnps of
         Nothing -> HH.text ""
-        Just nrLines -> HH.text $ "Lines: " <> show nrLines <> " lines"
+        Just nr -> HH.text $ "SNPs: " <> show nr
     ]
+  where
+    fileInputForm :: H.ComponentHTML Action () m
+    fileInputForm = HH.form_
+        [ HH.label_ [ HH.text "Select a weight file: " ]
+        , HH.input 
+          [ HP.type_ HP.InputFile, HE.onChange GotWeightFileEvent ]
+        , HH.br_
+        , HH.label_ [ HH.text "Select genotype data file(s): " ]
+        , HH.input  
+          [ HP.type_ HP.InputFile, HP.multiple true, HE.onChange GotGenoDataFileEvent ]
+        ]
 
 handleAction :: forall output m. MonadAff m => Action -> H.HalogenM State Action () output m Unit
-handleAction (GotFileEvent ev) = do
+handleAction (GotWeightFileEvent ev) = do
   let mInputElem = WE.target ev >>= fromEventTarget
   mFile <- case mInputElem of
     Nothing -> pure Nothing
@@ -98,10 +124,12 @@ handleAction (GotFileEvent ev) = do
       pure $ mFileList >>= item 0
   case mFile of
     Just file -> do
-      H.modify_ _ { selectedFile = Just file }
+      H.modify_ _ { selectedWeightFile = Just file }
+      H.modify_ _ { statusWeightFileLoading = true }
       -- Read file contents asynchronously using makeAff
       content <- readFileAsTextAff file
       let lineCount = length $ split (Pattern "\n") content
-      H.modify_ _ { fileNrLines = Just lineCount }
+      H.modify_ _ { nrSnps = Just lineCount, statusWeightFileLoading = false }
     Nothing -> pure unit
 
+handleAction (GotGenoDataFileEvent _) = pure unit
