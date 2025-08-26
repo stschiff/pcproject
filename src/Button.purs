@@ -3,6 +3,10 @@ module Button where
 import Prelude
 
 import Control.Monad.Except.Trans (runExceptT)
+import Data.Array ((!!), drop)
+import Data.Traversable (traverse)
+import Data.Int as DI
+import Data.Number as DN
 import Data.List.Types (NonEmptyList(..))
 import Data.Maybe (Maybe(..))
 import Data.String (split, Pattern(..))
@@ -55,6 +59,22 @@ readFileAsTextAff file = liftAff $ makeAff \callback -> do
 data GenoData = GenoDataPlink File File File
               | GenoDataEigenstrat File File File
               | GenoDataVcf File
+
+data SnpWeight = SnpWeight
+  { snpId :: String
+  , chromosome :: String
+  , position :: Int
+  , pcWeights :: Array Number
+  }
+
+readSnpWeightLine :: String -> Maybe SnpWeight
+readSnpWeightLine line = do
+  let fields = split (Pattern "\t") line
+  snpId <- fields !! 0
+  chromosome <- fields !! 1
+  position <- fields !! 2 >>= DI.fromString
+  pcWeights <- traverse DN.fromString (drop 3 fields)
+  pure $ SnpWeight snpId chromosome position pcWeights
 
 type State =
   { selectedWeightFile :: Maybe File
@@ -128,8 +148,9 @@ handleAction (GotWeightFileEvent ev) = do
       H.modify_ _ { statusWeightFileLoading = true }
       -- Read file contents asynchronously using makeAff
       content <- readFileAsTextAff file
-      let lineCount = length $ split (Pattern "\n") content
-      H.modify_ _ { nrSnps = Just lineCount, statusWeightFileLoading = false }
+      let snpWeightData = traverse readSnpWeightLine (split (Pattern "\n") content)
+      let nrSnps = map length snpWeightData
+      H.modify_ _ { nrSnps = nrSnps, statusWeightFileLoading = false }
     Nothing -> pure unit
 
 handleAction (GotGenoDataFileEvent _) = pure unit
