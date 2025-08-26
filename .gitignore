@@ -7,3 +7,4 @@ output/
 dist/
 .psc-ide-port
 .purs-repl
+generated-docs/

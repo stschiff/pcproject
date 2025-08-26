@@ -2,18 +2,55 @@ module Button where
 
 import Prelude
 
+import Control.Monad.Except.Trans (runExceptT)
+import Data.List.Types (NonEmptyList(..))
 import Data.Maybe (Maybe(..))
--- import Data.String (split, Pattern(..))
-import Effect.Aff.Class (class MonadAff)
+import Data.String (split, Pattern(..))
+import Data.Either (Either(..))
+import Data.Array (length)
+import Effect.Aff.Class (class MonadAff, liftAff)
+import Effect.Aff (makeAff, nonCanceler)
 import Effect.Class (liftEffect)
+import Effect.Exception (error)
+import Foreign (readString)
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 import Web.Event.Event as WE
-import Web.File.File (File, name, size)
+import Web.File.File (File, name, size, toBlob)
 import Web.File.FileList (item)
+import Web.File.FileReader (fileReader, readAsText, result, toEventTarget)
 import Web.HTML.HTMLInputElement (fromEventTarget, files)
+import Web.Event.EventTarget (addEventListener, eventListener)
+import Web.HTML.Event.EventTypes (load, error) as ET
+
+-- Function to read file contents using FileReader API with makeAff
+readFileAsTextAff :: forall state action slots output m. MonadAff m => File -> H.HalogenM state action slots output m String
+readFileAsTextAff file = liftAff $ makeAff \callback -> do
+  reader <- fileReader
+  
+  -- Set up success handler
+  loadListener <- eventListener \_ -> do
+    foreignResult <- result reader
+    content <- runExceptT $ readString foreignResult
+    case content of
+      Left (NonEmptyList foreignErrs) -> callback (Left $ error (show foreignErrs))
+      Right contentText -> callback (Right contentText)
+  
+  -- Set up error handler  
+  errorListener <- eventListener \_ -> do
+    callback (Left (error "FileReader error"))
+  
+  -- Add event listeners to the reader (converted to EventTarget)
+  let eventTarget = toEventTarget reader
+  addEventListener ET.load loadListener false eventTarget
+  addEventListener ET.error errorListener false eventTarget
+  
+  -- Start reading (convert File to Blob first)
+  readAsText (toBlob file) reader
+  
+  pure nonCanceler
 
 type State =
   { selectedFile :: Maybe File
@@ -62,9 +99,9 @@ handleAction (GotFileEvent ev) = do
   case mFile of
     Just file -> do
       H.modify_ _ { selectedFile = Just file }
-      -- H.liftAff $ do
-      --   (contents, size) <- readFileAsText file
-      --   let lineCount = length $ split (Pattern "\n") contents
-      --   H.modify_ _ { fileNrLines = Just { size: size, lines: lineCount } }
+      -- Read file contents asynchronously using makeAff
+      content <- readFileAsTextAff file
+      let lineCount = length $ split (Pattern "\n") content
+      H.modify_ _ { fileNrLines = Just lineCount }
     Nothing -> pure unit
 
