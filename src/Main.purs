@@ -2,7 +2,7 @@ module Main where
 
 import Prelude
 
-import Button (component)
+import App.Interface (component)
 import Effect (Effect)
 import Halogen.Aff (awaitBody, runHalogenAff)
 import Halogen.VDom.Driver (runUI)

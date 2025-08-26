@@ -1,33 +1,34 @@
-module Button where
+module App.Interface where
 
 import Prelude
 
 import Control.Monad.Except.Trans (runExceptT)
-import Data.Array ((!!), drop)
-import Data.Traversable (traverse)
-import Data.Int as DI
-import Data.Number as DN
+import Data.Array (length, take)
+import Data.Either (Either(..))
 import Data.List.Types (NonEmptyList(..))
 import Data.Maybe (Maybe(..))
 import Data.String (split, Pattern(..))
-import Data.Either (Either(..))
-import Data.Array (length)
-import Effect.Aff.Class (class MonadAff, liftAff)
+import Data.String.Common (trim)
+import Data.Traversable (traverse)
 import Effect.Aff (makeAff, nonCanceler)
+import Effect.Aff.Class (class MonadAff, liftAff)
 import Effect.Class (liftEffect)
+import Effect.Console (logShow)
 import Effect.Exception (error)
 import Foreign (readString)
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
+import Utils.Helpers (readSnpWeightLine)
+import Utils.Types (GenoData)
 import Web.Event.Event as WE
+import Web.Event.EventTarget (addEventListener, eventListener)
 import Web.File.File (File, name, size, toBlob)
 import Web.File.FileList (item)
 import Web.File.FileReader (fileReader, readAsText, result, toEventTarget)
-import Web.HTML.HTMLInputElement (fromEventTarget, files)
-import Web.Event.EventTarget (addEventListener, eventListener)
 import Web.HTML.Event.EventTypes (load, error) as ET
+import Web.HTML.HTMLInputElement (fromEventTarget, files)
 
 -- Function to read file contents using FileReader API with makeAff
 readFileAsTextAff :: forall state action slots output m. MonadAff m => File -> H.HalogenM state action slots output m String
@@ -55,26 +56,6 @@ readFileAsTextAff file = liftAff $ makeAff \callback -> do
   readAsText (toBlob file) reader
   
   pure nonCanceler
-
-data GenoData = GenoDataPlink File File File
-              | GenoDataEigenstrat File File File
-              | GenoDataVcf File
-
-data SnpWeight = SnpWeight
-  { snpId :: String
-  , chromosome :: String
-  , position :: Int
-  , pcWeights :: Array Number
-  }
-
-readSnpWeightLine :: String -> Maybe SnpWeight
-readSnpWeightLine line = do
-  let fields = split (Pattern "\t") line
-  snpId <- fields !! 0
-  chromosome <- fields !! 1
-  position <- fields !! 2 >>= DI.fromString
-  pcWeights <- traverse DN.fromString (drop 3 fields)
-  pure $ SnpWeight snpId chromosome position pcWeights
 
 type State =
   { selectedWeightFile :: Maybe File
@@ -148,7 +129,8 @@ handleAction (GotWeightFileEvent ev) = do
       H.modify_ _ { statusWeightFileLoading = true }
       -- Read file contents asynchronously using makeAff
       content <- readFileAsTextAff file
-      let snpWeightData = traverse readSnpWeightLine (split (Pattern "\n") content)
+      let snpWeightData = traverse readSnpWeightLine <<< split (Pattern "\n") <<< trim $ content
+      -- liftEffect <<< logShow $ snpWeightData
       let nrSnps = map length snpWeightData
       H.modify_ _ { nrSnps = nrSnps, statusWeightFileLoading = false }
     Nothing -> pure unit
