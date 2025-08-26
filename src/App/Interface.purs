@@ -3,7 +3,7 @@ module App.Interface where
 import Prelude
 
 import Control.Monad.Except.Trans (runExceptT)
-import Data.Array (length, take)
+import Data.Array (length)
 import Data.Either (Either(..))
 import Data.List.Types (NonEmptyList(..))
 import Data.Maybe (Maybe(..))
@@ -13,7 +13,7 @@ import Data.Traversable (traverse)
 import Effect.Aff (makeAff, nonCanceler)
 import Effect.Aff.Class (class MonadAff, liftAff)
 import Effect.Class (liftEffect)
-import Effect.Console (logShow)
+-- import Effect.Console (logShow)
 import Effect.Exception (error)
 import Foreign (readString)
 import Halogen as H
