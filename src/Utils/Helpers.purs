@@ -2,7 +2,8 @@ module Utils.Helpers where
 
 import Prelude
 
-import Data.Array ((!!), drop)
+import Data.Array ((!!), head, drop, replicate)
+import Data.ArrayBuffer.Typed (empty)
 import Data.Either (Either(..))
 import Data.Int as DI
 import Data.Maybe (Maybe(..))
@@ -13,12 +14,20 @@ import Data.String.Regex.Flags (global)
 import Data.Traversable (traverse)
 import Utils.Types (SnpWeight(..))
 
-readSnpWeightLine :: String -> Maybe SnpWeight
-readSnpWeightLine line = do
-  wsRegex <- case R.regex "\\s+" global of
+readSnpWeightLines :: String -> Effect (Maybe SnpWeights)
+readSnpWeightLines fileContent = do
+  let lines = split (Pattern "\n") fileContent
+  let numSnps = length lines
+  let snpIds = replicate numSnps ""
+  let chromosomes = replicate numSnps ""
+  positions <- empty numSnps
+  let wsRegex = case R.regex "\\s+" global of
     Left _ -> Nothing
     Right r -> Just r
-  let fields = R.split wsRegex (trim line)
+  let firstLine 
+  let firstLineFields = R.split wsRegex (trim (lines !! 0))
+  let numPCs = length firstLineFields - 3
+
   snpId <- fields !! 0
   chromosome <- fields !! 1
   position <- fields !! 2 >>= DI.fromString
