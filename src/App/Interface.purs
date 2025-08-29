@@ -2,7 +2,10 @@ module App.Interface where
 
 import Prelude
 
+import PCproject.SnpWeights (readSnpWeights)
+
 import Control.Monad.Except.Trans (runExceptT)
+import Control.Monad.ST.Internal (read)
 import Data.Array (length)
 import Data.Either (Either(..))
 import Data.List.Types (NonEmptyList(..))
@@ -13,15 +16,12 @@ import Data.Traversable (traverse)
 import Effect.Aff (makeAff, nonCanceler)
 import Effect.Aff.Class (class MonadAff, liftAff)
 import Effect.Class (liftEffect)
--- import Effect.Console (logShow)
 import Effect.Exception (error)
 import Foreign (readString)
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
-import Utils.Helpers (readSnpWeightLine)
-import Utils.Types (GenoData)
 import Web.Event.Event as WE
 import Web.Event.EventTarget (addEventListener, eventListener)
 import Web.File.File (File, name, size, toBlob)
@@ -129,10 +129,8 @@ handleAction (GotWeightFileEvent ev) = do
       H.modify_ _ { statusWeightFileLoading = true }
       -- Read file contents asynchronously using makeAff
       content <- readFileAsTextAff file
-      let snpWeightData = traverse readSnpWeightLine <<< split (Pattern "\n") <<< trim $ content
-      -- liftEffect <<< logShow $ snpWeightData
-      let nrSnps = map length snpWeightData
-      H.modify_ _ { nrSnps = nrSnps, statusWeightFileLoading = false }
+      snpWeightData <- liftEffect $ readSnpWeights content
+      H.modify_ _ { nrSnps = snpWeightData.numSnps, statusWeightFileLoading = false }
     Nothing -> pure unit
 
 handleAction (GotGenoDataFileEvent _) = pure unit

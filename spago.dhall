@@ -27,6 +27,9 @@ to generate this file without the comments in this block.
   , "web-events"
   , "web-file"
   , "web-html"
+  , "arraybuffer"
+  , "uint"
+  , "float32"
   ]
 , packages = ./packages.dhall
 , sources = [ "src/**/*.purs" ]
