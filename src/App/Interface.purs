@@ -60,7 +60,6 @@ readFileAsTextAff file = liftAff $ makeAff \callback -> do
 type State =
   { selectedWeightFile :: Maybe File
   , statusWeightFileLoading :: Boolean
-  , selectedGenoData :: Maybe GenoData
   , nrSnps :: Maybe Int
   }
 
@@ -80,7 +79,6 @@ initialState :: forall input. input -> State
 initialState = const
   { selectedWeightFile: Nothing
   , statusWeightFileLoading : false
-  , selectedGenoData : Nothing
   , nrSnps : Nothing }
 
 render :: forall m. State -> H.ComponentHTML Action () m

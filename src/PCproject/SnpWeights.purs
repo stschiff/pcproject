@@ -1,30 +1,24 @@
-module PCproject.SnpWeights
-  ( readSnpWeights
-  )
-  where
+module PCproject.SnpWeights where
 
 import Prelude
 
 import Control.Monad.ST as ST
-import Data.Array ((..), (!!), head, drop, replicate, length, zip)
+import Data.Array ((..), head, drop, replicate, length, unsafeIndex)
 import Data.Array.ST as STA
-import Data.ArrayBuffer.Typed (empty, set, Index, fromArray)
-import Data.ArrayBuffer.Types (Float32Array, Uint32Array)
-import Data.Either (Either(..))
-import Data.Float32 (Float32)
 import Data.Int as DI
-import Data.Maybe (Maybe(..), fromJust)
+import Data.Maybe (Maybe(..))
 import Data.Number as DN
-import Data.String.Common (trim)
 import Data.String (split, Pattern(..))
-import Data.String.Regex (regex, split) as R
+import Data.String.Common (trim)
+import Data.String.Regex (split) as R
 import Data.String.Regex.Flags (global)
+import Data.String.Regex.Unsafe (unsafeRegex)
 import Data.Traversable (traverse, for_)
-import Data.Tuple (Tuple(..))
-import Data.Tuple.Nested (tuple6)
-import Data.UInt (UInt)
+import Data.TraversableWithIndex (forWithIndex)
 import Effect (Effect)
-import Effect.Exception (throwException, throw)
+import Effect.Exception (throw)
+import Partial (crashWith)
+import Partial.Unsafe (unsafePartial)
 
 
 -- Column-wise storage of SNP weights
@@ -45,55 +39,46 @@ readSnpWeights :: String -> Effect SnpWeights
 readSnpWeights fileContent = do
   let lines = split (Pattern "\n") fileContent
   let numSnps = length lines
-  wsRegex <- case R.regex "\\s+" global of
-    Left err -> throw err
-    Right r -> pure r
+  let wsRegex = unsafeRegex "\\s+" global
   firstLineFields <- case head lines of
     Nothing -> throw "snp weight file content is empty"
     Just fl -> pure $ R.split wsRegex <<< trim $ fl
-  let numPCs = length firstLineFields - 3
-  pure <<< ST.run $ do
-    snpIds <- STA.thaw (replicate numSnps "")
-    chromosomes <- STA.thaw (replicate numSnps "")
-    positions <- STA.thaw (replicate numSnps 0)
-    refAlleles <- STA.thaw (replicate numSnps "")
-    altAlleles <- STA.thaw (replicate numSnps "")
-    pcWeights <- STA.thaw (replicate (numPCs * numSnps) 0.0)
-    for_ (0 .. (numSnps - 1)) \i -> do
-      let
-        maybeValues = do -- Maybe monad
-          line <- lines !! i
-          let fields = R.split wsRegex (trim line)
-          snpId     <- fields !! 0
-          chromosome <- fields !! 1
-          positionStr <- fields !! 2
-          position <- DI.fromString positionStr
-          refAllele <- fields !! 3
-          altAllele <- fields !! 4
-          pcWs <- traverse DN.fromString (drop 5 fields)
-          pure (tuple6 snpId chromosome position refAllele altAllele pcWs)
-      case maybeValues of
-        Nothing -> throw $ "Error parsing line " <> show i <> " in snp weight file"
-        Just t -> do
-          STA.poke i (get1 t) snpIds
-          STA.poke i (get2 t) chromosomes
-          STA.poke i (get3 t) positions
-          STA.poke i (get4 t) altAlleles
-          STA.poke i (get5 t) refAlleles
-          for_ (0 .. (numPCs - 1)) \j -> do
-            STA.poke (i * numPCs + j) (pcWs !! j) pcWeights
-    snpIds'      <- STA.freeze snpIds
-    chromosomes' <- STA.freeze chromosomes
-    refAlleles'  <- STA.freeze refAlleles
-    altAlleles'  <- STA.freeze altAlleles
-    positions'   <- STA.freeze positions
-    pcWeights'   <- STA.freeze pcWeights
-    pure $ SnpWeights { snpIds : snpIds'
-      , chromosomes : chromosomes'
-      , refAlleles  : refAlleles'
-      , altAlleles  : altAlleles'
-      , positions   : positions'
-      , pcWeights   : pcWeights'
-      , numSnps     : numSnps
-      , numPCs      : numPCs
-      }
+  numPCs <- case length firstLineFields - 5 of
+    n | n <= 0 -> throw "snp weight file must have at least 6 columns (SNP ID, chromosome, position, ref, alt) plus at least one PC weight column"
+    n -> pure n
+  pure <<< unsafePartial $ ST.run do
+      snpIds <- STA.thaw (replicate numSnps "")
+      chromosomes <- STA.thaw (replicate numSnps "")
+      positions <- STA.thaw (replicate numSnps 0)
+      refAlleles <- STA.thaw (replicate numSnps "")
+      altAlleles <- STA.thaw (replicate numSnps "")
+      pcWeights <- STA.thaw (replicate (numPCs * numSnps) 0.0)
+      _ <- forWithIndex lines (\i line -> do
+        let fields = R.split wsRegex (trim line)
+        _ <- STA.poke i (fields `unsafeIndex` 0) snpIds
+        _ <- STA.poke i (fields `unsafeIndex` 1) chromosomes
+        _ <- case DI.fromString (fields `unsafeIndex` 2) of
+          Nothing -> crashWith $ "Error parsing position in line " <> show i <> " in snp weight file"
+          Just p  -> STA.poke i p positions
+        _ <- STA.poke i (fields `unsafeIndex` 3) refAlleles
+        _ <- STA.poke i (fields `unsafeIndex` 4) altAlleles
+        case traverse DN.fromString (drop 5 fields) of
+          Nothing -> crashWith $ "Error parsing PC weights in line " <> show i <> " in snp weight file"
+          Just pcWs -> for_ (0 .. (numPCs - 1)) (\j -> STA.poke (i * numPCs + j) (pcWs `unsafeIndex` j) pcWeights)
+      )
+      snpIds'      <- STA.freeze snpIds
+      chromosomes' <- STA.freeze chromosomes
+      refAlleles'  <- STA.freeze refAlleles
+      altAlleles'  <- STA.freeze altAlleles
+      positions'   <- STA.freeze positions
+      pcWeights'   <- STA.freeze pcWeights
+      pure $ SnpWeights
+        { snpIds      : snpIds'
+        , chromosomes : chromosomes'
+        , positions   : positions'
+        , refAlleles  : refAlleles'
+        , altAlleles  : altAlleles'
+        , pcWeights   : pcWeights'
+        , numSnps     : numSnps
+        , numPCs      : numPCs
+        }
