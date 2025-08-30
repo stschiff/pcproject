@@ -2,17 +2,12 @@ module App.Interface where
 
 import Prelude
 
-import PCproject.SnpWeights (readSnpWeights)
+import PCproject.SnpWeights (SnpWeights, readSnpWeights)
 
 import Control.Monad.Except.Trans (runExceptT)
-import Control.Monad.ST.Internal (read)
-import Data.Array (length)
 import Data.Either (Either(..))
 import Data.List.Types (NonEmptyList(..))
 import Data.Maybe (Maybe(..))
-import Data.String (split, Pattern(..))
-import Data.String.Common (trim)
-import Data.Traversable (traverse)
 import Effect.Aff (makeAff, nonCanceler)
 import Effect.Aff.Class (class MonadAff, liftAff)
 import Effect.Class (liftEffect)
@@ -60,7 +55,7 @@ readFileAsTextAff file = liftAff $ makeAff \callback -> do
 type State =
   { selectedWeightFile :: Maybe File
   , statusWeightFileLoading :: Boolean
-  , nrSnps :: Maybe Int
+  , snpWeights :: Maybe SnpWeights
   }
 
 data Action
@@ -79,7 +74,7 @@ initialState :: forall input. input -> State
 initialState = const
   { selectedWeightFile: Nothing
   , statusWeightFileLoading : false
-  , nrSnps : Nothing }
+  , snpWeights : Nothing }
 
 render :: forall m. State -> H.ComponentHTML Action () m
 render st =
@@ -97,9 +92,9 @@ render st =
         HH.div_ [ HH.text "Loading weight file...", HH.br_ ]
       else
         HH.text ""
-    , case st.nrSnps of
+    , case st.snpWeights of
         Nothing -> HH.text ""
-        Just nr -> HH.text $ "SNPs: " <> show nr
+        Just _ -> HH.text $ "hello" -- "SNPs: " <> show sw.numSnps <> ", PCs: " <> show sw.numPCs
     ]
   where
     fileInputForm :: H.ComponentHTML Action () m
@@ -128,7 +123,7 @@ handleAction (GotWeightFileEvent ev) = do
       -- Read file contents asynchronously using makeAff
       content <- readFileAsTextAff file
       snpWeightData <- liftEffect $ readSnpWeights content
-      H.modify_ _ { nrSnps = snpWeightData.numSnps, statusWeightFileLoading = false }
+      H.modify_ _ { snpWeights = Just snpWeightData, statusWeightFileLoading = false }
     Nothing -> pure unit
 
 handleAction (GotGenoDataFileEvent _) = pure unit
