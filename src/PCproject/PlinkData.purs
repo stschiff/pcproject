@@ -1,6 +1,6 @@
 module PCproject.PlinkData where
 
-import Data.ArrayBuffer.Types (Uint8Array)
+import Data.ArrayBuffer.Types (Uint8Array, Uint16Array)
 
 data PlinkBimData = PlinkBimData
   { snpIds :: Array String

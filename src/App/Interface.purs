@@ -1,9 +1,9 @@
 module App.Interface where
 
-
 import Prelude
 
 import Control.Monad.Except.Trans (runExceptT)
+import Data.ArrayBuffer.Types (ArrayBuffer)
 import Data.Either (Either(..))
 import Data.List.Types (NonEmptyList(..))
 import Data.Maybe (Maybe(..))
@@ -20,6 +20,8 @@ import PCproject.PlinkData (PlinkData, readBimData, readFamData)
 import PCproject.SnpWeights (SnpWeights, readSnpWeights)
 import Web.Event.Event as WE
 import Web.Event.EventTarget (addEventListener, eventListener)
+import Web.Encoding.TextDecoder as TextDecoder
+import Web.Encoding.UtfLabel as UtfLabel
 import Web.File.File (File, name, size, toBlob)
 import Web.File.FileList (item, items)
 import Web.File.FileReader (fileReader, readAsText, result, toEventTarget)
@@ -28,8 +30,8 @@ import Web.HTML.Event.EventTypes (offline)
 import Web.HTML.HTMLInputElement (fromEventTarget, files)
 
 -- Function to read file contents using FileReader API with makeAff
-readFileAsTextAff :: forall state action slots output m. MonadAff m => File -> H.HalogenM state action slots output m String
-readFileAsTextAff file = liftAff $ makeAff \callback -> do
+readFileAsArrayBufferAff :: forall state action slots output m. MonadAff m => File -> H.HalogenM state action slots output m ArrayBuffer
+readFileAsArrayBufferAff file = liftAff $ makeAff \callback -> do
   reader <- fileReader
   
   -- Set up success handler
@@ -50,9 +52,14 @@ readFileAsTextAff file = liftAff $ makeAff \callback -> do
   addEventListener ET.error errorListener false eventTarget
   
   -- Start reading (convert File to Blob first)
-  readAsText (toBlob file) reader
+  readAsArrayBuffer (toBlob file) reader
   
   pure nonCanceler
+
+arrayBufferToString :: forall m. MonadEffect m => ArrayBuffer -> m String
+arrayBufferToString buffer = do
+  decoder <- TextDecoder.new UtfLabel.utf8
+  TextDecoder.decode buffer decoder
 
 data PlinkFileSpec = PlinkFileSpec File File File
 
@@ -184,7 +191,6 @@ handleAction (GotGenoDataFileEvent ev) = do
                   -- Read the files asynchronously using makeAff
                   famContent <- readFileAsTextAff famFile
                   bimContent <- readFileAsTextAff bimFile
-                  ...
                 _ -> H.modify_ _ { errorNote = Just "Multiple .bed files selected", selectedPlinkFiles = Nothing }
               _ -> H.modify_ _ { errorNote = Just "Multiple .bim files selected", selectedPlinkFiles = Nothing }
             _ -> H.modify_ _ { errorNote = Just "Multiple .fam files selected", selectedPlinkFiles = Nothing }
