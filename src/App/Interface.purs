@@ -2,45 +2,43 @@ module App.Interface where
 
 import Prelude
 
-import Control.Monad.Except.Trans (runExceptT)
-import Data.ArrayBuffer.Types (ArrayBuffer)
+import Data.Array (filter)
+import Data.ArrayBuffer.Typed (whole, empty)
+import Data.ArrayBuffer.Types (ArrayBuffer, Uint8Array)
 import Data.Either (Either(..))
-import Data.List.Types (NonEmptyList(..))
 import Data.Maybe (Maybe(..))
+import Data.String.Utils (endsWith)
+import Effect (Effect)
 import Effect.Aff (makeAff, nonCanceler)
 import Effect.Aff.Class (class MonadAff, liftAff)
-import Effect.Class (liftEffect)
-import Effect.Exception (error, throw)
-import Foreign (readString)
+import Effect.Class (liftEffect, class MonadEffect)
+import Effect.Exception (error)
+import Foreign (unsafeFromForeign)
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
-import PCproject.PlinkData (PlinkData, readBimData, readFamData)
-import PCproject.SnpWeights (SnpWeights, readSnpWeights)
-import Web.Event.Event as WE
-import Web.Event.EventTarget (addEventListener, eventListener)
+import PCproject.PlinkData (PlinkData(..), readBimData, readFamData)
+import PCproject.SnpWeights (SnpWeights(..), readSnpWeights)
 import Web.Encoding.TextDecoder as TextDecoder
 import Web.Encoding.UtfLabel as UtfLabel
+import Web.Event.Event as WE
+import Web.Event.EventTarget (addEventListener, eventListener)
 import Web.File.File (File, name, size, toBlob)
 import Web.File.FileList (item, items)
-import Web.File.FileReader (fileReader, readAsText, result, toEventTarget)
+import Web.File.FileReader (fileReader, readAsArrayBuffer, result, toEventTarget)
 import Web.HTML.Event.EventTypes (load, error) as ET
-import Web.HTML.Event.EventTypes (offline)
 import Web.HTML.HTMLInputElement (fromEventTarget, files)
 
 -- Function to read file contents using FileReader API with makeAff
-readFileAsArrayBufferAff :: forall state action slots output m. MonadAff m => File -> H.HalogenM state action slots output m ArrayBuffer
+readFileAsArrayBufferAff :: forall m. MonadAff m => File -> m ArrayBuffer
 readFileAsArrayBufferAff file = liftAff $ makeAff \callback -> do
   reader <- fileReader
   
   -- Set up success handler
   loadListener <- eventListener \_ -> do
     foreignResult <- result reader
-    content <- runExceptT $ readString foreignResult
-    case content of
-      Left (NonEmptyList foreignErrs) -> callback (Left $ error (show foreignErrs))
-      Right contentText -> callback (Right contentText)
+    callback (Right $ unsafeFromForeign foreignResult)
   
   -- Set up error handler  
   errorListener <- eventListener \_ -> do
@@ -57,9 +55,10 @@ readFileAsArrayBufferAff file = liftAff $ makeAff \callback -> do
   pure nonCanceler
 
 arrayBufferToString :: forall m. MonadEffect m => ArrayBuffer -> m String
-arrayBufferToString buffer = do
+arrayBufferToString buffer = liftEffect $ do
   decoder <- TextDecoder.new UtfLabel.utf8
-  TextDecoder.decode buffer decoder
+  arrayView <- whole buffer :: Effect (Uint8Array)
+  TextDecoder.decode arrayView decoder
 
 data PlinkFileSpec = PlinkFileSpec File File File
 
@@ -88,7 +87,7 @@ component =
 initialState :: forall input. input -> State
 initialState = const
   { selectedWeightFile: Nothing
-  , selectedPlinkFiles: []
+  , selectedPlinkFiles: Nothing
   , statusWeightFileLoading : false
   , statusPlinkFilesLoading : false
   , snpWeights : Nothing
@@ -131,10 +130,10 @@ render st =
         HH.text ""
     , case st.snpWeights of
         Nothing -> HH.text ""
-        Just _ -> HH.text $ "snpWeights loaded" -- "SNPs: " <> show sw.numSnps <> ", PCs: " <> show sw.numPCs
+        Just (SnpWeights sw) -> HH.div_ [ HH.text $ "snpWeights loaded, SNPs: " <> show sw.numSnps <> ", PCs: " <> show sw.numPCs, HH.br_ ]
     , case st.plinkData of
         Nothing -> HH.text ""
-        Just _ -> HH.text $ "Plink Data loaded"
+        Just (PlinkData pd) -> HH.div_ [ HH.text $ "Plink Data loaded. Individuals: " <> show pd.numIndividuals <> ", SNPs: " <> show pd.numSnps, HH.br_ ]
     , case st.errorNote of
         Nothing -> HH.text ""
         Just errMsg -> HH.div_ [ HH.text $ "Error: " <> errMsg, HH.br_ ]
@@ -164,7 +163,7 @@ handleAction (GotWeightFileEvent ev) = do
       H.modify_ _ { selectedWeightFile = Just file }
       H.modify_ _ { statusWeightFileLoading = true }
       -- Read file contents asynchronously using makeAff
-      content <- readFileAsTextAff file
+      content <- readFileAsArrayBufferAff file >>= arrayBufferToString
       let snpWeightData = readSnpWeights content
       H.modify_ _ { snpWeights = Just snpWeightData, statusWeightFileLoading = false }
     Nothing -> pure unit
@@ -172,11 +171,11 @@ handleAction (GotWeightFileEvent ev) = do
 handleAction (GotGenoDataFileEvent ev) = do
   let mInputElem = WE.target ev >>= fromEventTarget
   case mInputElem of
-    Nothing -> pure Nothing
+    Nothing -> pure unit
     Just inputElem -> do
       mFileList <- liftEffect $ files inputElem
       case mFileList of
-        Nothing -> pure Nothing
+        Nothing -> pure unit
         Just fileList -> do
           let files = items fileList
           case filter (\f -> endsWith ".fam" (name f)) files of
@@ -189,11 +188,14 @@ handleAction (GotGenoDataFileEvent ev) = do
                   H.modify_ _ { selectedPlinkFiles = Just (PlinkFileSpec famFile bimFile bedFile), errorNote = Nothing }
                   H.modify_ _ { statusPlinkFilesLoading = true }
                   -- Read the files asynchronously using makeAff
-                  famContent <- readFileAsTextAff famFile
-                  bimContent <- readFileAsTextAff bimFile
+                  famContent <- readFileAsArrayBufferAff famFile >>= arrayBufferToString
+                  bimContent <- readFileAsArrayBufferAff bimFile >>= arrayBufferToString
+                  let famResults = readFamData famContent
+                  let bimResults = readBimData bimContent
+                  bedResults <- liftEffect $ empty 0
+                  let plinkData = PlinkData { famData : famResults, bimData : bimResults, bedData : bedResults, numIndividuals : 0, numSnps : 0 }
+                  H.modify_ _ { plinkData = Just plinkData, statusPlinkFilesLoading = false } 
                 _ -> H.modify_ _ { errorNote = Just "Multiple .bed files selected", selectedPlinkFiles = Nothing }
               _ -> H.modify_ _ { errorNote = Just "Multiple .bim files selected", selectedPlinkFiles = Nothing }
             _ -> H.modify_ _ { errorNote = Just "Multiple .fam files selected", selectedPlinkFiles = Nothing }
   pure unit
-
-
