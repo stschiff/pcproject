@@ -1,23 +1,24 @@
 export function readBimData(bimText) {
     const lines = bimText.trim().split('\n');
-    const nrSnps = lines.length;
-    let chromosomes = new Array(nrSnps);
-    let positions = new Uint16Array(nrSnps);
-    let snpIds = new Array(nrSnps);
-    let alleles1 = new Array(nrSnps);
-    let alleles2 = new Array(nrSnps);
-    for (let i = 0; i < nrSnps; i++) {
+    const nrSNPs = lines.length;
+    let chromosomes = new Array(nrSNPs);
+    let positions = new Uint16Array(nrSNPs);
+    let snpIDs = new Array(nrSNPs);
+    let alleles1 = new Array(nrSNPs);
+    let alleles2 = new Array(nrSNPs);
+    for (let i = 0; i < nrSNPs; i++) {
         const fields = lines[i].trim().split(/\s+/);
         chromosomes[i] = fields[0];
-        snpIds[i] = fields[1];
+        snpIDs[i] = fields[1];
         positions[i] = parseInt(fields[3]);
         if (isNaN(positions[i])) {
-            throw new Error(`Invalid position for SNP ${snpIds[i]}: ${fields[3]}`);
+            throw new Error(`Invalid position for SNP ${snpIDs[i]}: ${fields[3]}`);
         }
         alleles1[i] = fields[4];
         alleles2[i] = fields[5];
     }
-    return { snpIds, chromosomes, positions, alleles1, alleles2 };
+    console.log(`Loaded ${nrSNPs} SNPs from BIM file.`);
+    return { snpIDs, chromosomes, positions, alleles1, alleles2 };
 }
 
 export function readFamData(famText) {
@@ -30,5 +31,6 @@ export function readFamData(famText) {
         popNames[i] = fields[0];
         indNames[i] = fields[1];
     }
+    console.log(`Loaded ${nrSamples} individuals from FAM file.`);
     return { indNames, popNames };
 }

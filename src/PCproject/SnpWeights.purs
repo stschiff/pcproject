@@ -26,14 +26,14 @@ import Data.ArrayBuffer.Types (Float32Array, Uint16Array)
 -- Column-wise storage of SNP weights
 -- Each SNP has an ID, chromosome, position, and weights for each PC
 -- We store columns rather than row-wise structs for better memory- and overall efficiency.
-data SnpWeights = SnpWeights
+type SnpWeights =
   { snpIds      :: Array String
   , chromosomes :: Array String
   , positions   :: Uint16Array
   , alleles1  :: Array String
   , alleles2  :: Array String
   , pcWeights   :: Float32Array -- Flattened 2D array: numSnps * numPCs
-  , numSnps     :: Int
+  , numSNPs     :: Int
   , numPCs      :: Int
   }
 

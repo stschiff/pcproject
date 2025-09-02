@@ -2,7 +2,7 @@ module App.Interface where
 
 import Prelude
 
-import Data.Array (filter)
+import Data.Array (filter, length)
 import Data.ArrayBuffer.Typed (whole, empty)
 import Data.ArrayBuffer.Types (ArrayBuffer, Uint8Array)
 import Data.Either (Either(..))
@@ -18,8 +18,8 @@ import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
-import PCproject.PlinkData (PlinkData(..), readBimData, readFamData)
-import PCproject.SnpWeights (SnpWeights(..), readSnpWeights)
+import PCproject.PlinkData (PlinkData, readBimData, readFamData)
+import PCproject.SnpWeights (SnpWeights, readSnpWeights)
 import Web.Encoding.TextDecoder as TextDecoder
 import Web.Encoding.UtfLabel as UtfLabel
 import Web.Event.Event as WE
@@ -101,14 +101,14 @@ render st =
     [ HH.h3_ [ HH.text "Upload files" ]
     , fileInputForm
     , case st.selectedWeightFile of
-        Nothing -> HH.text "No weight file selected"
+        Nothing -> HH.div_ [ HH.text "No weight file selected", HH.br_ ]
         Just file -> HH.div_
           [ HH.text $ "Selected weight file: " <> name file
           , HH.br_
           , HH.text $ "Weight File size: " <> show (size file) <> " bytes"
           ]
     , case st.selectedPlinkFiles of
-        Nothing -> HH.text "No plink files selected"
+        Nothing -> HH.div_ [ HH.text "No plink files selected", HH.br_ ]
         Just (PlinkFileSpec famFile bimFile bedFile) -> HH.div_
           [ HH.text $ "Selected fam file: " <> name famFile
           , HH.br_
@@ -130,10 +130,10 @@ render st =
         HH.text ""
     , case st.snpWeights of
         Nothing -> HH.text ""
-        Just (SnpWeights sw) -> HH.div_ [ HH.text $ "snpWeights loaded, SNPs: " <> show sw.numSnps <> ", PCs: " <> show sw.numPCs, HH.br_ ]
+        Just sw -> HH.div_ [ HH.text $ "snpWeights loaded, SNPs: " <> show sw.numSNPs <> ", PCs: " <> show sw.numPCs, HH.br_ ]
     , case st.plinkData of
         Nothing -> HH.text ""
-        Just (PlinkData pd) -> HH.div_ [ HH.text $ "Plink Data loaded. Individuals: " <> show pd.numIndividuals <> ", SNPs: " <> show pd.numSnps, HH.br_ ]
+        Just pd -> HH.div_ [ HH.text $ "Plink Data loaded. Individuals: " <> show pd.numIndividuals <> ", SNPs: " <> show pd.numSNPs, HH.br_ ]
     , case st.errorNote of
         Nothing -> HH.text ""
         Just errMsg -> HH.div_ [ HH.text $ "Error: " <> errMsg, HH.br_ ]
@@ -193,7 +193,7 @@ handleAction (GotGenoDataFileEvent ev) = do
                   let famResults = readFamData famContent
                   let bimResults = readBimData bimContent
                   bedResults <- liftEffect $ empty 0
-                  let plinkData = PlinkData { famData : famResults, bimData : bimResults, bedData : bedResults, numIndividuals : 0, numSnps : 0 }
+                  let plinkData = { famData : famResults, bimData : bimResults, bedData : bedResults, numIndividuals : length famResults.indNames, numSNPs : length bimResults.snpIDs }
                   H.modify_ _ { plinkData = Just plinkData, statusPlinkFilesLoading = false } 
                 _ -> H.modify_ _ { errorNote = Just "Multiple .bed files selected", selectedPlinkFiles = Nothing }
               _ -> H.modify_ _ { errorNote = Just "Multiple .bim files selected", selectedPlinkFiles = Nothing }
