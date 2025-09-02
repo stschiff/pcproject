@@ -27,3 +27,10 @@ type PlinkData =
 
 foreign import readBimData :: String -> PlinkBimData
 foreign import readFamData :: String -> PlinkFamData
+
+checkBedfileMagicBytes :: ArrayBuffer -> Effect Unit
+checkBedFileMagicBytes arr = do
+  bytes <- whole arr :: Effect Uint8Array
+  case take 3 bytes of
+    [0b01101100, 0b00011011, 0b00000001] -> pure unit
+    _ -> throw "Invalid .bed file: incorrect or missing magic numbers"

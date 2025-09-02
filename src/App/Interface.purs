@@ -190,8 +190,10 @@ handleAction (GotGenoDataFileEvent ev) = do
                   -- Read the files asynchronously using makeAff
                   famContent <- readFileAsArrayBufferAff famFile >>= arrayBufferToString
                   bimContent <- readFileAsArrayBufferAff bimFile >>= arrayBufferToString
+                  bedContent <- readFileAsArrayBufferAff bedFile
                   let famResults = readFamData famContent
                   let bimResults = readBimData bimContent
+                  checkBedfileMagicBytes bedContent
                   bedResults <- liftEffect $ empty 0
                   let plinkData = { famData : famResults, bimData : bimResults, bedData : bedResults, numIndividuals : length famResults.indNames, numSNPs : length bimResults.snpIDs }
                   H.modify_ _ { plinkData = Just plinkData, statusPlinkFilesLoading = false } 
