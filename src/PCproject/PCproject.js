@@ -16,19 +16,23 @@ function getAlleleFreq(plinkData, snpIndex, individualIndex) {
     }
 }
 
-export function projectPlinkOnWeights(plinkData, snpWeights) {
+export function projectPlinkOnWeights(plinkData) { return function(snpWeights) {
 
     let analysedPositions = new Array(plinkData.numIndividuals).fill(0);
     let overlappingPositions = 0;
     let plinkIndex = 0;
     let result = new Array(plinkData.numIndividuals * snpWeights.numPCs).fill(0);
     for (let i = 0; i < snpWeights.snpIDs.length; i++) {
-        while (plinkData.bimData.chromosomes[plinkIndex] < snpWeights.chromosomes[i] && plinkData.bimData.positions[plinkIndex] < snpWeights.positions[i]) {
+        // console.log(`Processing SNP ${i+1}: ${snpWeights.snpIDs[i]} at ${snpWeights.chromosomes[i]}:${snpWeights.positions[i]}`);
+        // console.log(`Current bim SNP: ${plinkData.bimData.snpIDs[plinkIndex]} at ${plinkData.bimData.chromosomes[plinkIndex]}:${plinkData.bimData.positions[plinkIndex]}`);
+        while (plinkData.bimData.chromosomes[plinkIndex] < snpWeights.chromosomes[i] ||
+               (plinkData.bimData.chromosomes[plinkIndex] == snpWeights.chromosomes[i] && plinkData.bimData.positions[plinkIndex] < snpWeights.positions[i])) {
             plinkIndex++;
-            
+            // console.log(`Advancing plinkIndex to ${plinkIndex}`);   
         }
         if (plinkData.bimData.chromosomes[plinkIndex] === snpWeights.chromosomes[i] && plinkData.bimData.positions[plinkIndex] === snpWeights.positions[i]) {
             overlappingPositions++;
+            console.log(`Matching SNP at plinkIndex ${plinkIndex} for snpWeights index ${i}`);
             for (let j = 0; j < plinkData.numIndividuals; j++) {
                 let alleleFreq = getAlleleFreq(plinkData, plinkIndex, j);
                 if (alleleFreq !== null) {
@@ -38,9 +42,12 @@ export function projectPlinkOnWeights(plinkData, snpWeights) {
                     analysedPositions[j]++;
                 }
             }
-        } 
+        }
+        if(plinkIndex >= plinkData.numSNPs) {
+            break;
+        }
     }
-    for (let j = 0; j < plinkData.numIndividuals; j++) {
+    for (let j = 0; j < 10; j++) { //plinkData.numIndividuals; j++) {
         for (let pc = 0; pc < snpWeights.numPCs; pc++) {
             if (analysedPositions[j] > 0) {
                 result[j * snpWeights.numPCs + pc] /= analysedPositions[j];
@@ -54,4 +61,4 @@ export function projectPlinkOnWeights(plinkData, snpWeights) {
         analysedPositions: analysedPositions,
         overlappingPositions: overlappingPositions
     }
-}
+} }

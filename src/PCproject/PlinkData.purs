@@ -1,6 +1,14 @@
 module PCproject.PlinkData where
 
-import Data.ArrayBuffer.Types (Uint8Array, Uint16Array)
+import Prelude
+
+import Data.UInt (toInt)
+import Data.ArrayBuffer.Types (Uint8Array, Uint16Array, ArrayBuffer)
+import Data.ArrayBuffer.Typed (whole, (!))
+import Data.Traversable (sequence)
+import Data.Maybe (Maybe(..))
+import Effect (Effect)
+import Effect.Exception (throw)
 
 type PlinkBimData =
   { snpIDs :: Array String
@@ -15,7 +23,7 @@ type PlinkFamData =
   , popNames :: Array String
   }
 
-type PlinkBedData = Uint8Array
+type PlinkBedData = ArrayBuffer
 
 type PlinkData =
   { bimData :: PlinkBimData
@@ -28,9 +36,11 @@ type PlinkData =
 foreign import readBimData :: String -> PlinkBimData
 foreign import readFamData :: String -> PlinkFamData
 
-checkBedfileMagicBytes :: ArrayBuffer -> Effect Unit
+checkBedFileMagicBytes :: ArrayBuffer -> Effect Boolean
 checkBedFileMagicBytes arr = do
   bytes <- whole arr :: Effect Uint8Array
-  case take 3 bytes of
-    [0b01101100, 0b00011011, 0b00000001] -> pure unit
-    _ -> throw "Invalid .bed file: incorrect or missing magic numbers"
+  maybeFirstThree <- sequence [bytes ! 0, bytes ! 1, bytes ! 2]
+  case map (map toInt) $ sequence maybeFirstThree of
+    Nothing -> throw "Invalid .bed file: too short to contain magic numbers"
+    Just [108, 27, 1] -> pure true -- magic bytes are [0b01101100, 0b00011011, 0b00000001]
+    _ -> pure false

@@ -27,7 +27,7 @@ import Data.ArrayBuffer.Types (Float32Array, Uint16Array)
 -- Each SNP has an ID, chromosome, position, and weights for each PC
 -- We store columns rather than row-wise structs for better memory- and overall efficiency.
 type SnpWeights =
-  { snpIds      :: Array String
+  { snpIDs      :: Array String
   , chromosomes :: Array String
   , positions   :: Uint16Array
   , alleles1  :: Array String
@@ -51,7 +51,7 @@ foreign import readSnpWeights :: String -> SnpWeights
 --     n | n <= 0 -> throw "snp weight file must have at least 6 columns (SNP ID, chromosome, position, ref, alt) plus at least one PC weight column"
 --     n -> pure n
 --   pure <<< unsafePartial $ ST.run do
---       snpIds <- STA.thaw (replicate numSnps "")
+--       snpIDs <- STA.thaw (replicate numSnps "")
 --       chromosomes <- STA.thaw (replicate numSnps "")
 --       positions <- STA.thaw (replicate numSnps 0)
 --       refAlleles <- STA.thaw (replicate numSnps "")
@@ -59,7 +59,7 @@ foreign import readSnpWeights :: String -> SnpWeights
 --       pcWeights <- STA.thaw (replicate (numPCs * numSnps) 0.0)
 --       _ <- forWithIndex lines (\i line -> do
 --         let fields = R.split wsRegex (trim line)
---         _ <- STA.poke i (fields `unsafeIndex` 0) snpIds
+--         _ <- STA.poke i (fields `unsafeIndex` 0) snpIDs
 --         _ <- STA.poke i (fields `unsafeIndex` 1) chromosomes
 --         _ <- case DI.fromString (fields `unsafeIndex` 2) of
 --           Nothing -> crashWith $ "Error parsing position in line " <> show i <> " in snp weight file"
@@ -70,14 +70,14 @@ foreign import readSnpWeights :: String -> SnpWeights
 --           Nothing -> crashWith $ "Error parsing PC weights in line " <> show i <> " in snp weight file"
 --           Just pcWs -> for_ (0 .. (numPCs - 1)) (\j -> STA.poke (i * numPCs + j) (pcWs `unsafeIndex` j) pcWeights)
 --       )
---       snpIds'      <- STA.freeze snpIds
+--       snpIDs'      <- STA.freeze snpIDs
 --       chromosomes' <- STA.freeze chromosomes
 --       refAlleles'  <- STA.freeze refAlleles
 --       altAlleles'  <- STA.freeze altAlleles
 --       positions'   <- STA.freeze positions
 --       pcWeights'   <- STA.freeze pcWeights
 --       pure $ SnpWeights
---         { snpIds      : snpIds'
+--         { snpIDs      : snpIDs'
 --         , chromosomes : chromosomes'
 --         , positions   : positions'
 --         , refAlleles  : refAlleles'

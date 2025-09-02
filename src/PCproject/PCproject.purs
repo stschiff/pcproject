@@ -1,6 +1,7 @@
 module PCproject.PCproject where
 
-import Prelude
+import PCproject.PlinkData (PlinkData)
+import PCproject.SnpWeights (SnpWeights)
 
 type ProjectionResult =
     { pcPositions :: Array Number

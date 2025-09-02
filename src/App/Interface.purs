@@ -3,11 +3,12 @@ module App.Interface where
 import Prelude
 
 import Data.Array (filter, length)
-import Data.ArrayBuffer.Typed (whole, empty)
+import Data.ArrayBuffer.Typed (whole)
 import Data.ArrayBuffer.Types (ArrayBuffer, Uint8Array)
 import Data.Either (Either(..))
 import Data.Maybe (Maybe(..))
 import Data.String.Utils (endsWith)
+import Data.Tuple (Tuple(..))
 import Effect (Effect)
 import Effect.Aff (makeAff, nonCanceler)
 import Effect.Aff.Class (class MonadAff, liftAff)
@@ -18,8 +19,9 @@ import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
-import PCproject.PlinkData (PlinkData, readBimData, readFamData)
+import PCproject.PlinkData (PlinkData, readBimData, readFamData, checkBedFileMagicBytes)
 import PCproject.SnpWeights (SnpWeights, readSnpWeights)
+import PCproject.PCproject (ProjectionResult, projectPlinkOnWeights)
 import Web.Encoding.TextDecoder as TextDecoder
 import Web.Encoding.UtfLabel as UtfLabel
 import Web.Event.Event as WE
@@ -69,6 +71,8 @@ type State =
   , statusPlinkFilesLoading :: Boolean
   , snpWeights :: Maybe SnpWeights
   , plinkData :: Maybe PlinkData
+  , projectionRunning :: Boolean
+  , projectionResults :: Maybe ProjectionResult
   , errorNote :: Maybe String
   }
 
@@ -92,6 +96,8 @@ initialState = const
   , statusPlinkFilesLoading : false
   , snpWeights : Nothing
   , plinkData : Nothing
+  , projectionRunning : false
+  , projectionResults : Nothing
   , errorNote : Nothing
   }
 
@@ -134,6 +140,13 @@ render st =
     , case st.plinkData of
         Nothing -> HH.text ""
         Just pd -> HH.div_ [ HH.text $ "Plink Data loaded. Individuals: " <> show pd.numIndividuals <> ", SNPs: " <> show pd.numSNPs, HH.br_ ]
+    , if st.projectionRunning then
+        HH.div_ [ HH.text "Projection running...", HH.br_ ]
+      else
+        HH.text ""
+    , case st.projectionResults of
+        Nothing -> HH.text ""
+        Just pr -> HH.div_ [ HH.text $ "Projection done. Overlapping SNPs: " <> show pr.overlappingPositions <> ", PCs: " <> show pr.numPCs <> ", Individuals: " <> show pr.numIndividuals, HH.br_ ]
     , case st.errorNote of
         Nothing -> HH.text ""
         Just errMsg -> HH.div_ [ HH.text $ "Error: " <> errMsg, HH.br_ ]
@@ -160,12 +173,12 @@ handleAction (GotWeightFileEvent ev) = do
       pure $ mFileList >>= item 0
   case mFile of
     Just file -> do
-      H.modify_ _ { selectedWeightFile = Just file }
-      H.modify_ _ { statusWeightFileLoading = true }
+      H.modify_ _ { selectedWeightFile = Just file, statusWeightFileLoading = true }
       -- Read file contents asynchronously using makeAff
       content <- readFileAsArrayBufferAff file >>= arrayBufferToString
       let snpWeightData = readSnpWeights content
       H.modify_ _ { snpWeights = Just snpWeightData, statusWeightFileLoading = false }
+      checkAndRunProjection
     Nothing -> pure unit
 
 handleAction (GotGenoDataFileEvent ev) = do
@@ -193,11 +206,24 @@ handleAction (GotGenoDataFileEvent ev) = do
                   bedContent <- readFileAsArrayBufferAff bedFile
                   let famResults = readFamData famContent
                   let bimResults = readBimData bimContent
-                  checkBedfileMagicBytes bedContent
-                  bedResults <- liftEffect $ empty 0
-                  let plinkData = { famData : famResults, bimData : bimResults, bedData : bedResults, numIndividuals : length famResults.indNames, numSNPs : length bimResults.snpIDs }
-                  H.modify_ _ { plinkData = Just plinkData, statusPlinkFilesLoading = false } 
+                  bedCheck <- liftEffect $ checkBedFileMagicBytes bedContent
+                  if (not bedCheck) then
+                    H.modify_ _ { errorNote = Just "Invalid .bed file (incorrect magic numbers in the first three bytes)", selectedPlinkFiles = Nothing, statusPlinkFilesLoading = false }
+                  else do
+                    let plinkData = { famData : famResults, bimData : bimResults, bedData : bedContent, numIndividuals : length famResults.indNames, numSNPs : length bimResults.snpIDs }
+                    H.modify_ _ { plinkData = Just plinkData, statusPlinkFilesLoading = false } 
+                    checkAndRunProjection
                 _ -> H.modify_ _ { errorNote = Just "Multiple .bed files selected", selectedPlinkFiles = Nothing }
               _ -> H.modify_ _ { errorNote = Just "Multiple .bim files selected", selectedPlinkFiles = Nothing }
             _ -> H.modify_ _ { errorNote = Just "Multiple .fam files selected", selectedPlinkFiles = Nothing }
+  pure unit
+
+checkAndRunProjection :: forall output m. MonadAff m => H.HalogenM State Action () output m Unit
+checkAndRunProjection = do
+  st <- H.get
+  case Tuple st.snpWeights st.plinkData of
+    Tuple (Just sw) (Just pd) -> do
+      let projResult = projectPlinkOnWeights pd sw
+      H.modify_ _ { projectionResults = Just projResult }
+    _ -> pure unit
   pure unit
