@@ -6,7 +6,7 @@ import Data.Array (filter, length)
 import Data.ArrayBuffer.Typed (whole)
 import Data.ArrayBuffer.Types (ArrayBuffer, Uint8Array)
 import Data.Either (Either(..))
-import Data.Maybe (Maybe(..))
+import Data.Maybe (Maybe(..), isJust, isNothing)
 import Data.String.Utils (endsWith)
 import Data.Tuple (Tuple(..))
 import Effect (Effect)
@@ -79,6 +79,7 @@ type State =
 data Action
   = GotWeightFileEvent WE.Event
   | GotGenoDataFileEvent WE.Event
+  | RunProjectionEvent
 
 component :: forall query input output m. MonadAff m => H.Component query input output m
 component =
@@ -110,8 +111,6 @@ render st =
         Nothing -> HH.div_ [ HH.text "No weight file selected", HH.br_ ]
         Just file -> HH.div_
           [ HH.text $ "Selected weight file: " <> name file
-          , HH.br_
-          , HH.text $ "Weight File size: " <> show (size file) <> " bytes"
           ]
     , case st.selectedPlinkFiles of
         Nothing -> HH.div_ [ HH.text "No plink files selected", HH.br_ ]
@@ -121,10 +120,6 @@ render st =
           , HH.text $ "Selected bim file: " <> name bimFile
           , HH.br_
           , HH.text $ "Selected bed file: " <> name bedFile
-          , HH.br_
-          , HH.text $ "Bed File size: " <> show (size bedFile) <> " bytes"
-          , HH.br_
-          , HH.text $ "Bim File size: " <> show (size bimFile) <> " bytes"
           ]
     , if st.statusWeightFileLoading then
         HH.div_ [ HH.text "Loading weight file...", HH.br_ ]
@@ -140,6 +135,10 @@ render st =
     , case st.plinkData of
         Nothing -> HH.text ""
         Just pd -> HH.div_ [ HH.text $ "Plink Data loaded. Individuals: " <> show pd.numIndividuals <> ", SNPs: " <> show pd.numSNPs, HH.br_ ]
+    , if isJust st.snpWeights && isJust st.plinkData && (not st.projectionRunning) && (isNothing st.projectionResults) then
+        HH.button [ HE.onClick (\_ -> RunProjectionEvent) ] [ HH.text "Run Projection" ]
+      else
+        HH.text ""
     , if st.projectionRunning then
         HH.div_ [ HH.text "Projection running...", HH.br_ ]
       else
@@ -178,7 +177,6 @@ handleAction (GotWeightFileEvent ev) = do
       content <- readFileAsArrayBufferAff file >>= arrayBufferToString
       let snpWeightData = readSnpWeights content
       H.modify_ _ { snpWeights = Just snpWeightData, statusWeightFileLoading = false }
-      checkAndRunProjection
     Nothing -> pure unit
 
 handleAction (GotGenoDataFileEvent ev) = do
@@ -212,10 +210,15 @@ handleAction (GotGenoDataFileEvent ev) = do
                   else do
                     let plinkData = { famData : famResults, bimData : bimResults, bedData : bedContent, numIndividuals : length famResults.indNames, numSNPs : length bimResults.snpIDs }
                     H.modify_ _ { plinkData = Just plinkData, statusPlinkFilesLoading = false } 
-                    checkAndRunProjection
                 _ -> H.modify_ _ { errorNote = Just "Multiple .bed files selected", selectedPlinkFiles = Nothing }
               _ -> H.modify_ _ { errorNote = Just "Multiple .bim files selected", selectedPlinkFiles = Nothing }
             _ -> H.modify_ _ { errorNote = Just "Multiple .fam files selected", selectedPlinkFiles = Nothing }
+  pure unit
+
+handleAction RunProjectionEvent = do
+  H.modify_ _ { projectionRunning = true, projectionResults = Nothing }
+  checkAndRunProjection
+  H.modify_ _ { projectionRunning = false }
   pure unit
 
 checkAndRunProjection :: forall output m. MonadAff m => H.HalogenM State Action () output m Unit

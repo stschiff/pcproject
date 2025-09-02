@@ -9,7 +9,7 @@ export function readBimData(bimText) {
     for (let i = 0; i < nrSNPs; i++) {
         const fields = lines[i].trim().split(/\s+/);
         chromosomes[i] = parseInt(fields[0]);
-        if (isNaN(chromosomes[i])) {
+        if (isNaN(chromosomes[i]) || chromosomes[i] < 1 || chromosomes[i] > 25) {
             throw new Error(`Invalid chromosome for SNP ${snpIDs[i]}: ${fields[0]}`);
         }
         snpIDs[i] = fields[1];

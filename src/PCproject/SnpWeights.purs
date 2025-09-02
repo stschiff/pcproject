@@ -1,6 +1,6 @@
 module PCproject.SnpWeights where
 
-import Data.ArrayBuffer.Types (Float32Array, Uint16Array)
+import Data.ArrayBuffer.Types (Float32Array, Uint32Array)
 -- import Prelude
 
 -- import Control.Monad.ST as ST
@@ -28,8 +28,8 @@ import Data.ArrayBuffer.Types (Float32Array, Uint16Array)
 -- We store columns rather than row-wise structs for better memory- and overall efficiency.
 type SnpWeights =
   { snpIDs      :: Array String
-  , chromosomes :: Array String
-  , positions   :: Uint16Array
+  , chromosomes :: Array Int
+  , positions   :: Uint32Array
   , alleles1  :: Array String
   , alleles2  :: Array String
   , pcWeights   :: Float32Array -- Flattened 2D array: numSnps * numPCs

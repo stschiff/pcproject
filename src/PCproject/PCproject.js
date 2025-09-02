@@ -32,7 +32,7 @@ export function projectPlinkOnWeights(plinkData) { return function(snpWeights) {
         }
         if (plinkData.bimData.chromosomes[plinkIndex] === snpWeights.chromosomes[i] && plinkData.bimData.positions[plinkIndex] === snpWeights.positions[i]) {
             overlappingPositions++;
-            console.log(`Matching SNP at plinkIndex ${plinkIndex} for snpWeights index ${i}`);
+            // console.log(`Matching SNP at plinkIndex ${plinkIndex} for snpWeights index ${i}`);
             for (let j = 0; j < plinkData.numIndividuals; j++) {
                 let alleleFreq = getAlleleFreq(plinkData, plinkIndex, j);
                 if (alleleFreq !== null) {

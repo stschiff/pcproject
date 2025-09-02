@@ -15,7 +15,10 @@ export function readSnpWeights(snpWeightText) {
     for (let i = 0; i < numSNPs; i++) {
         const fields = lines[i].trim().split(/\s+/);
         snpIDs[i] = fields[0];
-        chromosomes[i] = fields[1];
+        chromosomes[i] = parseInt(fields[1]);
+        if (isNaN(chromosomes[i]) || chromosomes[i] < 1 || chromosomes[i] > 25) {
+            throw new Error(`Invalid chromosome for SNP ${snpIDs[i]}: ${fields[1]}`);
+        }
         positions[i] = parseInt(fields[2]);
         if (isNaN(positions[i])) {
             throw new Error(`Invalid position for SNP ${snpIDs[i]}: ${fields[2]}`);

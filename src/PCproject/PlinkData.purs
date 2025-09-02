@@ -3,7 +3,7 @@ module PCproject.PlinkData where
 import Prelude
 
 import Data.UInt (toInt)
-import Data.ArrayBuffer.Types (Uint8Array, Uint16Array, ArrayBuffer)
+import Data.ArrayBuffer.Types (Uint8Array, Uint32Array, ArrayBuffer)
 import Data.ArrayBuffer.Typed (whole, (!))
 import Data.Traversable (sequence)
 import Data.Maybe (Maybe(..))
@@ -12,8 +12,8 @@ import Effect.Exception (throw)
 
 type PlinkBimData =
   { snpIDs :: Array String
-  , chromosomes :: Array String
-  , positions :: Uint16Array
+  , chromosomes :: Array Int
+  , positions :: Uint32Array
   , alleles1 :: Array String
   , alleles2 :: Array String
   }
