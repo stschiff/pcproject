@@ -17,7 +17,6 @@ function getAlleleFreq(plinkData, snpIndex, individualIndex) {
 }
 
 export function projectPlinkOnWeights(plinkData) { return function(snpWeights) {
-
     let analysedPositions = new Array(plinkData.numIndividuals).fill(0);
     let overlappingPositions = 0;
     let plinkIndex = 0;
@@ -26,16 +25,29 @@ export function projectPlinkOnWeights(plinkData) { return function(snpWeights) {
         // console.log(`Processing SNP ${i+1}: ${snpWeights.snpIDs[i]} at ${snpWeights.chromosomes[i]}:${snpWeights.positions[i]}`);
         // console.log(`Current bim SNP: ${plinkData.bimData.snpIDs[plinkIndex]} at ${plinkData.bimData.chromosomes[plinkIndex]}:${plinkData.bimData.positions[plinkIndex]}`);
         while (plinkData.bimData.chromosomes[plinkIndex] < snpWeights.chromosomes[i] ||
-               (plinkData.bimData.chromosomes[plinkIndex] == snpWeights.chromosomes[i] && plinkData.bimData.positions[plinkIndex] < snpWeights.positions[i])) {
+               (plinkData.bimData.chromosomes[plinkIndex] == snpWeights.chromosomes[i] &&
+                plinkData.bimData.positions[plinkIndex] < snpWeights.positions[i])) {
             plinkIndex++;
             // console.log(`Advancing plinkIndex to ${plinkIndex}`);   
         }
-        if (plinkData.bimData.chromosomes[plinkIndex] === snpWeights.chromosomes[i] && plinkData.bimData.positions[plinkIndex] === snpWeights.positions[i]) {
+        if (plinkData.bimData.chromosomes[plinkIndex] === snpWeights.chromosomes[i] &&
+            plinkData.bimData.positions[plinkIndex] === snpWeights.positions[i]) {
+            let alleles_flipped = -1;
+            if(plinkData.bimData.alleles1[plinkIndex] == snpWeights.alleles1[i] &&
+               plinkData.bimData.alleles2[plinkIndex] == snpWeights.alleles2[i])
+                alleles_flipped = false;
+            else if(plinkData.bimData.alleles1[plinkIndex] == snpWeights.alleles2[i] &&
+                    plinkData.bimData.alleles2[plinkIndex] == snpWeights.alleles1[i])
+                alleles_flipped = true;
+            else
+                continue;
             overlappingPositions++;
             // console.log(`Matching SNP at plinkIndex ${plinkIndex} for snpWeights index ${i}`);
             for (let j = 0; j < plinkData.numIndividuals; j++) {
                 let alleleFreq = getAlleleFreq(plinkData, plinkIndex, j);
                 if (alleleFreq !== null) {
+                    if(alleles_flipped)
+                        alleleFreq = 1.0 - alleleFreq;
                     for (let pc = 0; pc < snpWeights.numPCs; pc++) {
                         result[j * snpWeights.numPCs + pc] += alleleFreq * snpWeights.pcWeights[i * snpWeights.numPCs + pc];
                     }

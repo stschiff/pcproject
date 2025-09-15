@@ -21,6 +21,7 @@ import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 import PCproject.PlinkData (PlinkData, readBimData, readFamData, checkBedFileMagicBytes)
 import PCproject.SnpWeights (SnpWeights, readSnpWeights)
+import PCproject.RefPosData (RefPosData, readRefPosData)
 import PCproject.PCproject (ProjectionResult, projectPlinkOnWeights)
 import Web.Encoding.TextDecoder as TextDecoder
 import Web.Encoding.UtfLabel as UtfLabel
@@ -67,10 +68,13 @@ data PlinkFileSpec = PlinkFileSpec File File File
 type State =
   { selectedWeightFile :: Maybe File
   , selectedPlinkFiles :: Maybe PlinkFileSpec
+  , selectedReferenceFile :: Maybe File
   , statusWeightFileLoading :: Boolean
   , statusPlinkFilesLoading :: Boolean
+  , statusReferenceFileLoading :: Boolean
   , snpWeights :: Maybe SnpWeights
   , plinkData :: Maybe PlinkData
+  , refData :: Maybe RefPosData
   , projectionRunning :: Boolean
   , projectionResults :: Maybe ProjectionResult
   , errorNote :: Maybe String
@@ -79,6 +83,7 @@ type State =
 data Action
   = GotWeightFileEvent WE.Event
   | GotGenoDataFileEvent WE.Event
+  | GotRefDataFileEvent WE.Event
   | RunProjectionEvent
 
 component :: forall query input output m. MonadAff m => H.Component query input output m
@@ -93,10 +98,13 @@ initialState :: forall input. input -> State
 initialState = const
   { selectedWeightFile: Nothing
   , selectedPlinkFiles: Nothing
+  , selectedReferenceFile: Nothing
   , statusWeightFileLoading : false
   , statusPlinkFilesLoading : false
+  , statusReferenceFileLoading : false
   , snpWeights : Nothing
   , plinkData : Nothing
+  , refData : Nothing
   , projectionRunning : false
   , projectionResults : Nothing
   , errorNote : Nothing
@@ -121,6 +129,11 @@ render st =
           , HH.br_
           , HH.text $ "Selected bed file: " <> name bedFile
           ]
+    , case st.selectedReferenceFile of
+        Nothing -> HH.div_ [ HH.text "No reference position file selected", HH.br_ ]
+        Just file -> HH.div_
+          [ HH.text $ "Selected reference position file: " <> name file
+          ]
     , if st.statusWeightFileLoading then
         HH.div_ [ HH.text "Loading weight file...", HH.br_ ]
       else
@@ -129,12 +142,19 @@ render st =
         HH.div_ [ HH.text "Loading plink files...", HH.br_ ]
       else
         HH.text ""
+    , if st.statusReferenceFileLoading then
+        HH.div_ [ HH.text "Loading reference position file...", HH.br_ ]
+      else
+        HH.text ""
     , case st.snpWeights of
         Nothing -> HH.text ""
         Just sw -> HH.div_ [ HH.text $ "snpWeights loaded, SNPs: " <> show sw.numSNPs <> ", PCs: " <> show sw.numPCs, HH.br_ ]
     , case st.plinkData of
         Nothing -> HH.text ""
         Just pd -> HH.div_ [ HH.text $ "Plink Data loaded. Individuals: " <> show pd.numIndividuals <> ", SNPs: " <> show pd.numSNPs, HH.br_ ]
+    , case st.refData of
+        Nothing -> HH.text ""
+        Just rd -> HH.div_ [ HH.text $ "Reference Position Data loaded. Samples: " <> show rd.numSamples <> ", PCs: " <> show rd.numPCs, HH.br_ ]
     , if isJust st.snpWeights && isJust st.plinkData && (not st.projectionRunning) && (isNothing st.projectionResults) then
         HH.button [ HE.onClick (\_ -> RunProjectionEvent) ] [ HH.text "Run Projection" ]
       else
@@ -160,6 +180,11 @@ render st =
         , HH.label_ [ HH.text "Select Plink genotype data files: " ]
         , HH.input  
           [ HP.type_ HP.InputFile, HP.multiple true, HE.onChange GotGenoDataFileEvent ]
+        , HH.br_
+        , HH.label_ [ HH.text "Select a reference position file: " ]
+        , HH.input 
+          [ HP.type_ HP.InputFile, HE.onChange GotRefDataFileEvent ]
+        , HH.br_
         ]
 
 handleAction :: forall output m. MonadAff m => Action -> H.HalogenM State Action () output m Unit
@@ -214,6 +239,22 @@ handleAction (GotGenoDataFileEvent ev) = do
               _ -> H.modify_ _ { errorNote = Just "Multiple .bim files selected", selectedPlinkFiles = Nothing }
             _ -> H.modify_ _ { errorNote = Just "Multiple .fam files selected", selectedPlinkFiles = Nothing }
   pure unit
+
+handleAction (GotRefDataFileEvent ev) = do
+  let mInputElem = WE.target ev >>= fromEventTarget
+  mFile <- case mInputElem of
+    Nothing -> pure Nothing
+    Just inputElem -> do
+      mFileList <- liftEffect $ files inputElem
+      pure $ mFileList >>= item 0
+  case mFile of
+    Just file -> do
+      H.modify_ _ { selectedReferenceFile = Just file, statusReferenceFileLoading = true }
+      -- Read file contents asynchronously using makeAff
+      content <- readFileAsArrayBufferAff file >>= arrayBufferToString
+      let refPosData = readRefPosData content
+      H.modify_ _ { refData = Just refPosData, statusReferenceFileLoading = false }
+    Nothing -> pure unit
 
 handleAction RunProjectionEvent = do
   H.modify_ _ { projectionRunning = true, projectionResults = Nothing }
