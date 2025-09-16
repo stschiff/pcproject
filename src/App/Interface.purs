@@ -269,7 +269,12 @@ handleAction RunProjectionEvent = do
   H.modify_ _ { projectionRunning = false }
   pure unit
 
-handleAction MakeChart = liftEffect drawChart
+handleAction MakeChart = do
+  st <- H.get
+  case st.refData of
+    Nothing -> pure unit
+    Just rd ->
+      liftEffect $ drawChart rd 0 1
 
 checkAndRunProjection :: forall output m. MonadAff m => H.HalogenM State Action () output m Unit
 checkAndRunProjection = do
