@@ -19,15 +19,16 @@ import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
-import PCproject.PlinkData (PlinkData, readBimData, readFamData, checkBedFileMagicBytes)
-import PCproject.SnpWeights (SnpWeights, readSnpWeights)
-import PCproject.RefPosData (RefPosData, readRefPosData)
 import PCproject.PCproject (ProjectionResult, projectPlinkOnWeights)
+import PCproject.PlinkData (PlinkData, readBimData, readFamData, checkBedFileMagicBytes)
+import PCproject.Plot (drawChart)
+import PCproject.RefPosData (RefPosData, readRefPosData)
+import PCproject.SnpWeights (SnpWeights, readSnpWeights)
 import Web.Encoding.TextDecoder as TextDecoder
 import Web.Encoding.UtfLabel as UtfLabel
 import Web.Event.Event as WE
 import Web.Event.EventTarget (addEventListener, eventListener)
-import Web.File.File (File, name, size, toBlob)
+import Web.File.File (File, name, toBlob)
 import Web.File.FileList (item, items)
 import Web.File.FileReader (fileReader, readAsArrayBuffer, result, toEventTarget)
 import Web.HTML.Event.EventTypes (load, error) as ET
@@ -85,6 +86,7 @@ data Action
   | GotGenoDataFileEvent WE.Event
   | GotRefDataFileEvent WE.Event
   | RunProjectionEvent
+  | MakeChart
 
 component :: forall query input output m. MonadAff m => H.Component query input output m
 component =
@@ -169,6 +171,11 @@ render st =
     , case st.errorNote of
         Nothing -> HH.text ""
         Just errMsg -> HH.div_ [ HH.text $ "Error: " <> errMsg, HH.br_ ]
+    , if isJust st.refData || isJust st.projectionResults then
+        HH.button [ HE.onClick (\_ -> MakeChart) ] [ HH.text "Make Chart" ]
+      else
+        HH.text ""
+    , HH.div [ HP.id "chart-container" ] []
     ]
   where
     fileInputForm :: H.ComponentHTML Action () m
@@ -262,6 +269,8 @@ handleAction RunProjectionEvent = do
   H.modify_ _ { projectionRunning = false }
   pure unit
 
+handleAction MakeChart = liftEffect drawChart
+
 checkAndRunProjection :: forall output m. MonadAff m => H.HalogenM State Action () output m Unit
 checkAndRunProjection = do
   st <- H.get
@@ -271,3 +280,4 @@ checkAndRunProjection = do
       H.modify_ _ { projectionResults = Just projResult }
     _ -> pure unit
   pure unit
+

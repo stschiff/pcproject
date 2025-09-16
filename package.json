@@ -11,5 +11,8 @@
     "repl": "spago repl",
     "serve": "parcel dev/index.html --open",
     "build-prod": "rm -rf prod && mkdir -p prod && cp dev/index.html prod/ && spago bundle-app --to prod/index.js && parcel build prod/index.html"
+  },
+  "dependencies": {
+    "@observablehq/plot": "^0.6.17"
   }
 }
