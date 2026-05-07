@@ -13,7 +13,9 @@ import Effect (Effect)
 import Effect.Aff (makeAff, nonCanceler)
 import Effect.Aff.Class (class MonadAff, liftAff)
 import Effect.Class (liftEffect, class MonadEffect)
+import Effect.Class.Console (log)
 import Effect.Exception (error)
+import Fetch (fetch)
 import Foreign (unsafeFromForeign)
 import Halogen as H
 import Halogen.HTML as HH
@@ -29,7 +31,7 @@ import Web.Encoding.UtfLabel as UtfLabel
 import Web.Event.Event as WE
 import Web.Event.EventTarget (addEventListener, eventListener)
 import Web.File.File (File, name, toBlob)
-import Web.File.FileList (item, items)
+import Web.File.FileList (items)
 import Web.File.FileReader (fileReader, readAsArrayBuffer, result, toEventTarget)
 import Web.HTML.Event.EventTypes (load, error) as ET
 import Web.HTML.HTMLInputElement (fromEventTarget, files)
@@ -67,12 +69,8 @@ arrayBufferToString buffer = liftEffect $ do
 data PlinkFileSpec = PlinkFileSpec File File File
 
 type State =
-  { selectedWeightFile :: Maybe File
-  , selectedPlinkFiles :: Maybe PlinkFileSpec
-  , selectedReferenceFile :: Maybe File
-  , statusWeightFileLoading :: Boolean
+  { selectedPlinkFiles :: Maybe PlinkFileSpec
   , statusPlinkFilesLoading :: Boolean
-  , statusReferenceFileLoading :: Boolean
   , snpWeights :: Maybe SnpWeights
   , plinkData :: Maybe PlinkData
   , refData :: Maybe RefPosData
@@ -82,9 +80,8 @@ type State =
   }
 
 data Action
-  = GotWeightFileEvent WE.Event
+  = LoadRefData
   | GotGenoDataFileEvent WE.Event
-  | GotRefDataFileEvent WE.Event
   | RunProjectionEvent
   | MakeChart
 
@@ -93,17 +90,16 @@ component =
   H.mkComponent
     { initialState
     , render
-    , eval: H.mkEval $ H.defaultEval { handleAction = handleAction }
+    , eval: H.mkEval $ H.defaultEval
+        { handleAction = handleAction
+        , initialize = Just LoadRefData
+        }
     }
 
 initialState :: forall input. input -> State
 initialState = const
-  { selectedWeightFile: Nothing
-  , selectedPlinkFiles: Nothing
-  , selectedReferenceFile: Nothing
-  , statusWeightFileLoading : false
+  { selectedPlinkFiles: Nothing
   , statusPlinkFilesLoading : false
-  , statusReferenceFileLoading : false
   , snpWeights : Nothing
   , plinkData : Nothing
   , refData : Nothing
@@ -117,11 +113,6 @@ render st =
   HH.div_
     [ HH.h3_ [ HH.text "Upload files" ]
     , fileInputForm
-    , case st.selectedWeightFile of
-        Nothing -> HH.div_ [ HH.text "No weight file selected", HH.br_ ]
-        Just file -> HH.div_
-          [ HH.text $ "Selected weight file: " <> name file
-          ]
     , case st.selectedPlinkFiles of
         Nothing -> HH.div_ [ HH.text "No plink files selected", HH.br_ ]
         Just (PlinkFileSpec famFile bimFile bedFile) -> HH.div_
@@ -131,32 +122,19 @@ render st =
           , HH.br_
           , HH.text $ "Selected bed file: " <> name bedFile
           ]
-    , case st.selectedReferenceFile of
-        Nothing -> HH.div_ [ HH.text "No reference position file selected", HH.br_ ]
-        Just file -> HH.div_
-          [ HH.text $ "Selected reference position file: " <> name file
-          ]
-    , if st.statusWeightFileLoading then
-        HH.div_ [ HH.text "Loading weight file...", HH.br_ ]
-      else
-        HH.text ""
+    , case st.snpWeights of
+        Nothing -> HH.div_ [ HH.text "Loading weight file...", HH.br_ ]
+        Just sw -> HH.div_ [ HH.text $ "Selected weight file with SNPs: " <> show sw.numSNPs <> ", PCs: " <> show sw.numPCs, HH.br_ ]
+    , case st.refData of
+        Nothing -> HH.div_ [ HH.text "Loading reference position file...", HH.br_ ]
+        Just rd -> HH.div_ [ HH.text $ "Reference Position Data loaded. Samples: " <> show rd.numSamples <> ", PCs: " <> show rd.numPCs, HH.br_ ]
     , if st.statusPlinkFilesLoading then
         HH.div_ [ HH.text "Loading plink files...", HH.br_ ]
       else
         HH.text ""
-    , if st.statusReferenceFileLoading then
-        HH.div_ [ HH.text "Loading reference position file...", HH.br_ ]
-      else
-        HH.text ""
-    , case st.snpWeights of
-        Nothing -> HH.text ""
-        Just sw -> HH.div_ [ HH.text $ "snpWeights loaded, SNPs: " <> show sw.numSNPs <> ", PCs: " <> show sw.numPCs, HH.br_ ]
     , case st.plinkData of
         Nothing -> HH.text ""
         Just pd -> HH.div_ [ HH.text $ "Plink Data loaded. Individuals: " <> show pd.numIndividuals <> ", SNPs: " <> show pd.numSNPs, HH.br_ ]
-    , case st.refData of
-        Nothing -> HH.text ""
-        Just rd -> HH.div_ [ HH.text $ "Reference Position Data loaded. Samples: " <> show rd.numSamples <> ", PCs: " <> show rd.numPCs, HH.br_ ]
     , if isJust st.snpWeights && isJust st.plinkData && (not st.projectionRunning) && (isNothing st.projectionResults) then
         HH.button [ HE.onClick (\_ -> RunProjectionEvent) ] [ HH.text "Run Projection" ]
       else
@@ -180,36 +158,30 @@ render st =
   where
     fileInputForm :: H.ComponentHTML Action () m
     fileInputForm = HH.form_
-        [ HH.label_ [ HH.text "Select a weight file: " ]
-        , HH.input 
-          [ HP.type_ HP.InputFile, HE.onChange GotWeightFileEvent ]
-        , HH.br_
-        , HH.label_ [ HH.text "Select Plink genotype data files: " ]
+        [ HH.label_ [ HH.text "Select Plink genotype data files: " ]
         , HH.input  
           [ HP.type_ HP.InputFile, HP.multiple true, HE.onChange GotGenoDataFileEvent ]
-        , HH.br_
-        , HH.label_ [ HH.text "Select a reference position file: " ]
-        , HH.input 
-          [ HP.type_ HP.InputFile, HE.onChange GotRefDataFileEvent ]
         , HH.br_
         ]
 
 handleAction :: forall output m. MonadAff m => Action -> H.HalogenM State Action () output m Unit
-handleAction (GotWeightFileEvent ev) = do
-  let mInputElem = WE.target ev >>= fromEventTarget
-  mFile <- case mInputElem of
-    Nothing -> pure Nothing
-    Just inputElem -> do
-      mFileList <- liftEffect $ files inputElem
-      pure $ mFileList >>= item 0
-  case mFile of
-    Just file -> do
-      H.modify_ _ { selectedWeightFile = Just file, statusWeightFileLoading = true }
-      -- Read file contents asynchronously using makeAff
-      content <- readFileAsArrayBufferAff file >>= arrayBufferToString
+handleAction LoadRefData = do
+  f1 <- H.liftAff $ fetch "./assets/weights_joined.tsv" {}
+  if f1.ok
+    then do
+      content <- H.liftAff $ f1.text
       let snpWeightData = readSnpWeights content
-      H.modify_ _ { snpWeights = Just snpWeightData, statusWeightFileLoading = false }
-    Nothing -> pure unit
+      H.modify_ _ { snpWeights = Just snpWeightData}
+    else
+      H.modify_ _ { errorNote = Just "Failed to load weight data", snpWeights = Nothing}
+  f2 <- H.liftAff $ fetch "./assets/reference_positions.tsv" {}
+  if f2.ok
+    then do
+      content <- H.liftAff $ f2.text
+      let refData = readRefPosData content
+      H.modify_ _ { refData = Just refData}
+    else
+      H.modify_ _ { errorNote = Just "Failed to load reference data", refData = Nothing}
 
 handleAction (GotGenoDataFileEvent ev) = do
   let mInputElem = WE.target ev >>= fromEventTarget
@@ -246,22 +218,6 @@ handleAction (GotGenoDataFileEvent ev) = do
               _ -> H.modify_ _ { errorNote = Just "Multiple .bim files selected", selectedPlinkFiles = Nothing }
             _ -> H.modify_ _ { errorNote = Just "Multiple .fam files selected", selectedPlinkFiles = Nothing }
   pure unit
-
-handleAction (GotRefDataFileEvent ev) = do
-  let mInputElem = WE.target ev >>= fromEventTarget
-  mFile <- case mInputElem of
-    Nothing -> pure Nothing
-    Just inputElem -> do
-      mFileList <- liftEffect $ files inputElem
-      pure $ mFileList >>= item 0
-  case mFile of
-    Just file -> do
-      H.modify_ _ { selectedReferenceFile = Just file, statusReferenceFileLoading = true }
-      -- Read file contents asynchronously using makeAff
-      content <- readFileAsArrayBufferAff file >>= arrayBufferToString
-      let refPosData = readRefPosData content
-      H.modify_ _ { refData = Just refPosData, statusReferenceFileLoading = false }
-    Nothing -> pure unit
 
 handleAction RunProjectionEvent = do
   H.modify_ _ { projectionRunning = true, projectionResults = Nothing }

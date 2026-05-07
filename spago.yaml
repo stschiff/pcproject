@@ -1,0 +1,26 @@
+package:
+  name: "pcproject"
+  dependencies:
+    - aff
+    - arraybuffer
+    - arraybuffer-types
+    - arrays
+    - effect
+    - either
+    - exceptions
+    - fetch
+    - foldable-traversable
+    - foreign
+    - halogen
+    - maybe
+    - prelude
+    - stringutils
+    - tuples
+    - uint
+    - web-encoding
+    - web-events
+    - web-file
+    - web-html
+workspace:
+  packageSet:
+    registry: 73.3.0
