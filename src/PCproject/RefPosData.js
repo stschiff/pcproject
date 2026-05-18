@@ -5,7 +5,7 @@ export function readRefPosData(content) {
     const numFields = lines[0].trim().split(/\s+/).length;
     const numPCs = numFields - 2;
     let popNames = new Array(numSamples);
-    let pcValues = new Float32Array(numSamples * numPCs);
+    let pcValues = Array.from({ length: numSamples }, () => Array(numPCs).fill(0));
     if (numPCs < 1) {
         throw new Error(`Expected at least 3 columns per line (sampleID, PCs and a popname), but found ${numFields} in the first line.`);
     }
@@ -16,8 +16,8 @@ export function readRefPosData(content) {
         }
         sampleIDs[i] = fields[0];
         for (let j = 0; j < numPCs; j++) {
-            pcValues[i * numPCs + j] = parseFloat(fields[1 + j]);
-            if (isNaN(pcValues[i * numPCs + j])) {
+            pcValues[i][j] = parseFloat(fields[1 + j]);
+            if (isNaN(pcValues[i][j])) {
                 throw new Error(`Invalid PC value for sample ${sampleIDs[i]} PC${j + 1}: ${fields[1 + j]}`);    
             }
         }
