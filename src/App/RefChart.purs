@@ -5,9 +5,10 @@ import Prelude
 import Chartjs (defaultConfig, defaultDataset, simpleInput)
 import Chartjs.Halogen as HC
 import Chartjs.Types (DataPoint(..), ChartType(..))
-import Data.Array ((!!))
-import Data.Traversable (for)
+import Data.Array ((!!), groupAllBy)
+import Data.Array.NonEmpty (head, toArray)
 import Data.Maybe (Maybe(..))
+import Data.Traversable (traverse)
 import Effect.Aff.Class (class MonadAff)
 import Halogen as H
 import Halogen.HTML as HH
@@ -46,14 +47,16 @@ initialState { refPosData } = { refPosData, xPc: 1, yPc: 2 }
 
 render :: forall m . (MonadAff m) => State -> H.ComponentHTML Action Slots m
 render st =
-    let maybePcData = for st.refPosData.pcValues (\row ->
-            XY <$> (row !! (st.xPc - 1)) <*> (row !! (st.yPc - 1))
-        )
-        pcData = case maybePcData of
-            Just dataPoints -> dataPoints
-            Nothing -> []
+    let groupedSamples = groupAllBy (\sample1 sample2 -> compare sample1.popName sample2.popName) st.refPosData.samples
+        datasets = do -- list monad
+            group <- groupedSamples
+            let groupName = (head group).popName
+                maybeDataPoints = traverse (\sample -> XY <$> (sample.pcValues !! (st.xPc - 1)) <*> (sample.pcValues !! (st.yPc - 1))) group
+            case maybeDataPoints of
+                Just points -> pure $ defaultDataset { label = groupName, data = toArray points }
+                Nothing -> []
         chartInput = simpleInput $ defaultConfig
             { chartType = Scatter
-            , datasets = [ defaultDataset { label = "hello", data = pcData } ]
+            , datasets = datasets
             }
     in  HH.div_ [ HH.slot_ _chart unit HC.component chartInput ]

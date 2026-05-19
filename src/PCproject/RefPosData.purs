@@ -1,9 +1,13 @@
 module PCproject.RefPosData where
 
+type SampleData =
+  { sampleID :: String
+  , popName :: String
+  , pcValues :: Array Number
+  }
+
 type RefPosData =
-  { sampleIDs :: Array String
-  , popNames :: Array String
-  , pcValues :: Array (Array Number)
+  { samples :: Array SampleData
   , numSamples :: Int
   , numPCs :: Int
   }
