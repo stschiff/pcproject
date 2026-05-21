@@ -33,6 +33,7 @@ type SnpWeights =
   , alleles1  :: Array String
   , alleles2  :: Array String
   , pcWeights   :: Float32Array -- Flattened 2D array: numSnps * numPCs
+  , frequencies :: Float32Array
   , numSNPs     :: Int
   , numPCs      :: Int
   }

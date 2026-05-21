@@ -3099,9 +3099,9 @@ var traverse = function(dict) {
   return dict.traverse;
 };
 var sequenceDefault = function(dictTraversable) {
-  var traverse22 = traverse(dictTraversable);
+  var traverse2 = traverse(dictTraversable);
   return function(dictApplicative) {
-    return traverse22(dictApplicative)(identity5);
+    return traverse2(dictApplicative)(identity5);
   };
 };
 var traversableArray = {
@@ -23486,9 +23486,6 @@ var component = function(dictMonadAff) {
   });
 };
 
-// output/Data.Array.NonEmpty.Internal/index.js
-var traversableNonEmptyArray = traversableArray;
-
 // output/Data.Array.NonEmpty/index.js
 var fromJust5 = /* @__PURE__ */ fromJust();
 var toArray = function(v) {
@@ -23500,6 +23497,14 @@ var adaptMaybe = function(f) {
   };
 };
 var head2 = /* @__PURE__ */ adaptMaybe(head);
+var adaptAny = function(f) {
+  return function($128) {
+    return f(toArray($128));
+  };
+};
+var mapMaybe3 = function(f) {
+  return adaptAny(mapMaybe(f));
+};
 
 // output/Halogen.HTML/index.js
 var componentSlot2 = /* @__PURE__ */ componentSlot();
@@ -23524,7 +23529,6 @@ var slot_ = function() {
 // output/App.RefChart/index.js
 var compare2 = /* @__PURE__ */ compare(ordString);
 var bind5 = /* @__PURE__ */ bind(bindArray);
-var traverse2 = /* @__PURE__ */ traverse(traversableNonEmptyArray)(applicativeMaybe);
 var apply2 = /* @__PURE__ */ apply(applyMaybe);
 var map20 = /* @__PURE__ */ map(functorMaybe);
 var pure7 = /* @__PURE__ */ pure(applicativeArray);
@@ -23533,16 +23537,6 @@ var slot_2 = /* @__PURE__ */ slot_()({
     return "chart";
   }
 })(ordUnit);
-var ReceivedRefPosDataEvent = /* @__PURE__ */ function() {
-  function ReceivedRefPosDataEvent2(value0) {
-    this.value0 = value0;
-  }
-  ;
-  ReceivedRefPosDataEvent2.create = function(value0) {
-    return new ReceivedRefPosDataEvent2(value0);
-  };
-  return ReceivedRefPosDataEvent2;
-}();
 var initialState = function(v) {
   return {
     refPosData: v.refPosData,
@@ -23562,85 +23556,77 @@ var render2 = function(dictMonadAff) {
       };
     })(st.refPosData.samples);
     var datasets = bind5(groupedSamples)(function(group5) {
-      var maybeDataPoints = traverse2(function(sample2) {
+      var groupName = head2(group5).popName;
+      var dataPoints = mapMaybe3(function(sample2) {
         return apply2(map20(XY.create)(index(sample2.pcValues)(st.xPc - 1 | 0)))(index(sample2.pcValues)(st.yPc - 1 | 0));
       })(group5);
-      var groupName = head2(group5).popName;
-      if (maybeDataPoints instanceof Just) {
-        return pure7({
-          backgroundColor: defaultDataset.backgroundColor,
-          barPercentage: defaultDataset.barPercentage,
-          barThickness: defaultDataset.barThickness,
-          base: defaultDataset.base,
-          borderAlign: defaultDataset.borderAlign,
-          borderCapStyle: defaultDataset.borderCapStyle,
-          borderColor: defaultDataset.borderColor,
-          borderDash: defaultDataset.borderDash,
-          borderDashOffset: defaultDataset.borderDashOffset,
-          borderJoinStyle: defaultDataset.borderJoinStyle,
-          borderRadius: defaultDataset.borderRadius,
-          borderSkipped: defaultDataset.borderSkipped,
-          borderWidth: defaultDataset.borderWidth,
-          categoryPercentage: defaultDataset.categoryPercentage,
-          circular: defaultDataset.circular,
-          circumference: defaultDataset.circumference,
-          clip: defaultDataset.clip,
-          cubicInterpolationMode: defaultDataset.cubicInterpolationMode,
-          drawActiveElementsOnTop: defaultDataset.drawActiveElementsOnTop,
-          fill: defaultDataset.fill,
-          grouped: defaultDataset.grouped,
-          hidden: defaultDataset.hidden,
-          hitRadius: defaultDataset.hitRadius,
-          hoverBackgroundColor: defaultDataset.hoverBackgroundColor,
-          hoverBorderCapStyle: defaultDataset.hoverBorderCapStyle,
-          hoverBorderColor: defaultDataset.hoverBorderColor,
-          hoverBorderDash: defaultDataset.hoverBorderDash,
-          hoverBorderDashOffset: defaultDataset.hoverBorderDashOffset,
-          hoverBorderJoinStyle: defaultDataset.hoverBorderJoinStyle,
-          hoverBorderRadius: defaultDataset.hoverBorderRadius,
-          hoverBorderWidth: defaultDataset.hoverBorderWidth,
-          hoverOffset: defaultDataset.hoverOffset,
-          hoverRadius: defaultDataset.hoverRadius,
-          indexAxis: defaultDataset.indexAxis,
-          inflateAmount: defaultDataset.inflateAmount,
-          maxBarThickness: defaultDataset.maxBarThickness,
-          minBarLength: defaultDataset.minBarLength,
-          offset: defaultDataset.offset,
-          order: defaultDataset.order,
-          parsing: defaultDataset.parsing,
-          pointBackgroundColor: defaultDataset.pointBackgroundColor,
-          pointBorderColor: defaultDataset.pointBorderColor,
-          pointBorderWidth: defaultDataset.pointBorderWidth,
-          pointHitRadius: defaultDataset.pointHitRadius,
-          pointHoverBackgroundColor: defaultDataset.pointHoverBackgroundColor,
-          pointHoverBorderColor: defaultDataset.pointHoverBorderColor,
-          pointHoverBorderWidth: defaultDataset.pointHoverBorderWidth,
-          pointHoverRadius: defaultDataset.pointHoverRadius,
-          pointRadius: defaultDataset.pointRadius,
-          pointRotation: defaultDataset.pointRotation,
-          pointStyle: defaultDataset.pointStyle,
-          radius: defaultDataset.radius,
-          rotation: defaultDataset.rotation,
-          showLine: defaultDataset.showLine,
-          skipNull: defaultDataset.skipNull,
-          spacing: defaultDataset.spacing,
-          spanGaps: defaultDataset.spanGaps,
-          stack: defaultDataset.stack,
-          stepped: defaultDataset.stepped,
-          tension: defaultDataset.tension,
-          weight: defaultDataset.weight,
-          xAxisID: defaultDataset.xAxisID,
-          yAxisID: defaultDataset.yAxisID,
-          label: groupName,
-          data: toArray(maybeDataPoints.value0)
-        });
-      }
-      ;
-      if (maybeDataPoints instanceof Nothing) {
-        return [];
-      }
-      ;
-      throw new Error("Failed pattern match at App.RefChart (line 55, column 13 - line 57, column 30): " + [maybeDataPoints.constructor.name]);
+      return pure7({
+        backgroundColor: defaultDataset.backgroundColor,
+        barPercentage: defaultDataset.barPercentage,
+        barThickness: defaultDataset.barThickness,
+        base: defaultDataset.base,
+        borderAlign: defaultDataset.borderAlign,
+        borderCapStyle: defaultDataset.borderCapStyle,
+        borderColor: defaultDataset.borderColor,
+        borderDash: defaultDataset.borderDash,
+        borderDashOffset: defaultDataset.borderDashOffset,
+        borderJoinStyle: defaultDataset.borderJoinStyle,
+        borderRadius: defaultDataset.borderRadius,
+        borderSkipped: defaultDataset.borderSkipped,
+        borderWidth: defaultDataset.borderWidth,
+        categoryPercentage: defaultDataset.categoryPercentage,
+        circular: defaultDataset.circular,
+        circumference: defaultDataset.circumference,
+        clip: defaultDataset.clip,
+        cubicInterpolationMode: defaultDataset.cubicInterpolationMode,
+        drawActiveElementsOnTop: defaultDataset.drawActiveElementsOnTop,
+        fill: defaultDataset.fill,
+        grouped: defaultDataset.grouped,
+        hidden: defaultDataset.hidden,
+        hitRadius: defaultDataset.hitRadius,
+        hoverBackgroundColor: defaultDataset.hoverBackgroundColor,
+        hoverBorderCapStyle: defaultDataset.hoverBorderCapStyle,
+        hoverBorderColor: defaultDataset.hoverBorderColor,
+        hoverBorderDash: defaultDataset.hoverBorderDash,
+        hoverBorderDashOffset: defaultDataset.hoverBorderDashOffset,
+        hoverBorderJoinStyle: defaultDataset.hoverBorderJoinStyle,
+        hoverBorderRadius: defaultDataset.hoverBorderRadius,
+        hoverBorderWidth: defaultDataset.hoverBorderWidth,
+        hoverOffset: defaultDataset.hoverOffset,
+        hoverRadius: defaultDataset.hoverRadius,
+        indexAxis: defaultDataset.indexAxis,
+        inflateAmount: defaultDataset.inflateAmount,
+        maxBarThickness: defaultDataset.maxBarThickness,
+        minBarLength: defaultDataset.minBarLength,
+        offset: defaultDataset.offset,
+        order: defaultDataset.order,
+        parsing: defaultDataset.parsing,
+        pointBackgroundColor: defaultDataset.pointBackgroundColor,
+        pointBorderColor: defaultDataset.pointBorderColor,
+        pointBorderWidth: defaultDataset.pointBorderWidth,
+        pointHitRadius: defaultDataset.pointHitRadius,
+        pointHoverBackgroundColor: defaultDataset.pointHoverBackgroundColor,
+        pointHoverBorderColor: defaultDataset.pointHoverBorderColor,
+        pointHoverBorderWidth: defaultDataset.pointHoverBorderWidth,
+        pointHoverRadius: defaultDataset.pointHoverRadius,
+        pointRadius: defaultDataset.pointRadius,
+        pointRotation: defaultDataset.pointRotation,
+        pointStyle: defaultDataset.pointStyle,
+        radius: defaultDataset.radius,
+        rotation: defaultDataset.rotation,
+        showLine: defaultDataset.showLine,
+        skipNull: defaultDataset.skipNull,
+        spacing: defaultDataset.spacing,
+        spanGaps: defaultDataset.spanGaps,
+        stack: defaultDataset.stack,
+        stepped: defaultDataset.stepped,
+        tension: defaultDataset.tension,
+        weight: defaultDataset.weight,
+        xAxisID: defaultDataset.xAxisID,
+        yAxisID: defaultDataset.yAxisID,
+        label: groupName,
+        data: dataPoints
+      });
     });
     var chartInput = simpleInput({
       labels: defaultConfig.labels,
@@ -23655,15 +23641,7 @@ var component2 = function(dictMonadAff) {
   return mkComponent({
     initialState,
     render: render2(dictMonadAff),
-    "eval": mkEval({
-      handleAction: defaultEval.handleAction,
-      handleQuery: defaultEval.handleQuery,
-      initialize: defaultEval.initialize,
-      finalize: defaultEval.finalize,
-      receive: function(v1) {
-        return new Just(new ReceivedRefPosDataEvent(v1.refPosData));
-      }
-    })
+    "eval": mkEval(defaultEval)
   });
 };
 
