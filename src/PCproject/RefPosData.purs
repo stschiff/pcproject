@@ -3,6 +3,7 @@ module PCproject.RefPosData where
 type SampleData =
   { sampleID :: String
   , popName :: String
+  , popGroup :: String
   , pcValues :: Array Number
   }
 

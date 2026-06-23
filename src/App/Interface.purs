@@ -105,57 +105,88 @@ component =
 
 render :: forall m . (MonadAff m) => State -> H.ComponentHTML Action Slots m
 render st =
-  HH.section [ HP.classes [ HH.ClassName "section"] ]
-    [ HH.div [ HP.classes [ HH.ClassName "container" ] ]
-      [ HH.h1 [ HP.classes [ HH.ClassName "title" ] ] [ HH.text "PC Projection Tool" ]
-      , HH.h3_ [ HH.text "Upload files" ]
-      , fileInputForm
-      , case st.selectedPlinkFiles of
-          Nothing -> HH.div_ [ HH.text "No plink files selected", HH.br_ ]
-          Just (PlinkFileSpec famFile bimFile bedFile) -> HH.div_
-            [ HH.text $ "Selected fam file: " <> name famFile
-            , HH.br_
-            , HH.text $ "Selected bim file: " <> name bimFile
-            , HH.br_
-            , HH.text $ "Selected bed file: " <> name bedFile
-            ]
-      , case st.snpWeights of
-          Nothing -> HH.div_ [ HH.text "Loading weight file...", HH.br_ ]
-          Just sw -> HH.div_ [ HH.text $ "Selected weight file with SNPs: " <> show sw.numSNPs <> ", PCs: " <> show sw.numPCs, HH.br_ ]
-      , case st.refData of
-          Nothing -> HH.div_ [ HH.text "Loading reference position file...", HH.br_ ]
-          Just rd -> HH.div_ [ HH.text $ "Reference Position Data loaded. Samples: " <> show rd.numSamples <> ", PCs: " <> show rd.numPCs, HH.br_ ]
-      , if st.statusPlinkFilesLoading then
-          HH.div_ [ HH.text "Loading plink files...", HH.br_ ]
-        else
-          HH.text ""
-      , case st.plinkData of
-          Nothing -> HH.text ""
-          Just pd -> HH.div_ [ HH.text $ "Plink Data loaded. Individuals: " <> show pd.numIndividuals <> ", SNPs: " <> show pd.numSNPs, HH.br_ ]
-      , if isJust st.snpWeights && isJust st.plinkData && (not st.projectionRunning) && (isNothing st.projectionResults) then
-          HH.button [ HE.onClick (\_ -> RunProjectionEvent) ] [ HH.text "Run Projection" ]
-        else
-          HH.text ""
-      , if st.projectionRunning then
-          HH.div_ [ HH.text "Projection running...", HH.br_ ]
-        else
-          HH.text ""
-      , case st.projectionResults of
-          Nothing -> HH.text ""
-          Just pr -> HH.div_ [ HH.text $ "Projection done. Overlapping SNPs: " <> show pr.overlappingPositions <> ", PCs: " <> show pr.numPCs <> ", Individuals: " <> show pr.numIndividuals, HH.br_ ]
-      , case st.errorNote of
-          Nothing -> HH.text ""
-          Just errMsg -> HH.div_ [ HH.text $ "Error: " <> errMsg, HH.br_ ]
-      , if isJust st.refData || isJust st.projectionResults then
-          HH.button [ HE.onClick (\_ -> MakeChart) ] [ HH.text "Make Chart" ]
-        else
-          HH.text ""
-      , case st.refData of
-          Nothing -> HH.text ""
-          Just rd -> HH.div_ [ HH.slot_ _refChart unit RefChart.component { refPosData:  rd } ]
+  HH.section [ HP.classes [ HH.ClassName "section" ] ]
+    [ HH.h1 [ HP.classes [ HH.ClassName "title", HH.ClassName "is-1"] ] [ HH.text "PC Projection Tool" ]
+    , HH.div [ HP.classes [ HH.ClassName "columns" ] ]
+      [ HH.div [ HP.classes [ HH.ClassName "column" ] ] [ refDataBox st ]
+      , HH.div [ HP.classes [ HH.ClassName "column" ] ] [ userDataBox st ]
+      ]
+    , HH.div [ HP.classes [ HH.ClassName "columns" ] ]
+      [ HH.div [ HP.classes [ HH.ClassName "column" ] ] [ refChartBox st ]
+      , HH.div [ HP.classes [ HH.ClassName "column" ] ] [ projChartBox st ]
       ]
     ]
-    
+
+refDataBox :: forall action slots m . (MonadAff m) => State -> H.ComponentHTML action slots m
+refDataBox st = 
+  HH.div [ HP.classes [ HH.ClassName "box" ] ]
+    [ HH.h2 [ HP.classes [ HH.ClassName "title", HH.ClassName "is-3" ] ] [ HH.text "Reference Data" ]
+    , case st.snpWeights of
+        Nothing -> HH.div_ [ HH.text "Loading weight file...", HH.br_ ]
+        Just sw -> HH.div_ [ HH.text $ "Selected weight file with SNPs: " <> show sw.numSNPs <> ", PCs: " <> show sw.numPCs, HH.br_ ]
+    , case st.refData of
+        Nothing -> HH.div_ [ HH.text "Loading reference position file...", HH.br_ ]
+        Just rd -> HH.div_ [ HH.text $ "Reference Position Data loaded. Samples: " <> show rd.numSamples <> ", PCs: " <> show rd.numPCs, HH.br_ ]
+    ]
+
+userDataBox :: forall slots m . (MonadAff m) => State -> H.ComponentHTML Action slots m
+userDataBox st =
+  HH.div [ HP.classes [ HH.ClassName "box" ] ]
+    [ HH.h2 [ HP.classes [ HH.ClassName "title", HH.ClassName "is-3" ] ] [ HH.text "User Data" ]
+    , HH.label_ [ HH.text "Select Plink genotype data files: " ]
+    , fileInputForm
+          , case st.selectedPlinkFiles of
+      Nothing -> HH.div_ [ HH.text "No plink files selected", HH.br_ ]
+      Just (PlinkFileSpec famFile bimFile bedFile) -> HH.div_
+        [ HH.text $ "Selected fam file: " <> name famFile
+        , HH.br_
+        , HH.text $ "Selected bim file: " <> name bimFile
+        , HH.br_
+        , HH.text $ "Selected bed file: " <> name bedFile
+        ]
+    , if st.statusPlinkFilesLoading then
+        HH.div_ [ HH.text "Loading plink files...", HH.br_ ]
+      else
+        HH.text ""
+    , case st.plinkData of
+        Nothing -> HH.text ""
+        Just pd -> HH.div_ [ HH.text $ "Plink Data loaded. Individuals: " <> show pd.numIndividuals <> ", SNPs: " <> show pd.numSNPs, HH.br_ ]
+    , if isJust st.snpWeights && isJust st.plinkData && (not st.projectionRunning) && (isNothing st.projectionResults) then
+        HH.button [ HE.onClick (\_ -> RunProjectionEvent) ] [ HH.text "Run Projection" ]
+      else
+        HH.text ""
+    , if st.projectionRunning then
+        HH.div_ [ HH.text "Projection running...", HH.br_ ]
+      else
+        HH.text ""
+    , case st.projectionResults of
+        Nothing -> HH.text ""
+        Just pr -> HH.div_ [ HH.text $ "Projection done. Overlapping SNPs: " <> show pr.overlappingPositions <> ", PCs: " <> show pr.numPCs <> ", Individuals: " <> show pr.numIndividuals, HH.br_ ]
+    , case st.errorNote of
+        Nothing -> HH.text ""
+        Just errMsg -> HH.div_ [ HH.text $ "Error: " <> errMsg, HH.br_ ]
+    , if isJust st.refData || isJust st.projectionResults then
+        HH.button [ HE.onClick (\_ -> MakeChart) ] [ HH.text "Make Chart" ]
+      else
+        HH.text ""
+    ]
+
+refChartBox :: forall action m . (MonadAff m) => State -> H.ComponentHTML action Slots m
+refChartBox st =
+  HH.div [ HP.classes [ HH.ClassName "box" ] ]
+    [ HH.h2 [ HP.classes [ HH.ClassName "title", HH.ClassName "is-3" ] ] [ HH.text "Reference Data Chart" ]
+    , case st.refData of
+        Nothing -> HH.text ""
+        Just rd -> HH.div_ [ HH.slot_ _refChart unit RefChart.component { refPosData:  rd } ]
+    ]
+
+projChartBox :: forall action slots m . (MonadAff m) => State -> H.ComponentHTML action slots m
+projChartBox _ =
+  HH.div [ HP.classes [ HH.ClassName "box" ] ]
+    [ HH.h2 [ HP.classes [ HH.ClassName "title", HH.ClassName "is-3" ] ] [ HH.text "Projection Results Chart" ]
+    , HH.text "Projection results chart will be displayed here after running the projection."
+    ]
+
 fileInputForm :: forall slots m . H.ComponentHTML Action slots m
 fileInputForm = HH.form_
     [ HH.label_ [ HH.text "Select Plink genotype data files: " ]

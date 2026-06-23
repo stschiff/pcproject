@@ -2,7 +2,8 @@ module App.RefChart where
 
 import Prelude
 
-import Chartjs (defaultConfig, defaultDataset, simpleInput)
+import Chartjs (defaultConfig, defaultDataset, simpleInput, defaultOptions)
+import Chartjs.Types (defaultInteractionConfig)
 import Chartjs.Halogen as HC
 import Chartjs.Types (DataPoint(..), ChartType(..))
 import Data.Array ((!!), groupAllBy)
@@ -39,14 +40,17 @@ initialState { refPosData } = { refPosData, xPc: 1, yPc: 2 }
 
 render :: forall a m . (MonadAff m) => State -> H.ComponentHTML a Slots m
 render st =
-    let groupedSamples = groupAllBy (\sample1 sample2 -> compare sample1.popName sample2.popName) st.refPosData.samples
+    let groupedSamples = groupAllBy (\sample1 sample2 -> compare sample1.popGroup sample2.popGroup) st.refPosData.samples
         datasets = do -- list monad
             group <- groupedSamples
-            let groupName = (head group).popName
+            let groupName = (head group).popGroup
                 dataPoints = mapMaybe (\sample -> XY <$> (sample.pcValues !! (st.xPc - 1)) <*> (sample.pcValues !! (st.yPc - 1))) group
             pure $ defaultDataset { label = groupName, data = dataPoints }
         chartInput = simpleInput $ defaultConfig
             { chartType = Scatter
             , datasets = datasets
+            , options = defaultOptions {
+                hover = defaultInteractionConfig { mode = "nearest" }
+            }
             }
     in  HH.div_ [ HH.slot_ _chart unit HC.component chartInput ]

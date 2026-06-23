@@ -10,13 +10,13 @@ var eqIntImpl = refEq;
 var eqStringImpl = refEq;
 
 // output/Type.Proxy/index.js
-var $$Proxy = /* @__PURE__ */ function() {
+var $$Proxy = /* @__PURE__ */ (function() {
   function $$Proxy2() {
   }
   ;
   $$Proxy2.value = new $$Proxy2();
   return $$Proxy2;
-}();
+})();
 
 // output/Data.Symbol/index.js
 var reflectSymbol = function(dict) {
@@ -279,27 +279,27 @@ var ordIntImpl = unsafeCompareImpl;
 var ordStringImpl = unsafeCompareImpl;
 
 // output/Data.Ordering/index.js
-var LT = /* @__PURE__ */ function() {
+var LT = /* @__PURE__ */ (function() {
   function LT2() {
   }
   ;
   LT2.value = new LT2();
   return LT2;
-}();
-var GT = /* @__PURE__ */ function() {
+})();
+var GT = /* @__PURE__ */ (function() {
   function GT2() {
   }
   ;
   GT2.value = new GT2();
   return GT2;
-}();
-var EQ = /* @__PURE__ */ function() {
+})();
+var EQ = /* @__PURE__ */ (function() {
   function EQ2() {
   }
   ;
   EQ2.value = new EQ2();
   return EQ2;
-}();
+})();
 var eqOrdering = {
   eq: function(v) {
     return function(v1) {
@@ -331,36 +331,36 @@ var ordUnit = {
     return eqUnit;
   }
 };
-var ordString = /* @__PURE__ */ function() {
+var ordString = /* @__PURE__ */ (function() {
   return {
     compare: ordStringImpl(LT.value)(EQ.value)(GT.value),
     Eq0: function() {
       return eqString;
     }
   };
-}();
-var ordInt = /* @__PURE__ */ function() {
+})();
+var ordInt = /* @__PURE__ */ (function() {
   return {
     compare: ordIntImpl(LT.value)(EQ.value)(GT.value),
     Eq0: function() {
       return eqInt;
     }
   };
-}();
+})();
 var compare = function(dict) {
   return dict.compare;
 };
 
 // output/Data.Maybe/index.js
 var identity3 = /* @__PURE__ */ identity(categoryFn);
-var Nothing = /* @__PURE__ */ function() {
+var Nothing = /* @__PURE__ */ (function() {
   function Nothing2() {
   }
   ;
   Nothing2.value = new Nothing2();
   return Nothing2;
-}();
-var Just = /* @__PURE__ */ function() {
+})();
+var Just = /* @__PURE__ */ (function() {
   function Just2(value0) {
     this.value0 = value0;
   }
@@ -369,7 +369,7 @@ var Just = /* @__PURE__ */ function() {
     return new Just2(value0);
   };
   return Just2;
-}();
+})();
 var maybe$prime = function(v) {
   return function(v1) {
     return function(v2) {
@@ -465,14 +465,14 @@ var bindMaybe = {
     return applyMaybe;
   }
 };
-var applicativeMaybe = /* @__PURE__ */ function() {
+var applicativeMaybe = /* @__PURE__ */ (function() {
   return {
     pure: Just.create,
     Apply0: function() {
       return applyMaybe;
     }
   };
-}();
+})();
 var altMaybe = {
   alt: function(v) {
     return function(v1) {
@@ -489,308 +489,308 @@ var altMaybe = {
 };
 
 // output/Chartjs.Types/index.js
-var Millisecond = /* @__PURE__ */ function() {
+var Millisecond = /* @__PURE__ */ (function() {
   function Millisecond2() {
   }
   ;
   Millisecond2.value = new Millisecond2();
   return Millisecond2;
-}();
-var Second = /* @__PURE__ */ function() {
+})();
+var Second = /* @__PURE__ */ (function() {
   function Second2() {
   }
   ;
   Second2.value = new Second2();
   return Second2;
-}();
-var Minute = /* @__PURE__ */ function() {
+})();
+var Minute = /* @__PURE__ */ (function() {
   function Minute2() {
   }
   ;
   Minute2.value = new Minute2();
   return Minute2;
-}();
-var Hour = /* @__PURE__ */ function() {
+})();
+var Hour = /* @__PURE__ */ (function() {
   function Hour2() {
   }
   ;
   Hour2.value = new Hour2();
   return Hour2;
-}();
-var Day = /* @__PURE__ */ function() {
+})();
+var Day = /* @__PURE__ */ (function() {
   function Day2() {
   }
   ;
   Day2.value = new Day2();
   return Day2;
-}();
-var Week = /* @__PURE__ */ function() {
+})();
+var Week = /* @__PURE__ */ (function() {
   function Week2() {
   }
   ;
   Week2.value = new Week2();
   return Week2;
-}();
-var Month = /* @__PURE__ */ function() {
+})();
+var Month = /* @__PURE__ */ (function() {
   function Month2() {
   }
   ;
   Month2.value = new Month2();
   return Month2;
-}();
-var Quarter = /* @__PURE__ */ function() {
+})();
+var Quarter = /* @__PURE__ */ (function() {
   function Quarter2() {
   }
   ;
   Quarter2.value = new Quarter2();
   return Quarter2;
-}();
-var Year = /* @__PURE__ */ function() {
+})();
+var Year = /* @__PURE__ */ (function() {
   function Year2() {
   }
   ;
   Year2.value = new Year2();
   return Year2;
-}();
-var AlignStart = /* @__PURE__ */ function() {
+})();
+var AlignStart = /* @__PURE__ */ (function() {
   function AlignStart2() {
   }
   ;
   AlignStart2.value = new AlignStart2();
   return AlignStart2;
-}();
-var AlignCenter = /* @__PURE__ */ function() {
+})();
+var AlignCenter = /* @__PURE__ */ (function() {
   function AlignCenter2() {
   }
   ;
   AlignCenter2.value = new AlignCenter2();
   return AlignCenter2;
-}();
-var AlignEnd = /* @__PURE__ */ function() {
+})();
+var AlignEnd = /* @__PURE__ */ (function() {
   function AlignEnd2() {
   }
   ;
   AlignEnd2.value = new AlignEnd2();
   return AlignEnd2;
-}();
-var SteppedFalse = /* @__PURE__ */ function() {
+})();
+var SteppedFalse = /* @__PURE__ */ (function() {
   function SteppedFalse2() {
   }
   ;
   SteppedFalse2.value = new SteppedFalse2();
   return SteppedFalse2;
-}();
-var SteppedTrue = /* @__PURE__ */ function() {
+})();
+var SteppedTrue = /* @__PURE__ */ (function() {
   function SteppedTrue2() {
   }
   ;
   SteppedTrue2.value = new SteppedTrue2();
   return SteppedTrue2;
-}();
-var SteppedBefore = /* @__PURE__ */ function() {
+})();
+var SteppedBefore = /* @__PURE__ */ (function() {
   function SteppedBefore2() {
   }
   ;
   SteppedBefore2.value = new SteppedBefore2();
   return SteppedBefore2;
-}();
-var SteppedAfter = /* @__PURE__ */ function() {
+})();
+var SteppedAfter = /* @__PURE__ */ (function() {
   function SteppedAfter2() {
   }
   ;
   SteppedAfter2.value = new SteppedAfter2();
   return SteppedAfter2;
-}();
-var SteppedMiddle = /* @__PURE__ */ function() {
+})();
+var SteppedMiddle = /* @__PURE__ */ (function() {
   function SteppedMiddle2() {
   }
   ;
   SteppedMiddle2.value = new SteppedMiddle2();
   return SteppedMiddle2;
-}();
-var LinearScale = /* @__PURE__ */ function() {
+})();
+var LinearScale = /* @__PURE__ */ (function() {
   function LinearScale3() {
   }
   ;
   LinearScale3.value = new LinearScale3();
   return LinearScale3;
-}();
-var LogarithmicScale = /* @__PURE__ */ function() {
+})();
+var LogarithmicScale = /* @__PURE__ */ (function() {
   function LogarithmicScale3() {
   }
   ;
   LogarithmicScale3.value = new LogarithmicScale3();
   return LogarithmicScale3;
-}();
-var CategoryScale = /* @__PURE__ */ function() {
+})();
+var CategoryScale = /* @__PURE__ */ (function() {
   function CategoryScale3() {
   }
   ;
   CategoryScale3.value = new CategoryScale3();
   return CategoryScale3;
-}();
-var TimeScale = /* @__PURE__ */ function() {
+})();
+var TimeScale = /* @__PURE__ */ (function() {
   function TimeScale3() {
   }
   ;
   TimeScale3.value = new TimeScale3();
   return TimeScale3;
-}();
-var TimeSeriesScale = /* @__PURE__ */ function() {
+})();
+var TimeSeriesScale = /* @__PURE__ */ (function() {
   function TimeSeriesScale3() {
   }
   ;
   TimeSeriesScale3.value = new TimeSeriesScale3();
   return TimeSeriesScale3;
-}();
-var RadialLinearScale = /* @__PURE__ */ function() {
+})();
+var RadialLinearScale = /* @__PURE__ */ (function() {
   function RadialLinearScale3() {
   }
   ;
   RadialLinearScale3.value = new RadialLinearScale3();
   return RadialLinearScale3;
-}();
-var DisplayShown = /* @__PURE__ */ function() {
+})();
+var DisplayShown = /* @__PURE__ */ (function() {
   function DisplayShown2() {
   }
   ;
   DisplayShown2.value = new DisplayShown2();
   return DisplayShown2;
-}();
-var DisplayHidden = /* @__PURE__ */ function() {
+})();
+var DisplayHidden = /* @__PURE__ */ (function() {
   function DisplayHidden2() {
   }
   ;
   DisplayHidden2.value = new DisplayHidden2();
   return DisplayHidden2;
-}();
-var DisplayAuto = /* @__PURE__ */ function() {
+})();
+var DisplayAuto = /* @__PURE__ */ (function() {
   function DisplayAuto2() {
   }
   ;
   DisplayAuto2.value = new DisplayAuto2();
   return DisplayAuto2;
-}();
-var PosTop = /* @__PURE__ */ function() {
+})();
+var PosTop = /* @__PURE__ */ (function() {
   function PosTop2() {
   }
   ;
   PosTop2.value = new PosTop2();
   return PosTop2;
-}();
-var PosBottom = /* @__PURE__ */ function() {
+})();
+var PosBottom = /* @__PURE__ */ (function() {
   function PosBottom2() {
   }
   ;
   PosBottom2.value = new PosBottom2();
   return PosBottom2;
-}();
-var PosLeft = /* @__PURE__ */ function() {
+})();
+var PosLeft = /* @__PURE__ */ (function() {
   function PosLeft2() {
   }
   ;
   PosLeft2.value = new PosLeft2();
   return PosLeft2;
-}();
-var PosRight = /* @__PURE__ */ function() {
+})();
+var PosRight = /* @__PURE__ */ (function() {
   function PosRight2() {
   }
   ;
   PosRight2.value = new PosRight2();
   return PosRight2;
-}();
-var PosCenter = /* @__PURE__ */ function() {
+})();
+var PosCenter = /* @__PURE__ */ (function() {
   function PosCenter2() {
   }
   ;
   PosCenter2.value = new PosCenter2();
   return PosCenter2;
-}();
-var PosChartArea = /* @__PURE__ */ function() {
+})();
+var PosChartArea = /* @__PURE__ */ (function() {
   function PosChartArea2() {
   }
   ;
   PosChartArea2.value = new PosChartArea2();
   return PosChartArea2;
-}();
-var PSCircle = /* @__PURE__ */ function() {
+})();
+var PSCircle = /* @__PURE__ */ (function() {
   function PSCircle2() {
   }
   ;
   PSCircle2.value = new PSCircle2();
   return PSCircle2;
-}();
-var PSCross = /* @__PURE__ */ function() {
+})();
+var PSCross = /* @__PURE__ */ (function() {
   function PSCross2() {
   }
   ;
   PSCross2.value = new PSCross2();
   return PSCross2;
-}();
-var PSCrossRot = /* @__PURE__ */ function() {
+})();
+var PSCrossRot = /* @__PURE__ */ (function() {
   function PSCrossRot2() {
   }
   ;
   PSCrossRot2.value = new PSCrossRot2();
   return PSCrossRot2;
-}();
-var PSDash = /* @__PURE__ */ function() {
+})();
+var PSDash = /* @__PURE__ */ (function() {
   function PSDash2() {
   }
   ;
   PSDash2.value = new PSDash2();
   return PSDash2;
-}();
-var PSLine = /* @__PURE__ */ function() {
+})();
+var PSLine = /* @__PURE__ */ (function() {
   function PSLine2() {
   }
   ;
   PSLine2.value = new PSLine2();
   return PSLine2;
-}();
-var PSRect = /* @__PURE__ */ function() {
+})();
+var PSRect = /* @__PURE__ */ (function() {
   function PSRect2() {
   }
   ;
   PSRect2.value = new PSRect2();
   return PSRect2;
-}();
-var PSRectRounded = /* @__PURE__ */ function() {
+})();
+var PSRectRounded = /* @__PURE__ */ (function() {
   function PSRectRounded2() {
   }
   ;
   PSRectRounded2.value = new PSRectRounded2();
   return PSRectRounded2;
-}();
-var PSRectRot = /* @__PURE__ */ function() {
+})();
+var PSRectRot = /* @__PURE__ */ (function() {
   function PSRectRot2() {
   }
   ;
   PSRectRot2.value = new PSRectRot2();
   return PSRectRot2;
-}();
-var PSStar = /* @__PURE__ */ function() {
+})();
+var PSStar = /* @__PURE__ */ (function() {
   function PSStar2() {
   }
   ;
   PSStar2.value = new PSStar2();
   return PSStar2;
-}();
-var PSTriangle = /* @__PURE__ */ function() {
+})();
+var PSTriangle = /* @__PURE__ */ (function() {
   function PSTriangle2() {
   }
   ;
   PSTriangle2.value = new PSTriangle2();
   return PSTriangle2;
-}();
-var PSFalse = /* @__PURE__ */ function() {
+})();
+var PSFalse = /* @__PURE__ */ (function() {
   function PSFalse2() {
   }
   ;
   PSFalse2.value = new PSFalse2();
   return PSFalse2;
-}();
-var UniformPadding = /* @__PURE__ */ function() {
+})();
+var UniformPadding = /* @__PURE__ */ (function() {
   function UniformPadding2(value0) {
     this.value0 = value0;
   }
@@ -799,8 +799,8 @@ var UniformPadding = /* @__PURE__ */ function() {
     return new UniformPadding2(value0);
   };
   return UniformPadding2;
-}();
-var SidePadding = /* @__PURE__ */ function() {
+})();
+var SidePadding = /* @__PURE__ */ (function() {
   function SidePadding2(value0) {
     this.value0 = value0;
   }
@@ -809,71 +809,71 @@ var SidePadding = /* @__PURE__ */ function() {
     return new SidePadding2(value0);
   };
   return SidePadding2;
-}();
-var JoinRound = /* @__PURE__ */ function() {
+})();
+var JoinRound = /* @__PURE__ */ (function() {
   function JoinRound2() {
   }
   ;
   JoinRound2.value = new JoinRound2();
   return JoinRound2;
-}();
-var JoinBevel = /* @__PURE__ */ function() {
+})();
+var JoinBevel = /* @__PURE__ */ (function() {
   function JoinBevel2() {
   }
   ;
   JoinBevel2.value = new JoinBevel2();
   return JoinBevel2;
-}();
-var JoinMiter = /* @__PURE__ */ function() {
+})();
+var JoinMiter = /* @__PURE__ */ (function() {
   function JoinMiter2() {
   }
   ;
   JoinMiter2.value = new JoinMiter2();
   return JoinMiter2;
-}();
-var IMPoint = /* @__PURE__ */ function() {
+})();
+var IMPoint = /* @__PURE__ */ (function() {
   function IMPoint2() {
   }
   ;
   IMPoint2.value = new IMPoint2();
   return IMPoint2;
-}();
-var IMNearest = /* @__PURE__ */ function() {
+})();
+var IMNearest = /* @__PURE__ */ (function() {
   function IMNearest2() {
   }
   ;
   IMNearest2.value = new IMNearest2();
   return IMNearest2;
-}();
-var IMIndex = /* @__PURE__ */ function() {
+})();
+var IMIndex = /* @__PURE__ */ (function() {
   function IMIndex2() {
   }
   ;
   IMIndex2.value = new IMIndex2();
   return IMIndex2;
-}();
-var IMDataset = /* @__PURE__ */ function() {
+})();
+var IMDataset = /* @__PURE__ */ (function() {
   function IMDataset2() {
   }
   ;
   IMDataset2.value = new IMDataset2();
   return IMDataset2;
-}();
-var IMX = /* @__PURE__ */ function() {
+})();
+var IMX = /* @__PURE__ */ (function() {
   function IMX2() {
   }
   ;
   IMX2.value = new IMX2();
   return IMX2;
-}();
-var IMY = /* @__PURE__ */ function() {
+})();
+var IMY = /* @__PURE__ */ (function() {
   function IMY2() {
   }
   ;
   IMY2.value = new IMY2();
   return IMY2;
-}();
-var Single = /* @__PURE__ */ function() {
+})();
+var Single = /* @__PURE__ */ (function() {
   function Single2(value0) {
     this.value0 = value0;
   }
@@ -882,8 +882,8 @@ var Single = /* @__PURE__ */ function() {
     return new Single2(value0);
   };
   return Single2;
-}();
-var PerItem = /* @__PURE__ */ function() {
+})();
+var PerItem = /* @__PURE__ */ (function() {
   function PerItem2(value0) {
     this.value0 = value0;
   }
@@ -892,50 +892,50 @@ var PerItem = /* @__PURE__ */ function() {
     return new PerItem2(value0);
   };
   return PerItem2;
-}();
-var FillDisabled = /* @__PURE__ */ function() {
+})();
+var FillDisabled = /* @__PURE__ */ (function() {
   function FillDisabled2() {
   }
   ;
   FillDisabled2.value = new FillDisabled2();
   return FillDisabled2;
-}();
-var FillOrigin = /* @__PURE__ */ function() {
+})();
+var FillOrigin = /* @__PURE__ */ (function() {
   function FillOrigin2() {
   }
   ;
   FillOrigin2.value = new FillOrigin2();
   return FillOrigin2;
-}();
-var FillStart = /* @__PURE__ */ function() {
+})();
+var FillStart = /* @__PURE__ */ (function() {
   function FillStart2() {
   }
   ;
   FillStart2.value = new FillStart2();
   return FillStart2;
-}();
-var FillEnd = /* @__PURE__ */ function() {
+})();
+var FillEnd = /* @__PURE__ */ (function() {
   function FillEnd2() {
   }
   ;
   FillEnd2.value = new FillEnd2();
   return FillEnd2;
-}();
-var FillStack = /* @__PURE__ */ function() {
+})();
+var FillStack = /* @__PURE__ */ (function() {
   function FillStack2() {
   }
   ;
   FillStack2.value = new FillStack2();
   return FillStack2;
-}();
-var FillShape = /* @__PURE__ */ function() {
+})();
+var FillShape = /* @__PURE__ */ (function() {
   function FillShape2() {
   }
   ;
   FillShape2.value = new FillShape2();
   return FillShape2;
-}();
-var FillAbsolute = /* @__PURE__ */ function() {
+})();
+var FillAbsolute = /* @__PURE__ */ (function() {
   function FillAbsolute2(value0) {
     this.value0 = value0;
   }
@@ -944,8 +944,8 @@ var FillAbsolute = /* @__PURE__ */ function() {
     return new FillAbsolute2(value0);
   };
   return FillAbsolute2;
-}();
-var FillRelative = /* @__PURE__ */ function() {
+})();
+var FillRelative = /* @__PURE__ */ (function() {
   function FillRelative2(value0) {
     this.value0 = value0;
   }
@@ -954,260 +954,260 @@ var FillRelative = /* @__PURE__ */ function() {
     return new FillRelative2(value0);
   };
   return FillRelative2;
-}();
-var EaseLinear = /* @__PURE__ */ function() {
+})();
+var EaseLinear = /* @__PURE__ */ (function() {
   function EaseLinear2() {
   }
   ;
   EaseLinear2.value = new EaseLinear2();
   return EaseLinear2;
-}();
-var EaseInQuad = /* @__PURE__ */ function() {
+})();
+var EaseInQuad = /* @__PURE__ */ (function() {
   function EaseInQuad2() {
   }
   ;
   EaseInQuad2.value = new EaseInQuad2();
   return EaseInQuad2;
-}();
-var EaseOutQuad = /* @__PURE__ */ function() {
+})();
+var EaseOutQuad = /* @__PURE__ */ (function() {
   function EaseOutQuad2() {
   }
   ;
   EaseOutQuad2.value = new EaseOutQuad2();
   return EaseOutQuad2;
-}();
-var EaseInOutQuad = /* @__PURE__ */ function() {
+})();
+var EaseInOutQuad = /* @__PURE__ */ (function() {
   function EaseInOutQuad2() {
   }
   ;
   EaseInOutQuad2.value = new EaseInOutQuad2();
   return EaseInOutQuad2;
-}();
-var EaseInCubic = /* @__PURE__ */ function() {
+})();
+var EaseInCubic = /* @__PURE__ */ (function() {
   function EaseInCubic2() {
   }
   ;
   EaseInCubic2.value = new EaseInCubic2();
   return EaseInCubic2;
-}();
-var EaseOutCubic = /* @__PURE__ */ function() {
+})();
+var EaseOutCubic = /* @__PURE__ */ (function() {
   function EaseOutCubic2() {
   }
   ;
   EaseOutCubic2.value = new EaseOutCubic2();
   return EaseOutCubic2;
-}();
-var EaseInOutCubic = /* @__PURE__ */ function() {
+})();
+var EaseInOutCubic = /* @__PURE__ */ (function() {
   function EaseInOutCubic2() {
   }
   ;
   EaseInOutCubic2.value = new EaseInOutCubic2();
   return EaseInOutCubic2;
-}();
-var EaseInQuart = /* @__PURE__ */ function() {
+})();
+var EaseInQuart = /* @__PURE__ */ (function() {
   function EaseInQuart2() {
   }
   ;
   EaseInQuart2.value = new EaseInQuart2();
   return EaseInQuart2;
-}();
-var EaseOutQuart = /* @__PURE__ */ function() {
+})();
+var EaseOutQuart = /* @__PURE__ */ (function() {
   function EaseOutQuart2() {
   }
   ;
   EaseOutQuart2.value = new EaseOutQuart2();
   return EaseOutQuart2;
-}();
-var EaseInOutQuart = /* @__PURE__ */ function() {
+})();
+var EaseInOutQuart = /* @__PURE__ */ (function() {
   function EaseInOutQuart2() {
   }
   ;
   EaseInOutQuart2.value = new EaseInOutQuart2();
   return EaseInOutQuart2;
-}();
-var EaseInQuint = /* @__PURE__ */ function() {
+})();
+var EaseInQuint = /* @__PURE__ */ (function() {
   function EaseInQuint2() {
   }
   ;
   EaseInQuint2.value = new EaseInQuint2();
   return EaseInQuint2;
-}();
-var EaseOutQuint = /* @__PURE__ */ function() {
+})();
+var EaseOutQuint = /* @__PURE__ */ (function() {
   function EaseOutQuint2() {
   }
   ;
   EaseOutQuint2.value = new EaseOutQuint2();
   return EaseOutQuint2;
-}();
-var EaseInOutQuint = /* @__PURE__ */ function() {
+})();
+var EaseInOutQuint = /* @__PURE__ */ (function() {
   function EaseInOutQuint2() {
   }
   ;
   EaseInOutQuint2.value = new EaseInOutQuint2();
   return EaseInOutQuint2;
-}();
-var EaseInSine = /* @__PURE__ */ function() {
+})();
+var EaseInSine = /* @__PURE__ */ (function() {
   function EaseInSine2() {
   }
   ;
   EaseInSine2.value = new EaseInSine2();
   return EaseInSine2;
-}();
-var EaseOutSine = /* @__PURE__ */ function() {
+})();
+var EaseOutSine = /* @__PURE__ */ (function() {
   function EaseOutSine2() {
   }
   ;
   EaseOutSine2.value = new EaseOutSine2();
   return EaseOutSine2;
-}();
-var EaseInOutSine = /* @__PURE__ */ function() {
+})();
+var EaseInOutSine = /* @__PURE__ */ (function() {
   function EaseInOutSine2() {
   }
   ;
   EaseInOutSine2.value = new EaseInOutSine2();
   return EaseInOutSine2;
-}();
-var EaseInExpo = /* @__PURE__ */ function() {
+})();
+var EaseInExpo = /* @__PURE__ */ (function() {
   function EaseInExpo2() {
   }
   ;
   EaseInExpo2.value = new EaseInExpo2();
   return EaseInExpo2;
-}();
-var EaseOutExpo = /* @__PURE__ */ function() {
+})();
+var EaseOutExpo = /* @__PURE__ */ (function() {
   function EaseOutExpo2() {
   }
   ;
   EaseOutExpo2.value = new EaseOutExpo2();
   return EaseOutExpo2;
-}();
-var EaseInOutExpo = /* @__PURE__ */ function() {
+})();
+var EaseInOutExpo = /* @__PURE__ */ (function() {
   function EaseInOutExpo2() {
   }
   ;
   EaseInOutExpo2.value = new EaseInOutExpo2();
   return EaseInOutExpo2;
-}();
-var EaseInCirc = /* @__PURE__ */ function() {
+})();
+var EaseInCirc = /* @__PURE__ */ (function() {
   function EaseInCirc2() {
   }
   ;
   EaseInCirc2.value = new EaseInCirc2();
   return EaseInCirc2;
-}();
-var EaseOutCirc = /* @__PURE__ */ function() {
+})();
+var EaseOutCirc = /* @__PURE__ */ (function() {
   function EaseOutCirc2() {
   }
   ;
   EaseOutCirc2.value = new EaseOutCirc2();
   return EaseOutCirc2;
-}();
-var EaseInOutCirc = /* @__PURE__ */ function() {
+})();
+var EaseInOutCirc = /* @__PURE__ */ (function() {
   function EaseInOutCirc2() {
   }
   ;
   EaseInOutCirc2.value = new EaseInOutCirc2();
   return EaseInOutCirc2;
-}();
-var EaseInElastic = /* @__PURE__ */ function() {
+})();
+var EaseInElastic = /* @__PURE__ */ (function() {
   function EaseInElastic2() {
   }
   ;
   EaseInElastic2.value = new EaseInElastic2();
   return EaseInElastic2;
-}();
-var EaseOutElastic = /* @__PURE__ */ function() {
+})();
+var EaseOutElastic = /* @__PURE__ */ (function() {
   function EaseOutElastic2() {
   }
   ;
   EaseOutElastic2.value = new EaseOutElastic2();
   return EaseOutElastic2;
-}();
-var EaseInOutElastic = /* @__PURE__ */ function() {
+})();
+var EaseInOutElastic = /* @__PURE__ */ (function() {
   function EaseInOutElastic2() {
   }
   ;
   EaseInOutElastic2.value = new EaseInOutElastic2();
   return EaseInOutElastic2;
-}();
-var EaseInBack = /* @__PURE__ */ function() {
+})();
+var EaseInBack = /* @__PURE__ */ (function() {
   function EaseInBack2() {
   }
   ;
   EaseInBack2.value = new EaseInBack2();
   return EaseInBack2;
-}();
-var EaseOutBack = /* @__PURE__ */ function() {
+})();
+var EaseOutBack = /* @__PURE__ */ (function() {
   function EaseOutBack2() {
   }
   ;
   EaseOutBack2.value = new EaseOutBack2();
   return EaseOutBack2;
-}();
-var EaseInOutBack = /* @__PURE__ */ function() {
+})();
+var EaseInOutBack = /* @__PURE__ */ (function() {
   function EaseInOutBack2() {
   }
   ;
   EaseInOutBack2.value = new EaseInOutBack2();
   return EaseInOutBack2;
-}();
-var EaseInBounce = /* @__PURE__ */ function() {
+})();
+var EaseInBounce = /* @__PURE__ */ (function() {
   function EaseInBounce2() {
   }
   ;
   EaseInBounce2.value = new EaseInBounce2();
   return EaseInBounce2;
-}();
-var EaseOutBounce = /* @__PURE__ */ function() {
+})();
+var EaseOutBounce = /* @__PURE__ */ (function() {
   function EaseOutBounce2() {
   }
   ;
   EaseOutBounce2.value = new EaseOutBounce2();
   return EaseOutBounce2;
-}();
-var EaseInOutBounce = /* @__PURE__ */ function() {
+})();
+var EaseInOutBounce = /* @__PURE__ */ (function() {
   function EaseInOutBounce2() {
   }
   ;
   EaseInOutBounce2.value = new EaseInOutBounce2();
   return EaseInOutBounce2;
-}();
-var BeforeDraw = /* @__PURE__ */ function() {
+})();
+var BeforeDraw = /* @__PURE__ */ (function() {
   function BeforeDraw2() {
   }
   ;
   BeforeDraw2.value = new BeforeDraw2();
   return BeforeDraw2;
-}();
-var BeforeDatasetDraw = /* @__PURE__ */ function() {
+})();
+var BeforeDatasetDraw = /* @__PURE__ */ (function() {
   function BeforeDatasetDraw2() {
   }
   ;
   BeforeDatasetDraw2.value = new BeforeDatasetDraw2();
   return BeforeDatasetDraw2;
-}();
-var BeforeDatasetsDraw = /* @__PURE__ */ function() {
+})();
+var BeforeDatasetsDraw = /* @__PURE__ */ (function() {
   function BeforeDatasetsDraw2() {
   }
   ;
   BeforeDatasetsDraw2.value = new BeforeDatasetsDraw2();
   return BeforeDatasetsDraw2;
-}();
-var LTTB = /* @__PURE__ */ function() {
+})();
+var LTTB = /* @__PURE__ */ (function() {
   function LTTB2() {
   }
   ;
   LTTB2.value = new LTTB2();
   return LTTB2;
-}();
-var MinMax = /* @__PURE__ */ function() {
+})();
+var MinMax = /* @__PURE__ */ (function() {
   function MinMax2() {
   }
   ;
   MinMax2.value = new MinMax2();
   return MinMax2;
-}();
-var Value = /* @__PURE__ */ function() {
+})();
+var Value = /* @__PURE__ */ (function() {
   function Value2(value0) {
     this.value0 = value0;
   }
@@ -1216,15 +1216,15 @@ var Value = /* @__PURE__ */ function() {
     return new Value2(value0);
   };
   return Value2;
-}();
-var Null = /* @__PURE__ */ function() {
+})();
+var Null = /* @__PURE__ */ (function() {
   function Null2() {
   }
   ;
   Null2.value = new Null2();
   return Null2;
-}();
-var XY = /* @__PURE__ */ function() {
+})();
+var XY = /* @__PURE__ */ (function() {
   function XY3(value0, value1) {
     this.value0 = value0;
     this.value1 = value1;
@@ -1236,8 +1236,8 @@ var XY = /* @__PURE__ */ function() {
     };
   };
   return XY3;
-}();
-var BubbleXYR = /* @__PURE__ */ function() {
+})();
+var BubbleXYR = /* @__PURE__ */ (function() {
   function BubbleXYR2(value0, value1, value22) {
     this.value0 = value0;
     this.value1 = value1;
@@ -1252,99 +1252,99 @@ var BubbleXYR = /* @__PURE__ */ function() {
     };
   };
   return BubbleXYR2;
-}();
-var DefaultInterpolation = /* @__PURE__ */ function() {
+})();
+var DefaultInterpolation = /* @__PURE__ */ (function() {
   function DefaultInterpolation2() {
   }
   ;
   DefaultInterpolation2.value = new DefaultInterpolation2();
   return DefaultInterpolation2;
-}();
-var Monotone = /* @__PURE__ */ function() {
+})();
+var Monotone = /* @__PURE__ */ (function() {
   function Monotone2() {
   }
   ;
   Monotone2.value = new Monotone2();
   return Monotone2;
-}();
-var Line = /* @__PURE__ */ function() {
+})();
+var Line = /* @__PURE__ */ (function() {
   function Line2() {
   }
   ;
   Line2.value = new Line2();
   return Line2;
-}();
-var Bar = /* @__PURE__ */ function() {
+})();
+var Bar = /* @__PURE__ */ (function() {
   function Bar2() {
   }
   ;
   Bar2.value = new Bar2();
   return Bar2;
-}();
-var Pie = /* @__PURE__ */ function() {
+})();
+var Pie = /* @__PURE__ */ (function() {
   function Pie2() {
   }
   ;
   Pie2.value = new Pie2();
   return Pie2;
-}();
-var Doughnut = /* @__PURE__ */ function() {
+})();
+var Doughnut = /* @__PURE__ */ (function() {
   function Doughnut2() {
   }
   ;
   Doughnut2.value = new Doughnut2();
   return Doughnut2;
-}();
-var Radar = /* @__PURE__ */ function() {
+})();
+var Radar = /* @__PURE__ */ (function() {
   function Radar2() {
   }
   ;
   Radar2.value = new Radar2();
   return Radar2;
-}();
-var Scatter = /* @__PURE__ */ function() {
+})();
+var Scatter = /* @__PURE__ */ (function() {
   function Scatter2() {
   }
   ;
   Scatter2.value = new Scatter2();
   return Scatter2;
-}();
-var Bubble = /* @__PURE__ */ function() {
+})();
+var Bubble = /* @__PURE__ */ (function() {
   function Bubble2() {
   }
   ;
   Bubble2.value = new Bubble2();
   return Bubble2;
-}();
-var PolarArea = /* @__PURE__ */ function() {
+})();
+var PolarArea = /* @__PURE__ */ (function() {
   function PolarArea2() {
   }
   ;
   PolarArea2.value = new PolarArea2();
   return PolarArea2;
-}();
-var CapButt = /* @__PURE__ */ function() {
+})();
+var CapButt = /* @__PURE__ */ (function() {
   function CapButt2() {
   }
   ;
   CapButt2.value = new CapButt2();
   return CapButt2;
-}();
-var CapRound = /* @__PURE__ */ function() {
+})();
+var CapRound = /* @__PURE__ */ (function() {
   function CapRound2() {
   }
   ;
   CapRound2.value = new CapRound2();
   return CapRound2;
-}();
-var CapSquare = /* @__PURE__ */ function() {
+})();
+var CapSquare = /* @__PURE__ */ (function() {
   function CapSquare2() {
   }
   ;
   CapSquare2.value = new CapSquare2();
   return CapSquare2;
-}();
-var CSSColor = /* @__PURE__ */ function() {
+})();
+var CSSColor = /* @__PURE__ */ (function() {
   function CSSColor2(value0) {
     this.value0 = value0;
   }
@@ -1353,8 +1353,8 @@ var CSSColor = /* @__PURE__ */ function() {
     return new CSSColor2(value0);
   };
   return CSSColor2;
-}();
-var GradientColor = /* @__PURE__ */ function() {
+})();
+var GradientColor = /* @__PURE__ */ (function() {
   function GradientColor2(value0) {
     this.value0 = value0;
   }
@@ -1363,8 +1363,8 @@ var GradientColor = /* @__PURE__ */ function() {
     return new GradientColor2(value0);
   };
   return GradientColor2;
-}();
-var PatternColor = /* @__PURE__ */ function() {
+})();
+var PatternColor = /* @__PURE__ */ (function() {
   function PatternColor2(value0) {
     this.value0 = value0;
   }
@@ -1373,92 +1373,92 @@ var PatternColor = /* @__PURE__ */ function() {
     return new PatternColor2(value0);
   };
   return PatternColor2;
-}();
-var BSStart = /* @__PURE__ */ function() {
+})();
+var BSStart = /* @__PURE__ */ (function() {
   function BSStart2() {
   }
   ;
   BSStart2.value = new BSStart2();
   return BSStart2;
-}();
-var BSEnd = /* @__PURE__ */ function() {
+})();
+var BSEnd = /* @__PURE__ */ (function() {
   function BSEnd2() {
   }
   ;
   BSEnd2.value = new BSEnd2();
   return BSEnd2;
-}();
-var BSMiddle = /* @__PURE__ */ function() {
+})();
+var BSMiddle = /* @__PURE__ */ (function() {
   function BSMiddle2() {
   }
   ;
   BSMiddle2.value = new BSMiddle2();
   return BSMiddle2;
-}();
-var BSBottom = /* @__PURE__ */ function() {
+})();
+var BSBottom = /* @__PURE__ */ (function() {
   function BSBottom2() {
   }
   ;
   BSBottom2.value = new BSBottom2();
   return BSBottom2;
-}();
-var BSLeft = /* @__PURE__ */ function() {
+})();
+var BSLeft = /* @__PURE__ */ (function() {
   function BSLeft2() {
   }
   ;
   BSLeft2.value = new BSLeft2();
   return BSLeft2;
-}();
-var BSTop = /* @__PURE__ */ function() {
+})();
+var BSTop = /* @__PURE__ */ (function() {
   function BSTop2() {
   }
   ;
   BSTop2.value = new BSTop2();
   return BSTop2;
-}();
-var BSRight = /* @__PURE__ */ function() {
+})();
+var BSRight = /* @__PURE__ */ (function() {
   function BSRight2() {
   }
   ;
   BSRight2.value = new BSRight2();
   return BSRight2;
-}();
-var BSFalse = /* @__PURE__ */ function() {
+})();
+var BSFalse = /* @__PURE__ */ (function() {
   function BSFalse2() {
   }
   ;
   BSFalse2.value = new BSFalse2();
   return BSFalse2;
-}();
-var BACenter = /* @__PURE__ */ function() {
+})();
+var BACenter = /* @__PURE__ */ (function() {
   function BACenter2() {
   }
   ;
   BACenter2.value = new BACenter2();
   return BACenter2;
-}();
-var BAInner = /* @__PURE__ */ function() {
+})();
+var BAInner = /* @__PURE__ */ (function() {
   function BAInner2() {
   }
   ;
   BAInner2.value = new BAInner2();
   return BAInner2;
-}();
-var XAxis = /* @__PURE__ */ function() {
+})();
+var XAxis = /* @__PURE__ */ (function() {
   function XAxis2() {
   }
   ;
   XAxis2.value = new XAxis2();
   return XAxis2;
-}();
-var YAxis = /* @__PURE__ */ function() {
+})();
+var YAxis = /* @__PURE__ */ (function() {
   function YAxis2() {
   }
   ;
   YAxis2.value = new YAxis2();
   return YAxis2;
-}();
-var AnimationEnabled = /* @__PURE__ */ function() {
+})();
+var AnimationEnabled = /* @__PURE__ */ (function() {
   function AnimationEnabled2(value0) {
     this.value0 = value0;
   }
@@ -1467,14 +1467,14 @@ var AnimationEnabled = /* @__PURE__ */ function() {
     return new AnimationEnabled2(value0);
   };
   return AnimationEnabled2;
-}();
-var AnimationDisabled = /* @__PURE__ */ function() {
+})();
+var AnimationDisabled = /* @__PURE__ */ (function() {
   function AnimationDisabled2() {
   }
   ;
   AnimationDisabled2.value = new AnimationDisabled2();
   return AnimationDisabled2;
-}();
+})();
 var timeUnitToString = function(v) {
   if (v instanceof Millisecond) {
     return "millisecond";
@@ -1814,7 +1814,7 @@ var drawTimeToString = function(v) {
   ;
   throw new Error("Failed pattern match at Chartjs.Types (line 423, column 20 - line 426, column 45): " + [v.constructor.name]);
 };
-var defaultOptions = /* @__PURE__ */ function() {
+var defaultOptions = /* @__PURE__ */ (function() {
   return {
     responsive: Nothing.value,
     maintainAspectRatio: Nothing.value,
@@ -1833,8 +1833,8 @@ var defaultOptions = /* @__PURE__ */ function() {
     rotation: Nothing.value,
     circumference: Nothing.value
   };
-}();
-var defaultDataset = /* @__PURE__ */ function() {
+})();
+var defaultDataset = /* @__PURE__ */ (function() {
   return {
     label: "",
     data: [],
@@ -1902,15 +1902,15 @@ var defaultDataset = /* @__PURE__ */ function() {
     xAxisID: Nothing.value,
     yAxisID: Nothing.value
   };
-}();
-var defaultConfig = /* @__PURE__ */ function() {
+})();
+var defaultConfig = /* @__PURE__ */ (function() {
   return {
     chartType: Bar.value,
     labels: [],
     datasets: [],
     options: defaultOptions
   };
-}();
+})();
 var decimationAlgorithmToString = function(v) {
   if (v instanceof LTTB) {
     return "lttb";
@@ -2058,7 +2058,7 @@ var replicatePolyfill = function(count, value12) {
   return result2;
 };
 var replicateImpl = typeof Array.prototype.fill === "function" ? replicateFill : replicatePolyfill;
-var fromFoldableImpl = /* @__PURE__ */ function() {
+var fromFoldableImpl = /* @__PURE__ */ (function() {
   function Cons2(head4, tail2) {
     this.head = head4;
     this.tail = tail2;
@@ -2082,7 +2082,7 @@ var fromFoldableImpl = /* @__PURE__ */ function() {
   return function(foldr4, xs) {
     return listToArray(foldr4(curryCons)(emptyList)(xs));
   };
-}();
+})();
 var length = function(xs) {
   return xs.length;
 };
@@ -2104,7 +2104,7 @@ var _deleteAt = function(just, nothing, i2, l) {
 var filterImpl = function(f, xs) {
   return xs.filter(f);
 };
-var sortByImpl = /* @__PURE__ */ function() {
+var sortByImpl = /* @__PURE__ */ (function() {
   function mergeFromTo(compare4, fromOrdering, xs1, xs2, from5, to2) {
     var mid;
     var i2;
@@ -2145,7 +2145,7 @@ var sortByImpl = /* @__PURE__ */ function() {
     mergeFromTo(compare4, fromOrdering, out, xs.slice(0), 0, xs.length);
     return out;
   };
-}();
+})();
 var anyImpl = function(p2, xs) {
   var len = xs.length;
   for (var i2 = 0; i2 < len; i2++) {
@@ -2240,7 +2240,7 @@ var ap = function(dictMonad) {
 };
 
 // output/Data.Either/index.js
-var Left = /* @__PURE__ */ function() {
+var Left = /* @__PURE__ */ (function() {
   function Left2(value0) {
     this.value0 = value0;
   }
@@ -2249,8 +2249,8 @@ var Left = /* @__PURE__ */ function() {
     return new Left2(value0);
   };
   return Left2;
-}();
-var Right = /* @__PURE__ */ function() {
+})();
+var Right = /* @__PURE__ */ (function() {
   function Right2(value0) {
     this.value0 = value0;
   }
@@ -2259,7 +2259,7 @@ var Right = /* @__PURE__ */ function() {
     return new Right2(value0);
   };
   return Right2;
-}();
+})();
 var functorEither = {
   map: function(f) {
     return function(m) {
@@ -2290,9 +2290,9 @@ var either = function(v) {
     };
   };
 };
-var hush = /* @__PURE__ */ function() {
+var hush = /* @__PURE__ */ (function() {
   return either($$const(Nothing.value))(Just.create);
-}();
+})();
 
 // output/Data.Identity/index.js
 var Identity = function(x) {
@@ -2457,7 +2457,7 @@ var modify_ = function(f) {
 // output/Control.Monad.Rec.Class/index.js
 var bindFlipped2 = /* @__PURE__ */ bindFlipped(bindEffect);
 var map3 = /* @__PURE__ */ map(functorEffect);
-var Loop = /* @__PURE__ */ function() {
+var Loop = /* @__PURE__ */ (function() {
   function Loop2(value0) {
     this.value0 = value0;
   }
@@ -2466,8 +2466,8 @@ var Loop = /* @__PURE__ */ function() {
     return new Loop2(value0);
   };
   return Loop2;
-}();
-var Done = /* @__PURE__ */ function() {
+})();
+var Done = /* @__PURE__ */ (function() {
   function Done2(value0) {
     this.value0 = value0;
   }
@@ -2476,7 +2476,7 @@ var Done = /* @__PURE__ */ function() {
     return new Done2(value0);
   };
   return Done2;
-}();
+})();
 var tailRecM = function(dict) {
   return dict.tailRecM;
 };
@@ -2493,7 +2493,7 @@ var monadRecEffect = {
       return function __do2() {
         var r = bindFlipped2($$new)(f(a3))();
         (function() {
-          while (!function __do3() {
+          while (!(function __do3() {
             var v = read(r)();
             if (v instanceof Loop) {
               var e = f(v.value0)();
@@ -2506,7 +2506,7 @@ var monadRecEffect = {
             }
             ;
             throw new Error("Failed pattern match at Control.Monad.Rec.Class (line 128, column 22 - line 133, column 28): " + [v.constructor.name]);
-          }()) {
+          })()) {
           }
           ;
           return {};
@@ -2706,7 +2706,7 @@ var heytingAlgebraFunction = function(dictHeytingAlgebra) {
 var map4 = /* @__PURE__ */ map(functorST);
 var not2 = /* @__PURE__ */ not(heytingAlgebraBoolean);
 var $$void3 = /* @__PURE__ */ $$void(functorST);
-var Iterator = /* @__PURE__ */ function() {
+var Iterator = /* @__PURE__ */ (function() {
   function Iterator2(value0, value1) {
     this.value0 = value0;
     this.value1 = value1;
@@ -2718,7 +2718,7 @@ var Iterator = /* @__PURE__ */ function() {
     };
   };
   return Iterator2;
-}();
+})();
 var peek = function(v) {
   return function __do2() {
     var i2 = read2(v.value1)();
@@ -2815,7 +2815,7 @@ var empty = function(dict) {
 };
 
 // output/Data.Tuple/index.js
-var Tuple = /* @__PURE__ */ function() {
+var Tuple = /* @__PURE__ */ (function() {
   function Tuple2(value0, value1) {
     this.value0 = value0;
     this.value1 = value1;
@@ -2827,7 +2827,7 @@ var Tuple = /* @__PURE__ */ function() {
     };
   };
   return Tuple2;
-}();
+})();
 var snd = function(v) {
   return v.value1;
 };
@@ -3044,7 +3044,7 @@ var runFn4 = function(fn) {
 };
 
 // output/Data.Traversable/foreign.js
-var traverseArrayImpl = /* @__PURE__ */ function() {
+var traverseArrayImpl = /* @__PURE__ */ (function() {
   function array1(a3) {
     return [a3];
   }
@@ -3091,7 +3091,7 @@ var traverseArrayImpl = /* @__PURE__ */ function() {
       };
     };
   };
-}();
+})();
 
 // output/Data.Traversable/index.js
 var identity5 = /* @__PURE__ */ identity(categoryFn);
@@ -3214,15 +3214,15 @@ var singleton2 = function(a3) {
 var $$null = function(xs) {
   return length(xs) === 0;
 };
-var index = /* @__PURE__ */ function() {
+var index = /* @__PURE__ */ (function() {
   return runFn4(indexImpl)(Just.create)(Nothing.value);
-}();
+})();
 var head = function(xs) {
   return index(xs)(0);
 };
 var groupBy = function(op) {
   return function(xs) {
-    return function __do2() {
+    return (function __do2() {
       var result2 = newSTArray();
       var iter = iterator(function(v) {
         return index(xs)(v);
@@ -3237,7 +3237,7 @@ var groupBy = function(op) {
         });
       })();
       return unsafeFreeze(result2)();
-    }();
+    })();
   };
 };
 var groupAllBy = function(cmp) {
@@ -3254,13 +3254,13 @@ var groupAllBy = function(cmp) {
 var fromFoldable = function(dictFoldable) {
   return runFn2(fromFoldableImpl)(foldr(dictFoldable));
 };
-var findIndex = /* @__PURE__ */ function() {
+var findIndex = /* @__PURE__ */ (function() {
   return runFn4(findIndexImpl)(Just.create)(Nothing.value);
-}();
+})();
 var filter = /* @__PURE__ */ runFn2(filterImpl);
-var deleteAt = /* @__PURE__ */ function() {
+var deleteAt = /* @__PURE__ */ (function() {
   return runFn4(_deleteAt)(Just.create)(Nothing.value);
-}();
+})();
 var deleteBy = function(v) {
   return function(v1) {
     return function(v2) {
@@ -3276,12 +3276,12 @@ var deleteBy = function(v) {
 };
 var concatMap = /* @__PURE__ */ flip(/* @__PURE__ */ bind(bindArray));
 var mapMaybe = function(f) {
-  return concatMap(function() {
+  return concatMap((function() {
     var $189 = maybe([])(singleton2);
     return function($190) {
       return $189(f($190));
     };
-  }());
+  })());
 };
 var catMaybes = /* @__PURE__ */ mapMaybe(/* @__PURE__ */ identity(categoryFn));
 var any2 = /* @__PURE__ */ runFn2(anyImpl);
@@ -3328,9 +3328,6 @@ function typeOf(value12) {
 function tagOf(value12) {
   return Object.prototype.toString.call(value12).slice(8, -1);
 }
-var isArray = Array.isArray || function(value12) {
-  return Object.prototype.toString.call(value12) === "[object Array]";
-};
 
 // output/Effect.Exception/foreign.js
 function error(msg) {
@@ -3489,12 +3486,12 @@ var applyExceptT = function(dictMonad) {
 };
 var applicativeExceptT = function(dictMonad) {
   return {
-    pure: function() {
+    pure: (function() {
       var $194 = pure(dictMonad.Applicative0());
       return function($195) {
         return ExceptT($194(Right.create($195)));
       };
-    }(),
+    })(),
     Apply0: function() {
       return applyExceptT(dictMonad);
     }
@@ -3503,12 +3500,12 @@ var applicativeExceptT = function(dictMonad) {
 var monadThrowExceptT = function(dictMonad) {
   var monadExceptT1 = monadExceptT(dictMonad);
   return {
-    throwError: function() {
+    throwError: (function() {
       var $204 = pure(dictMonad.Applicative0());
       return function($205) {
         return ExceptT($204(Left.create($205)));
       };
-    }(),
+    })(),
     Monad0: function() {
       return monadExceptT1;
     }
@@ -3521,7 +3518,7 @@ var toNumber = function(n) {
 };
 
 // output/Data.NonEmpty/index.js
-var NonEmpty = /* @__PURE__ */ function() {
+var NonEmpty = /* @__PURE__ */ (function() {
   function NonEmpty2(value0, value1) {
     this.value0 = value0;
     this.value1 = value1;
@@ -3533,7 +3530,7 @@ var NonEmpty = /* @__PURE__ */ function() {
     };
   };
   return NonEmpty2;
-}();
+})();
 var singleton3 = function(dictPlus) {
   var empty10 = empty(dictPlus);
   return function(a3) {
@@ -3542,14 +3539,14 @@ var singleton3 = function(dictPlus) {
 };
 
 // output/Data.List.Types/index.js
-var Nil = /* @__PURE__ */ function() {
+var Nil = /* @__PURE__ */ (function() {
   function Nil2() {
   }
   ;
   Nil2.value = new Nil2();
   return Nil2;
-}();
-var Cons = /* @__PURE__ */ function() {
+})();
+var Cons = /* @__PURE__ */ (function() {
   function Cons2(value0, value1) {
     this.value0 = value0;
     this.value1 = value1;
@@ -3561,7 +3558,7 @@ var Cons = /* @__PURE__ */ function() {
     };
   };
   return Cons2;
-}();
+})();
 var NonEmptyList = function(x) {
   return x;
 };
@@ -3631,7 +3628,7 @@ var functorList = {
 var foldableList = {
   foldr: function(f) {
     return function(b2) {
-      var rev3 = function() {
+      var rev3 = (function() {
         var go2 = function($copy_v) {
           return function($copy_v1) {
             var $tco_var_v = $copy_v;
@@ -3660,7 +3657,7 @@ var foldableList = {
           };
         };
         return go2(Nil.value);
-      }();
+      })();
       var $284 = foldl(foldableList)(flip(f))(b2);
       return function($285) {
         return $284(rev3($285));
@@ -3725,17 +3722,17 @@ var altList = {
     return functorList;
   }
 };
-var plusList = /* @__PURE__ */ function() {
+var plusList = /* @__PURE__ */ (function() {
   return {
     empty: Nil.value,
     Alt0: function() {
       return altList;
     }
   };
-}();
+})();
 
 // output/Data.List/index.js
-var reverse2 = /* @__PURE__ */ function() {
+var reverse2 = /* @__PURE__ */ (function() {
   var go2 = function($copy_v) {
     return function($copy_v1) {
       var $tco_var_v = $copy_v;
@@ -3764,7 +3761,7 @@ var reverse2 = /* @__PURE__ */ function() {
     };
   };
   return go2(Nil.value);
-}();
+})();
 var $$null2 = function(v) {
   if (v instanceof Nil) {
     return true;
@@ -3798,12 +3795,12 @@ var unsafeCrashWith = function(msg) {
 };
 
 // output/Data.List.NonEmpty/index.js
-var singleton4 = /* @__PURE__ */ function() {
+var singleton4 = /* @__PURE__ */ (function() {
   var $200 = singleton3(plusList);
   return function($201) {
     return NonEmptyList($200($201));
   };
-}();
+})();
 var cons = function(y) {
   return function(v) {
     return new NonEmpty(y, new Cons(v.value0, v.value1));
@@ -3811,7 +3808,7 @@ var cons = function(y) {
 };
 
 // output/Foreign/index.js
-var TypeMismatch = /* @__PURE__ */ function() {
+var TypeMismatch = /* @__PURE__ */ (function() {
   function TypeMismatch2(value0, value1) {
     this.value0 = value0;
     this.value1 = value1;
@@ -3823,7 +3820,7 @@ var TypeMismatch = /* @__PURE__ */ function() {
     };
   };
   return TypeMismatch2;
-}();
+})();
 var unsafeToForeign = unsafeCoerce2;
 var unsafeFromForeign = unsafeCoerce2;
 var fail = function(dictMonad) {
@@ -3912,9 +3909,9 @@ function poke2(k2) {
 
 // output/Foreign.Object/index.js
 var $$void5 = /* @__PURE__ */ $$void(functorST);
-var lookup = /* @__PURE__ */ function() {
+var lookup = /* @__PURE__ */ (function() {
   return runFn4(_lookup)(Nothing.value)(Just.create);
-}();
+})();
 var isEmpty = /* @__PURE__ */ all3(function(v) {
   return function(v1) {
     return false;
@@ -4064,7 +4061,7 @@ var hasOverlays = function(cb) {
     return hasCallbacks(cb) || isJust(extractDatasetColorOverlays(cfg.datasets));
   };
 };
-var defaultCallbacks = /* @__PURE__ */ function() {
+var defaultCallbacks = /* @__PURE__ */ (function() {
   return {
     onClick: Nothing.value,
     onHover: Nothing.value,
@@ -4075,7 +4072,7 @@ var defaultCallbacks = /* @__PURE__ */ function() {
     legendOnLeave: Nothing.value,
     tickCallbacks: Nothing.value
   };
-}();
+})();
 var simpleInput = function(cfg) {
   return {
     config: cfg,
@@ -4198,18 +4195,18 @@ var optN = function(key) {
 var optS = function(key) {
   return opt(key)(id);
 };
-var numArrayToJson = /* @__PURE__ */ function() {
+var numArrayToJson = /* @__PURE__ */ (function() {
   var $43 = map1(id);
   return function($44) {
     return id($43($44));
   };
-}();
-var jsonObject = /* @__PURE__ */ function() {
+})();
+var jsonObject = /* @__PURE__ */ (function() {
   var $45 = fromFoldable3(foldableArray);
   return function($46) {
     return id($45($46));
   };
-}();
+})();
 var paddingToJson = function(v) {
   if (v instanceof UniformPadding) {
     return id(v.value0);
@@ -4483,12 +4480,12 @@ var scaleToJson = function(s2) {
     return id(positionToString($82));
   })(s2.position), opt("title")(scaleTitleToJson)(s2.title), optN("min")(s2.min), optN("max")(s2.max), optN("suggestedMin")(s2.suggestedMin), optN("suggestedMax")(s2.suggestedMax), optB("beginAtZero")(s2.beginAtZero), optB("reverse")(s2.reverse), optB("stacked")(s2.stacked), optN("weight")(s2.weight), optS("bounds")(s2.bounds), optB("offset")(s2.offset), opt("ticks")(ticksToJson)(s2.ticks), opt("grid")(gridToJson)(s2.grid), opt("border")(scaleBorderToJson)(s2.border), opt("time")(timeToJson)(s2.time), optB("animate")(s2.animate), optN("startAngle")(s2.startAngle), opt("angleLines")(angleLinesToJson)(s2.angleLines), opt("pointLabels")(pointLabelsToJson)(s2.pointLabels), optS("grace")(s2.grace), optB("alignToPixels")(s2.alignToPixels), optS("backgroundColor")(s2.backgroundColor)]));
 };
-var scalesToJson = /* @__PURE__ */ function() {
+var scalesToJson = /* @__PURE__ */ (function() {
   var $83 = map(functorObject)(scaleToJson);
   return function($84) {
     return id($83($84));
   };
-}();
+})();
 var optionsToJson = function(o) {
   return jsonObject(catMaybes([optB("responsive")(o.responsive), optB("maintainAspectRatio")(o.maintainAspectRatio), optN("aspectRatio")(o.aspectRatio), optN("resizeDelay")(o.resizeDelay), optS("locale")(o.locale), opt("indexAxis")(function($85) {
     return id(axisToString($85));
@@ -5475,14 +5472,14 @@ function _arrayUnique(items3) {
   }
   return Array.from(set4);
 }
-var requestAnimFrame = function() {
+var requestAnimFrame = (function() {
   if (typeof window === "undefined") {
     return function(callback2) {
       return callback2();
     };
   }
   return window.requestAnimationFrame;
-}();
+})();
 function throttled(fn, thisArg) {
   let argsToUse = [];
   let ticking = false;
@@ -7039,7 +7036,7 @@ function retinaScale(chart, forceRatio, forceStyle) {
   }
   return false;
 }
-var supportsEventListenerOptions = function() {
+var supportsEventListenerOptions = (function() {
   let passiveSupported = false;
   try {
     const options2 = {
@@ -7055,7 +7052,7 @@ var supportsEventListenerOptions = function() {
   } catch (e) {
   }
   return passiveSupported;
-}();
+})();
 function readUsedSize(element3, property) {
   const value12 = getStyle(element3, property);
   const matches2 = value12 && value12.match(/^(\d+)(\.\d+)?px$/);
@@ -19060,7 +19057,7 @@ var runExists = unsafeCoerce2;
 var mkExists = unsafeCoerce2;
 
 // output/Data.Coyoneda/index.js
-var CoyonedaF = /* @__PURE__ */ function() {
+var CoyonedaF = /* @__PURE__ */ (function() {
   function CoyonedaF2(value0, value1) {
     this.value0 = value0;
     this.value1 = value1;
@@ -19072,7 +19069,7 @@ var CoyonedaF = /* @__PURE__ */ function() {
     };
   };
   return CoyonedaF2;
-}();
+})();
 var unCoyoneda = function(f) {
   return function(v) {
     return runExists(function(v1) {
@@ -19112,14 +19109,14 @@ var $runtime_lazy2 = function(name16, moduleName, init4) {
   };
 };
 var map12 = /* @__PURE__ */ map(functorMaybe);
-var Leaf = /* @__PURE__ */ function() {
+var Leaf = /* @__PURE__ */ (function() {
   function Leaf2() {
   }
   ;
   Leaf2.value = new Leaf2();
   return Leaf2;
-}();
-var Node = /* @__PURE__ */ function() {
+})();
+var Node = /* @__PURE__ */ (function() {
   function Node2(value0, value1, value22, value32, value42, value52) {
     this.value0 = value0;
     this.value1 = value1;
@@ -19143,8 +19140,8 @@ var Node = /* @__PURE__ */ function() {
     };
   };
   return Node2;
-}();
-var Split = /* @__PURE__ */ function() {
+})();
+var Split = /* @__PURE__ */ (function() {
   function Split2(value0, value1, value22) {
     this.value0 = value0;
     this.value1 = value1;
@@ -19159,8 +19156,8 @@ var Split = /* @__PURE__ */ function() {
     };
   };
   return Split2;
-}();
-var SplitLast = /* @__PURE__ */ function() {
+})();
+var SplitLast = /* @__PURE__ */ (function() {
   function SplitLast2(value0, value1, value22) {
     this.value0 = value0;
     this.value1 = value1;
@@ -19175,7 +19172,7 @@ var SplitLast = /* @__PURE__ */ function() {
     };
   };
   return SplitLast2;
-}();
+})();
 var unsafeNode = function(k2, v, l, r) {
   if (l instanceof Leaf) {
     if (r instanceof Leaf) {
@@ -19195,14 +19192,14 @@ var unsafeNode = function(k2, v, l, r) {
     }
     ;
     if (r instanceof Node) {
-      return new Node(1 + function() {
+      return new Node(1 + (function() {
         var $280 = l.value0 > r.value0;
         if ($280) {
           return l.value0;
         }
         ;
         return r.value0;
-      }() | 0, (1 + l.value1 | 0) + r.value1 | 0, k2, v, l, r);
+      })() | 0, (1 + l.value1 | 0) + r.value1 | 0, k2, v, l, r);
     }
     ;
     throw new Error("Failed pattern match at Data.Map.Internal (line 708, column 5 - line 712, column 68): " + [r.constructor.name]);
@@ -19215,7 +19212,7 @@ var singleton7 = function(k2) {
     return new Node(1, 1, k2, v, Leaf.value, Leaf.value);
   };
 };
-var unsafeBalancedNode = /* @__PURE__ */ function() {
+var unsafeBalancedNode = /* @__PURE__ */ (function() {
   var height8 = function(v) {
     if (v instanceof Leaf) {
       return 0;
@@ -19275,7 +19272,7 @@ var unsafeBalancedNode = /* @__PURE__ */ function() {
     ;
     throw new Error("Failed pattern match at Data.Map.Internal (line 717, column 40 - line 738, column 34): " + [l.constructor.name]);
   };
-}();
+})();
 var $lazy_unsafeSplit = /* @__PURE__ */ $runtime_lazy2("unsafeSplit", "Data.Map.Internal", function() {
   return function(comp, k2, m) {
     if (m instanceof Leaf) {
@@ -19481,9 +19478,9 @@ var foldableMap = {
     };
   }
 };
-var empty3 = /* @__PURE__ */ function() {
+var empty3 = /* @__PURE__ */ (function() {
   return Leaf.value;
-}();
+})();
 var fromFoldable6 = function(dictOrd) {
   var insert13 = insert(dictOrd);
   return function(dictFoldable) {
@@ -19546,7 +19543,7 @@ var alter = function(dictOrd) {
 };
 
 // output/Halogen.Data.OrdBox/index.js
-var OrdBox = /* @__PURE__ */ function() {
+var OrdBox = /* @__PURE__ */ (function() {
   function OrdBox2(value0, value1, value22) {
     this.value0 = value0;
     this.value1 = value1;
@@ -19561,7 +19558,7 @@ var OrdBox = /* @__PURE__ */ function() {
     };
   };
   return OrdBox2;
-}();
+})();
 var mkOrdBox = function(dictOrd) {
   return OrdBox.create(eq(dictOrd.Eq0()))(compare(dictOrd));
 };
@@ -19658,160 +19655,160 @@ var joinWith = function(s2) {
 };
 
 // output/DOM.HTML.Indexed.InputType/index.js
-var InputButton = /* @__PURE__ */ function() {
+var InputButton = /* @__PURE__ */ (function() {
   function InputButton2() {
   }
   ;
   InputButton2.value = new InputButton2();
   return InputButton2;
-}();
-var InputCheckbox = /* @__PURE__ */ function() {
+})();
+var InputCheckbox = /* @__PURE__ */ (function() {
   function InputCheckbox2() {
   }
   ;
   InputCheckbox2.value = new InputCheckbox2();
   return InputCheckbox2;
-}();
-var InputColor = /* @__PURE__ */ function() {
+})();
+var InputColor = /* @__PURE__ */ (function() {
   function InputColor2() {
   }
   ;
   InputColor2.value = new InputColor2();
   return InputColor2;
-}();
-var InputDate = /* @__PURE__ */ function() {
+})();
+var InputDate = /* @__PURE__ */ (function() {
   function InputDate2() {
   }
   ;
   InputDate2.value = new InputDate2();
   return InputDate2;
-}();
-var InputDatetimeLocal = /* @__PURE__ */ function() {
+})();
+var InputDatetimeLocal = /* @__PURE__ */ (function() {
   function InputDatetimeLocal2() {
   }
   ;
   InputDatetimeLocal2.value = new InputDatetimeLocal2();
   return InputDatetimeLocal2;
-}();
-var InputEmail = /* @__PURE__ */ function() {
+})();
+var InputEmail = /* @__PURE__ */ (function() {
   function InputEmail2() {
   }
   ;
   InputEmail2.value = new InputEmail2();
   return InputEmail2;
-}();
-var InputFile = /* @__PURE__ */ function() {
+})();
+var InputFile = /* @__PURE__ */ (function() {
   function InputFile2() {
   }
   ;
   InputFile2.value = new InputFile2();
   return InputFile2;
-}();
-var InputHidden = /* @__PURE__ */ function() {
+})();
+var InputHidden = /* @__PURE__ */ (function() {
   function InputHidden2() {
   }
   ;
   InputHidden2.value = new InputHidden2();
   return InputHidden2;
-}();
-var InputImage = /* @__PURE__ */ function() {
+})();
+var InputImage = /* @__PURE__ */ (function() {
   function InputImage2() {
   }
   ;
   InputImage2.value = new InputImage2();
   return InputImage2;
-}();
-var InputMonth = /* @__PURE__ */ function() {
+})();
+var InputMonth = /* @__PURE__ */ (function() {
   function InputMonth2() {
   }
   ;
   InputMonth2.value = new InputMonth2();
   return InputMonth2;
-}();
-var InputNumber = /* @__PURE__ */ function() {
+})();
+var InputNumber = /* @__PURE__ */ (function() {
   function InputNumber2() {
   }
   ;
   InputNumber2.value = new InputNumber2();
   return InputNumber2;
-}();
-var InputPassword = /* @__PURE__ */ function() {
+})();
+var InputPassword = /* @__PURE__ */ (function() {
   function InputPassword2() {
   }
   ;
   InputPassword2.value = new InputPassword2();
   return InputPassword2;
-}();
-var InputRadio = /* @__PURE__ */ function() {
+})();
+var InputRadio = /* @__PURE__ */ (function() {
   function InputRadio2() {
   }
   ;
   InputRadio2.value = new InputRadio2();
   return InputRadio2;
-}();
-var InputRange = /* @__PURE__ */ function() {
+})();
+var InputRange = /* @__PURE__ */ (function() {
   function InputRange2() {
   }
   ;
   InputRange2.value = new InputRange2();
   return InputRange2;
-}();
-var InputReset = /* @__PURE__ */ function() {
+})();
+var InputReset = /* @__PURE__ */ (function() {
   function InputReset2() {
   }
   ;
   InputReset2.value = new InputReset2();
   return InputReset2;
-}();
-var InputSearch = /* @__PURE__ */ function() {
+})();
+var InputSearch = /* @__PURE__ */ (function() {
   function InputSearch2() {
   }
   ;
   InputSearch2.value = new InputSearch2();
   return InputSearch2;
-}();
-var InputSubmit = /* @__PURE__ */ function() {
+})();
+var InputSubmit = /* @__PURE__ */ (function() {
   function InputSubmit2() {
   }
   ;
   InputSubmit2.value = new InputSubmit2();
   return InputSubmit2;
-}();
-var InputTel = /* @__PURE__ */ function() {
+})();
+var InputTel = /* @__PURE__ */ (function() {
   function InputTel2() {
   }
   ;
   InputTel2.value = new InputTel2();
   return InputTel2;
-}();
-var InputText = /* @__PURE__ */ function() {
+})();
+var InputText = /* @__PURE__ */ (function() {
   function InputText2() {
   }
   ;
   InputText2.value = new InputText2();
   return InputText2;
-}();
-var InputTime = /* @__PURE__ */ function() {
+})();
+var InputTime = /* @__PURE__ */ (function() {
   function InputTime2() {
   }
   ;
   InputTime2.value = new InputTime2();
   return InputTime2;
-}();
-var InputUrl = /* @__PURE__ */ function() {
+})();
+var InputUrl = /* @__PURE__ */ (function() {
   function InputUrl2() {
   }
   ;
   InputUrl2.value = new InputUrl2();
   return InputUrl2;
-}();
-var InputWeek = /* @__PURE__ */ function() {
+})();
+var InputWeek = /* @__PURE__ */ (function() {
   function InputWeek2() {
   }
   ;
   InputWeek2.value = new InputWeek2();
   return InputWeek2;
-}();
+})();
 var renderInputType = function(v) {
   if (v instanceof InputButton) {
     return "button";
@@ -19905,7 +19902,7 @@ var renderInputType = function(v) {
 };
 
 // output/Halogen.Query.Input/index.js
-var RefUpdate = /* @__PURE__ */ function() {
+var RefUpdate = /* @__PURE__ */ (function() {
   function RefUpdate2(value0, value1) {
     this.value0 = value0;
     this.value1 = value1;
@@ -19917,8 +19914,8 @@ var RefUpdate = /* @__PURE__ */ function() {
     };
   };
   return RefUpdate2;
-}();
-var Action = /* @__PURE__ */ function() {
+})();
+var Action = /* @__PURE__ */ (function() {
   function Action3(value0) {
     this.value0 = value0;
   }
@@ -19927,7 +19924,7 @@ var Action = /* @__PURE__ */ function() {
     return new Action3(value0);
   };
   return Action3;
-}();
+})();
 
 // output/Data.Nullable/foreign.js
 var nullImpl = null;
@@ -19945,7 +19942,7 @@ var toMaybe = function(n) {
 };
 
 // output/Halogen.VDom.Machine/index.js
-var Step = /* @__PURE__ */ function() {
+var Step = /* @__PURE__ */ (function() {
   function Step3(value0, value1, value22, value32) {
     this.value0 = value0;
     this.value1 = value1;
@@ -19963,7 +19960,7 @@ var Step = /* @__PURE__ */ function() {
     };
   };
   return Step3;
-}();
+})();
 var unStep = unsafeCoerce2;
 var step = function(v, a3) {
   return v.value2(v.value1, a3);
@@ -19979,7 +19976,7 @@ var extract2 = /* @__PURE__ */ unStep(function(v) {
 // output/Halogen.VDom.Types/index.js
 var map13 = /* @__PURE__ */ map(functorArray);
 var map14 = /* @__PURE__ */ map(functorTuple);
-var Text = /* @__PURE__ */ function() {
+var Text = /* @__PURE__ */ (function() {
   function Text3(value0) {
     this.value0 = value0;
   }
@@ -19988,8 +19985,8 @@ var Text = /* @__PURE__ */ function() {
     return new Text3(value0);
   };
   return Text3;
-}();
-var Elem = /* @__PURE__ */ function() {
+})();
+var Elem = /* @__PURE__ */ (function() {
   function Elem2(value0, value1, value22, value32) {
     this.value0 = value0;
     this.value1 = value1;
@@ -20007,8 +20004,8 @@ var Elem = /* @__PURE__ */ function() {
     };
   };
   return Elem2;
-}();
-var Keyed = /* @__PURE__ */ function() {
+})();
+var Keyed = /* @__PURE__ */ (function() {
   function Keyed2(value0, value1, value22, value32) {
     this.value0 = value0;
     this.value1 = value1;
@@ -20026,8 +20023,8 @@ var Keyed = /* @__PURE__ */ function() {
     };
   };
   return Keyed2;
-}();
-var Widget = /* @__PURE__ */ function() {
+})();
+var Widget = /* @__PURE__ */ (function() {
   function Widget2(value0) {
     this.value0 = value0;
   }
@@ -20036,8 +20033,8 @@ var Widget = /* @__PURE__ */ function() {
     return new Widget2(value0);
   };
   return Widget2;
-}();
-var Grafted = /* @__PURE__ */ function() {
+})();
+var Grafted = /* @__PURE__ */ (function() {
   function Grafted2(value0) {
     this.value0 = value0;
   }
@@ -20046,8 +20043,8 @@ var Grafted = /* @__PURE__ */ function() {
     return new Grafted2(value0);
   };
   return Grafted2;
-}();
-var Graft = /* @__PURE__ */ function() {
+})();
+var Graft = /* @__PURE__ */ (function() {
   function Graft2(value0, value1, value22) {
     this.value0 = value0;
     this.value1 = value1;
@@ -20062,7 +20059,7 @@ var Graft = /* @__PURE__ */ function() {
     };
   };
   return Graft2;
-}();
+})();
 var unGraft = function(f) {
   return function($61) {
     return f($61);
@@ -20667,7 +20664,7 @@ var $runtime_lazy4 = function(name16, moduleName, init4) {
     return val;
   };
 };
-var Created = /* @__PURE__ */ function() {
+var Created = /* @__PURE__ */ (function() {
   function Created2(value0) {
     this.value0 = value0;
   }
@@ -20676,8 +20673,8 @@ var Created = /* @__PURE__ */ function() {
     return new Created2(value0);
   };
   return Created2;
-}();
-var Removed = /* @__PURE__ */ function() {
+})();
+var Removed = /* @__PURE__ */ (function() {
   function Removed2(value0) {
     this.value0 = value0;
   }
@@ -20686,8 +20683,8 @@ var Removed = /* @__PURE__ */ function() {
     return new Removed2(value0);
   };
   return Removed2;
-}();
-var Attribute = /* @__PURE__ */ function() {
+})();
+var Attribute = /* @__PURE__ */ (function() {
   function Attribute2(value0, value1, value22) {
     this.value0 = value0;
     this.value1 = value1;
@@ -20702,8 +20699,8 @@ var Attribute = /* @__PURE__ */ function() {
     };
   };
   return Attribute2;
-}();
-var Property = /* @__PURE__ */ function() {
+})();
+var Property = /* @__PURE__ */ (function() {
   function Property2(value0, value1) {
     this.value0 = value0;
     this.value1 = value1;
@@ -20715,8 +20712,8 @@ var Property = /* @__PURE__ */ function() {
     };
   };
   return Property2;
-}();
-var Handler = /* @__PURE__ */ function() {
+})();
+var Handler = /* @__PURE__ */ (function() {
   function Handler2(value0, value1) {
     this.value0 = value0;
     this.value1 = value1;
@@ -20728,8 +20725,8 @@ var Handler = /* @__PURE__ */ function() {
     };
   };
   return Handler2;
-}();
-var Ref = /* @__PURE__ */ function() {
+})();
+var Ref = /* @__PURE__ */ (function() {
   function Ref2(value0) {
     this.value0 = value0;
   }
@@ -20738,7 +20735,7 @@ var Ref = /* @__PURE__ */ function() {
     return new Ref2(value0);
   };
   return Ref2;
-}();
+})();
 var unsafeGetProperty = unsafeGetAny;
 var setProperty = unsafeSetAny;
 var removeProperty = function(key, el) {
@@ -20951,7 +20948,7 @@ var text = function($29) {
 };
 var ref = function(f) {
   return new Ref(function($30) {
-    return f(function(v) {
+    return f((function(v) {
       if (v instanceof Created) {
         return new Just(v.value0);
       }
@@ -20961,7 +20958,7 @@ var ref = function(f) {
       }
       ;
       throw new Error("Failed pattern match at Halogen.HTML.Core (line 109, column 21 - line 111, column 23): " + [v.constructor.name]);
-    }($30));
+    })($30));
   });
 };
 var prop = function(dictIsProp) {
@@ -20984,9 +20981,9 @@ var isPropInputType = {
 var isPropBoolean = {
   toPropValue: propFromBoolean
 };
-var handler = /* @__PURE__ */ function() {
+var handler = /* @__PURE__ */ (function() {
   return Handler.create;
-}();
+})();
 var element = function(ns) {
   return function(name16) {
     return function(props) {
@@ -20999,7 +20996,7 @@ var element = function(ns) {
 
 // output/Control.Applicative.Free/index.js
 var identity6 = /* @__PURE__ */ identity(categoryFn);
-var Pure = /* @__PURE__ */ function() {
+var Pure = /* @__PURE__ */ (function() {
   function Pure2(value0) {
     this.value0 = value0;
   }
@@ -21008,8 +21005,8 @@ var Pure = /* @__PURE__ */ function() {
     return new Pure2(value0);
   };
   return Pure2;
-}();
-var Lift = /* @__PURE__ */ function() {
+})();
+var Lift = /* @__PURE__ */ (function() {
   function Lift3(value0) {
     this.value0 = value0;
   }
@@ -21018,8 +21015,8 @@ var Lift = /* @__PURE__ */ function() {
     return new Lift3(value0);
   };
   return Lift3;
-}();
-var Ap = /* @__PURE__ */ function() {
+})();
+var Ap = /* @__PURE__ */ (function() {
   function Ap2(value0, value1) {
     this.value0 = value0;
     this.value1 = value1;
@@ -21031,15 +21028,15 @@ var Ap = /* @__PURE__ */ function() {
     };
   };
   return Ap2;
-}();
+})();
 var mkAp = function(fba) {
   return function(fb) {
     return new Ap(fba, fb);
   };
 };
-var liftFreeAp = /* @__PURE__ */ function() {
+var liftFreeAp = /* @__PURE__ */ (function() {
   return Lift.create;
-}();
+})();
 var goLeft = function(dictApplicative) {
   var pure15 = pure(dictApplicative);
   return function(fStack) {
@@ -21190,14 +21187,14 @@ var applyFreeAp = {
     return functorFreeAp;
   }
 };
-var applicativeFreeAp = /* @__PURE__ */ function() {
+var applicativeFreeAp = /* @__PURE__ */ (function() {
   return {
     pure: Pure.create,
     Apply0: function() {
       return applyFreeAp;
     }
   };
-}();
+})();
 var foldFreeAp1 = /* @__PURE__ */ foldFreeAp(applicativeFreeAp);
 var hoistFreeAp = function(f) {
   return foldFreeAp1(function($54) {
@@ -21206,7 +21203,7 @@ var hoistFreeAp = function(f) {
 };
 
 // output/Data.CatQueue/index.js
-var CatQueue = /* @__PURE__ */ function() {
+var CatQueue = /* @__PURE__ */ (function() {
   function CatQueue2(value0, value1) {
     this.value0 = value0;
     this.value1 = value1;
@@ -21218,7 +21215,7 @@ var CatQueue = /* @__PURE__ */ function() {
     };
   };
   return CatQueue2;
-}();
+})();
 var uncons2 = function($copy_v) {
   var $tco_done = false;
   var $tco_result;
@@ -21259,19 +21256,19 @@ var $$null3 = function(v) {
   ;
   return false;
 };
-var empty5 = /* @__PURE__ */ function() {
+var empty5 = /* @__PURE__ */ (function() {
   return new CatQueue(Nil.value, Nil.value);
-}();
+})();
 
 // output/Data.CatList/index.js
-var CatNil = /* @__PURE__ */ function() {
+var CatNil = /* @__PURE__ */ (function() {
   function CatNil2() {
   }
   ;
   CatNil2.value = new CatNil2();
   return CatNil2;
-}();
-var CatCons = /* @__PURE__ */ function() {
+})();
+var CatCons = /* @__PURE__ */ (function() {
   function CatCons2(value0, value1) {
     this.value0 = value0;
     this.value1 = value1;
@@ -21283,7 +21280,7 @@ var CatCons = /* @__PURE__ */ function() {
     };
   };
   return CatCons2;
-}();
+})();
 var link = function(v) {
   return function(v1) {
     if (v instanceof CatNil) {
@@ -21377,21 +21374,21 @@ var uncons3 = function(v) {
   }
   ;
   if (v instanceof CatCons) {
-    return new Just(new Tuple(v.value0, function() {
+    return new Just(new Tuple(v.value0, (function() {
       var $66 = $$null3(v.value1);
       if ($66) {
         return CatNil.value;
       }
       ;
       return foldr3(link)(CatNil.value)(v.value1);
-    }()));
+    })()));
   }
   ;
   throw new Error("Failed pattern match at Data.CatList (line 99, column 1 - line 99, column 61): " + [v.constructor.name]);
 };
-var empty6 = /* @__PURE__ */ function() {
+var empty6 = /* @__PURE__ */ (function() {
   return CatNil.value;
-}();
+})();
 var append3 = link;
 var semigroupCatList = {
   append: append3
@@ -21416,7 +21413,7 @@ var $runtime_lazy5 = function(name16, moduleName, init4) {
   };
 };
 var append4 = /* @__PURE__ */ append(semigroupCatList);
-var Free = /* @__PURE__ */ function() {
+var Free = /* @__PURE__ */ (function() {
   function Free2(value0, value1) {
     this.value0 = value0;
     this.value1 = value1;
@@ -21428,8 +21425,8 @@ var Free = /* @__PURE__ */ function() {
     };
   };
   return Free2;
-}();
-var Return = /* @__PURE__ */ function() {
+})();
+var Return = /* @__PURE__ */ (function() {
   function Return2(value0) {
     this.value0 = value0;
   }
@@ -21438,8 +21435,8 @@ var Return = /* @__PURE__ */ function() {
     return new Return2(value0);
   };
   return Return2;
-}();
-var Bind = /* @__PURE__ */ function() {
+})();
+var Bind = /* @__PURE__ */ (function() {
   function Bind2(value0, value1) {
     this.value0 = value0;
     this.value1 = value1;
@@ -21451,7 +21448,7 @@ var Bind = /* @__PURE__ */ function() {
     };
   };
   return Bind2;
-}();
+})();
 var toView = function($copy_v) {
   var $tco_done = false;
   var $tco_result;
@@ -21509,12 +21506,12 @@ var freeMonad = {
 var freeFunctor = {
   map: function(k2) {
     return function(f) {
-      return bindFlipped(freeBind)(function() {
+      return bindFlipped(freeBind)((function() {
         var $189 = pure(freeApplicative);
         return function($190) {
           return $189(k2($190));
         };
-      }())(f);
+      })())(f);
     };
   }
 };
@@ -21575,7 +21572,7 @@ var foldFree = function(dictMonadRec) {
 };
 
 // output/Effect.Aff/foreign.js
-var Aff = function() {
+var Aff = (function() {
   var EMPTY = {};
   var PURE = "Pure";
   var THROW = "Throw";
@@ -21637,7 +21634,7 @@ var Aff = function() {
       return nonCanceler2;
     }
   }
-  var Scheduler = function() {
+  var Scheduler = (function() {
     var limit = 1024;
     var size5 = 0;
     var ix = 0;
@@ -21673,7 +21670,7 @@ var Aff = function() {
         }
       }
     };
-  }();
+  })();
   function Supervisor(util) {
     var fibers = {};
     var fiberId = 0;
@@ -22406,7 +22403,7 @@ var Aff = function() {
   Aff2.Scheduler = Scheduler;
   Aff2.nonCanceler = nonCanceler2;
   return Aff2;
-}();
+})();
 var _pure = Aff.Pure;
 var _throwError = Aff.Throw;
 function _catchError(aff) {
@@ -22532,7 +22529,7 @@ var functorAff = {
 };
 var map17 = /* @__PURE__ */ map(functorAff);
 var forkAff = /* @__PURE__ */ _fork(true);
-var ffiUtil = /* @__PURE__ */ function() {
+var ffiUtil = /* @__PURE__ */ (function() {
   var unsafeFromRight = function(v) {
     if (v instanceof Right) {
       return v.value0;
@@ -22573,7 +22570,7 @@ var ffiUtil = /* @__PURE__ */ function() {
     left: Left.create,
     right: Right.create
   };
-}();
+})();
 var makeFiber = function(aff) {
   return _makeFiber(ffiUtil, aff);
 };
@@ -22826,7 +22823,7 @@ var SubscriptionId = function(x) {
 var ForkId = function(x) {
   return x;
 };
-var State = /* @__PURE__ */ function() {
+var State = /* @__PURE__ */ (function() {
   function State2(value0) {
     this.value0 = value0;
   }
@@ -22835,8 +22832,8 @@ var State = /* @__PURE__ */ function() {
     return new State2(value0);
   };
   return State2;
-}();
-var Subscribe = /* @__PURE__ */ function() {
+})();
+var Subscribe = /* @__PURE__ */ (function() {
   function Subscribe2(value0, value1) {
     this.value0 = value0;
     this.value1 = value1;
@@ -22848,8 +22845,8 @@ var Subscribe = /* @__PURE__ */ function() {
     };
   };
   return Subscribe2;
-}();
-var Unsubscribe = /* @__PURE__ */ function() {
+})();
+var Unsubscribe = /* @__PURE__ */ (function() {
   function Unsubscribe2(value0, value1) {
     this.value0 = value0;
     this.value1 = value1;
@@ -22861,8 +22858,8 @@ var Unsubscribe = /* @__PURE__ */ function() {
     };
   };
   return Unsubscribe2;
-}();
-var Lift2 = /* @__PURE__ */ function() {
+})();
+var Lift2 = /* @__PURE__ */ (function() {
   function Lift3(value0) {
     this.value0 = value0;
   }
@@ -22871,8 +22868,8 @@ var Lift2 = /* @__PURE__ */ function() {
     return new Lift3(value0);
   };
   return Lift3;
-}();
-var ChildQuery2 = /* @__PURE__ */ function() {
+})();
+var ChildQuery2 = /* @__PURE__ */ (function() {
   function ChildQuery3(value0) {
     this.value0 = value0;
   }
@@ -22881,8 +22878,8 @@ var ChildQuery2 = /* @__PURE__ */ function() {
     return new ChildQuery3(value0);
   };
   return ChildQuery3;
-}();
-var Raise = /* @__PURE__ */ function() {
+})();
+var Raise = /* @__PURE__ */ (function() {
   function Raise2(value0, value1) {
     this.value0 = value0;
     this.value1 = value1;
@@ -22894,8 +22891,8 @@ var Raise = /* @__PURE__ */ function() {
     };
   };
   return Raise2;
-}();
-var Par = /* @__PURE__ */ function() {
+})();
+var Par = /* @__PURE__ */ (function() {
   function Par2(value0) {
     this.value0 = value0;
   }
@@ -22904,8 +22901,8 @@ var Par = /* @__PURE__ */ function() {
     return new Par2(value0);
   };
   return Par2;
-}();
-var Fork = /* @__PURE__ */ function() {
+})();
+var Fork = /* @__PURE__ */ (function() {
   function Fork2(value0, value1) {
     this.value0 = value0;
     this.value1 = value1;
@@ -22917,8 +22914,8 @@ var Fork = /* @__PURE__ */ function() {
     };
   };
   return Fork2;
-}();
-var Join = /* @__PURE__ */ function() {
+})();
+var Join = /* @__PURE__ */ (function() {
   function Join2(value0, value1) {
     this.value0 = value0;
     this.value1 = value1;
@@ -22930,8 +22927,8 @@ var Join = /* @__PURE__ */ function() {
     };
   };
   return Join2;
-}();
-var Kill = /* @__PURE__ */ function() {
+})();
+var Kill = /* @__PURE__ */ (function() {
   function Kill2(value0, value1) {
     this.value0 = value0;
     this.value1 = value1;
@@ -22943,8 +22940,8 @@ var Kill = /* @__PURE__ */ function() {
     };
   };
   return Kill2;
-}();
-var GetRef = /* @__PURE__ */ function() {
+})();
+var GetRef = /* @__PURE__ */ (function() {
   function GetRef2(value0, value1) {
     this.value0 = value0;
     this.value1 = value1;
@@ -22956,7 +22953,7 @@ var GetRef = /* @__PURE__ */ function() {
     };
   };
   return GetRef2;
-}();
+})();
 var HalogenM = function(x) {
   return x;
 };
@@ -22976,12 +22973,12 @@ var monadStateHalogenM = {
 };
 var monadEffectHalogenM = function(dictMonadEffect) {
   return {
-    liftEffect: function() {
+    liftEffect: (function() {
       var $186 = liftEffect(dictMonadEffect);
       return function($187) {
         return HalogenM(liftF(Lift2.create($186($187))));
       };
-    }(),
+    })(),
     Monad0: function() {
       return monadHalogenM;
     }
@@ -22990,12 +22987,12 @@ var monadEffectHalogenM = function(dictMonadEffect) {
 var monadAffHalogenM = function(dictMonadAff) {
   var monadEffectHalogenM1 = monadEffectHalogenM(dictMonadAff.MonadEffect0());
   return {
-    liftAff: function() {
+    liftAff: (function() {
       var $188 = liftAff(dictMonadAff);
       return function($189) {
         return HalogenM(liftF(Lift2.create($188($189))));
       };
-    }(),
+    })(),
     MonadEffect0: function() {
       return monadEffectHalogenM1;
     }
@@ -23009,7 +23006,7 @@ var bindHalogenM = freeBind;
 var applicativeHalogenM = freeApplicative;
 
 // output/Halogen.Query.HalogenQ/index.js
-var Initialize = /* @__PURE__ */ function() {
+var Initialize = /* @__PURE__ */ (function() {
   function Initialize3(value0) {
     this.value0 = value0;
   }
@@ -23018,8 +23015,8 @@ var Initialize = /* @__PURE__ */ function() {
     return new Initialize3(value0);
   };
   return Initialize3;
-}();
-var Finalize = /* @__PURE__ */ function() {
+})();
+var Finalize = /* @__PURE__ */ (function() {
   function Finalize3(value0) {
     this.value0 = value0;
   }
@@ -23028,8 +23025,8 @@ var Finalize = /* @__PURE__ */ function() {
     return new Finalize3(value0);
   };
   return Finalize3;
-}();
-var Receive = /* @__PURE__ */ function() {
+})();
+var Receive = /* @__PURE__ */ (function() {
   function Receive3(value0, value1) {
     this.value0 = value0;
     this.value1 = value1;
@@ -23041,8 +23038,8 @@ var Receive = /* @__PURE__ */ function() {
     };
   };
   return Receive3;
-}();
-var Action2 = /* @__PURE__ */ function() {
+})();
+var Action2 = /* @__PURE__ */ (function() {
   function Action3(value0, value1) {
     this.value0 = value0;
     this.value1 = value1;
@@ -23054,8 +23051,8 @@ var Action2 = /* @__PURE__ */ function() {
     };
   };
   return Action3;
-}();
-var Query = /* @__PURE__ */ function() {
+})();
+var Query = /* @__PURE__ */ (function() {
   function Query2(value0, value1) {
     this.value0 = value0;
     this.value1 = value1;
@@ -23067,7 +23064,7 @@ var Query = /* @__PURE__ */ function() {
     };
   };
   return Query2;
-}();
+})();
 
 // output/Halogen.VDom.Thunk/index.js
 var $runtime_lazy7 = function(name16, moduleName, init4) {
@@ -23127,7 +23124,7 @@ var pure5 = /* @__PURE__ */ pure(applicativeHalogenM);
 var lookup4 = /* @__PURE__ */ lookup3();
 var pop3 = /* @__PURE__ */ pop2();
 var insert3 = /* @__PURE__ */ insert2();
-var ComponentSlot = /* @__PURE__ */ function() {
+var ComponentSlot = /* @__PURE__ */ (function() {
   function ComponentSlot2(value0) {
     this.value0 = value0;
   }
@@ -23136,8 +23133,8 @@ var ComponentSlot = /* @__PURE__ */ function() {
     return new ComponentSlot2(value0);
   };
   return ComponentSlot2;
-}();
-var ThunkSlot = /* @__PURE__ */ function() {
+})();
+var ThunkSlot = /* @__PURE__ */ (function() {
   function ThunkSlot2(value0) {
     this.value0 = value0;
   }
@@ -23146,7 +23143,7 @@ var ThunkSlot = /* @__PURE__ */ function() {
     return new ThunkSlot2(value0);
   };
   return ThunkSlot2;
-}();
+})();
 var unComponentSlot = unsafeCoerce2;
 var unComponent = unsafeCoerce2;
 var mkEval = function(args) {
@@ -23181,7 +23178,7 @@ var mkEval = function(args) {
 };
 var mkComponentSlot = unsafeCoerce2;
 var mkComponent = unsafeCoerce2;
-var defaultEval = /* @__PURE__ */ function() {
+var defaultEval = /* @__PURE__ */ (function() {
   return {
     handleAction: $$const(pure5(unit)),
     handleQuery: $$const(pure5(Nothing.value)),
@@ -23189,7 +23186,7 @@ var defaultEval = /* @__PURE__ */ function() {
     initialize: Nothing.value,
     finalize: Nothing.value
   };
-}();
+})();
 var componentSlot = function() {
   return function(dictIsSymbol) {
     var lookup13 = lookup4(dictIsSymbol);
@@ -23222,14 +23219,13 @@ var componentSlot = function() {
 };
 
 // output/Halogen.HTML.Elements/index.js
-var element2 = /* @__PURE__ */ function() {
+var element2 = /* @__PURE__ */ (function() {
   return element(Nothing.value);
-}();
+})();
 var form = /* @__PURE__ */ element2("form");
 var form_ = /* @__PURE__ */ form([]);
 var h12 = /* @__PURE__ */ element2("h1");
-var h3 = /* @__PURE__ */ element2("h3");
-var h3_ = /* @__PURE__ */ h3([]);
+var h22 = /* @__PURE__ */ element2("h2");
 var input = function(props) {
   return element2("input")(props)([]);
 };
@@ -23249,7 +23245,7 @@ var br_ = /* @__PURE__ */ br([]);
 
 // output/Halogen.HTML.Properties/index.js
 var unwrap2 = /* @__PURE__ */ unwrap();
-var ref2 = /* @__PURE__ */ function() {
+var ref2 = /* @__PURE__ */ (function() {
   var go2 = function(p2) {
     return function(mel) {
       return new Just(new RefUpdate(p2, mel));
@@ -23258,7 +23254,7 @@ var ref2 = /* @__PURE__ */ function() {
   return function($29) {
     return ref(go2($29));
   };
-}();
+})();
 var prop2 = function(dictIsProp) {
   return prop(dictIsProp);
 };
@@ -23268,14 +23264,14 @@ var type_ = function(dictIsProp) {
   return prop2(dictIsProp)("type");
 };
 var multiple = /* @__PURE__ */ prop1("multiple");
-var classes = /* @__PURE__ */ function() {
+var classes = /* @__PURE__ */ (function() {
   var $32 = prop22("className");
   var $33 = joinWith(" ");
   var $34 = map(functorArray)(unwrap2);
   return function($35) {
     return $32($33($34($35)));
   };
-}();
+})();
 
 // output/Web.HTML.HTMLElement/foreign.js
 function _read(nothing, just, value12) {
@@ -23295,14 +23291,14 @@ var fromElement = function(x) {
 
 // output/Halogen.Query/index.js
 var bindFlipped4 = /* @__PURE__ */ bindFlipped(bindMaybe);
-var getHTMLElementRef = /* @__PURE__ */ function() {
+var getHTMLElementRef = /* @__PURE__ */ (function() {
   var $24 = map(functorHalogenM)(function(v) {
     return bindFlipped4(fromElement)(v);
   });
   return function($25) {
     return $24(getRef($25));
   };
-}();
+})();
 
 // output/Chartjs.Halogen/index.js
 var bind4 = /* @__PURE__ */ bind(bindHalogenM);
@@ -23311,7 +23307,7 @@ var pure6 = /* @__PURE__ */ pure(applicativeHalogenM);
 var modify_3 = /* @__PURE__ */ modify_2(monadStateHalogenM);
 var discard2 = /* @__PURE__ */ discard(discardUnit)(bindHalogenM);
 var gets2 = /* @__PURE__ */ gets(monadStateHalogenM);
-var ChartError = /* @__PURE__ */ function() {
+var ChartError = /* @__PURE__ */ (function() {
   function ChartError2(value0) {
     this.value0 = value0;
   }
@@ -23320,15 +23316,15 @@ var ChartError = /* @__PURE__ */ function() {
     return new ChartError2(value0);
   };
   return ChartError2;
-}();
-var Initialize2 = /* @__PURE__ */ function() {
+})();
+var Initialize2 = /* @__PURE__ */ (function() {
   function Initialize3() {
   }
   ;
   Initialize3.value = new Initialize3();
   return Initialize3;
-}();
-var Receive2 = /* @__PURE__ */ function() {
+})();
+var Receive2 = /* @__PURE__ */ (function() {
   function Receive3(value0) {
     this.value0 = value0;
   }
@@ -23337,14 +23333,14 @@ var Receive2 = /* @__PURE__ */ function() {
     return new Receive3(value0);
   };
   return Receive3;
-}();
-var Finalize2 = /* @__PURE__ */ function() {
+})();
+var Finalize2 = /* @__PURE__ */ (function() {
   function Finalize3() {
   }
   ;
   Finalize3.value = new Finalize3();
   return Finalize3;
-}();
+})();
 var canvasRef = "chartjs-canvas";
 var handleAction = function(dictMonadAff) {
   var liftEffect9 = liftEffect(monadEffectHalogenM(dictMonadAff.MonadEffect0()));
@@ -23358,14 +23354,14 @@ var handleAction = function(dictMonadAff) {
           ;
           if (mEl instanceof Just) {
             var json3 = toChartJsConfig(st.config);
-            return bind4(liftEffect9($$try(function() {
+            return bind4(liftEffect9($$try((function() {
               var $23 = hasOverlays(st.callbacks)(st.config);
               if ($23) {
                 return createChartWithCallbacks(mEl.value0)(json3)(buildOverlays(st.callbacks)(st.config));
               }
               ;
               return createChart(mEl.value0)(json3);
-            }())))(function(result2) {
+            })())))(function(result2) {
               if (result2 instanceof Right) {
                 return modify_3(function(v1) {
                   var $25 = {};
@@ -23417,14 +23413,14 @@ var handleAction = function(dictMonadAff) {
           ;
           if (mInst instanceof Just) {
             var json3 = toChartJsConfig(v.value0.config);
-            return bind4(liftEffect9($$try(function() {
+            return bind4(liftEffect9($$try((function() {
               var $35 = hasOverlays(v.value0.callbacks)(v.value0.config);
               if ($35) {
                 return updateChartWithCallbacks(mInst.value0)(json3)(buildOverlays(v.value0.callbacks)(v.value0.config));
               }
               ;
               return updateChart(mInst.value0)(json3);
-            }())))(function(result2) {
+            })())))(function(result2) {
               if (result2 instanceof Right) {
                 return pure6(unit);
               }
@@ -23544,19 +23540,19 @@ var initialState = function(v) {
     yPc: 2
   };
 };
-var _chart = /* @__PURE__ */ function() {
+var _chart = /* @__PURE__ */ (function() {
   return $$Proxy.value;
-}();
+})();
 var render2 = function(dictMonadAff) {
   var component1 = component(dictMonadAff);
   return function(st) {
     var groupedSamples = groupAllBy(function(sample1) {
       return function(sample2) {
-        return compare2(sample1.popName)(sample2.popName);
+        return compare2(sample1.popGroup)(sample2.popGroup);
       };
     })(st.refPosData.samples);
     var datasets = bind5(groupedSamples)(function(group5) {
-      var groupName = head2(group5).popName;
+      var groupName = head2(group5).popGroup;
       var dataPoints = mapMaybe3(function(sample2) {
         return apply2(map20(XY.create)(index(sample2.pcValues)(st.xPc - 1 | 0)))(index(sample2.pcValues)(st.yPc - 1 | 0));
       })(group5);
@@ -23707,7 +23703,6 @@ function endsWithImpl(searchString, s2) {
 }
 
 // output/Data.String.CodePoints/foreign.js
-var hasArrayFrom = typeof Array.from === "function";
 var hasStringIterator = typeof Symbol !== "undefined" && Symbol != null && typeof Symbol.iterator !== "undefined" && typeof String.prototype[Symbol.iterator] === "function";
 var hasFromCodePoint = typeof String.prototype.fromCodePoint === "function";
 var hasCodePointAt = typeof String.prototype.codePointAt === "function";
@@ -23750,18 +23745,18 @@ function _toArray(tuple, headers2) {
 }
 
 // output/JS.Fetch.Headers/index.js
-var toArray2 = /* @__PURE__ */ function() {
+var toArray2 = /* @__PURE__ */ (function() {
   return runFn2(_toArray)(Tuple.create);
-}();
+})();
 
 // output/Fetch.Internal.Headers/index.js
-var toHeaders = /* @__PURE__ */ function() {
+var toHeaders = /* @__PURE__ */ (function() {
   var $7 = fromFoldable6(ordCaseInsensitiveString)(foldableArray);
   var $8 = map(functorArray)(lmap(bifunctorTuple)(CaseInsensitiveString));
   return function($9) {
     return $7($8(toArray2($9)));
   };
-}();
+})();
 
 // output/JS.Fetch.Request/foreign.js
 function _unsafeNew(url2, options2) {
@@ -23874,9 +23869,9 @@ function _toError(just, nothing, ref3) {
 }
 
 // output/Promise.Rejection/index.js
-var toError = /* @__PURE__ */ function() {
+var toError = /* @__PURE__ */ (function() {
   return runFn3(_toError)(Just.create)(Nothing.value);
-}();
+})();
 
 // output/Promise/index.js
 var thenOrCatch2 = function() {
@@ -24075,12 +24070,12 @@ function _files(input3) {
 // output/Web.HTML.HTMLInputElement/index.js
 var map24 = /* @__PURE__ */ map(functorEffect);
 var fromEventTarget = /* @__PURE__ */ unsafeReadProtoTagged("HTMLInputElement");
-var files = /* @__PURE__ */ function() {
+var files = /* @__PURE__ */ (function() {
   var $6 = map24(toMaybe);
   return function($7) {
     return $6(_files($7));
   };
-}();
+})();
 
 // output/Web.UIEvent.MouseEvent.EventTypes/index.js
 var click2 = "click";
@@ -24095,12 +24090,12 @@ var handler2 = function(et) {
   };
 };
 var onChange = /* @__PURE__ */ handler2(change);
-var onClick = /* @__PURE__ */ function() {
+var onClick = /* @__PURE__ */ (function() {
   var $15 = handler2(click2);
   return function($16) {
     return $15(mouseHandler($16));
   };
-}();
+})();
 
 // output/PCproject.PCproject/foreign.js
 function getAlleleFreq(plinkData, snpIndex, individualIndex) {
@@ -24533,7 +24528,7 @@ function rollups(values2, reduce, ...keys2) {
   return nest(values2, Array.from, reduce, keys2);
 }
 function nest(values2, map34, reduce, keys2) {
-  return function regroup(values3, i2) {
+  return (function regroup(values3, i2) {
     if (i2 >= keys2.length) return reduce(values3);
     const groups2 = new InternMap();
     const keyof3 = keys2[i2++];
@@ -24548,7 +24543,7 @@ function nest(values2, map34, reduce, keys2) {
       groups2.set(key, regroup(values4, i2));
     }
     return map34(groups2);
-  }(values2, 0);
+  })(values2, 0);
 }
 
 // node_modules/d3-array/src/permute.js
@@ -26424,7 +26419,7 @@ function nogamma(a3, b2) {
 }
 
 // node_modules/d3-interpolate/src/rgb.js
-var rgb_default = function rgbGamma(y) {
+var rgb_default = (function rgbGamma(y) {
   var color4 = gamma(y);
   function rgb2(start3, end) {
     var r = color4((start3 = rgb(start3)).r, (end = rgb(end)).r), g = color4(start3.g, end.g), b2 = color4(start3.b, end.b), opacity2 = nogamma(start3.opacity, end.opacity);
@@ -26438,7 +26433,7 @@ var rgb_default = function rgbGamma(y) {
   }
   rgb2.gamma = rgbGamma;
   return rgb2;
-}(1);
+})(1);
 function rgbSpline(spline) {
   return function(colors2) {
     var n = colors2.length, r = new Array(n), g = new Array(n), b2 = new Array(n), i2, color4;
@@ -26717,7 +26712,7 @@ var hclLong = hcl2(nogamma);
 
 // node_modules/d3-interpolate/src/cubehelix.js
 function cubehelix2(hue3) {
-  return function cubehelixGamma(y) {
+  return (function cubehelixGamma(y) {
     y = +y;
     function cubehelix3(start3, end) {
       var h = hue3((start3 = cubehelix(start3)).h, (end = cubehelix(end)).h), s2 = nogamma(start3.s, end.s), l = nogamma(start3.l, end.l), opacity2 = nogamma(start3.opacity, end.opacity);
@@ -26731,7 +26726,7 @@ function cubehelix2(hue3) {
     }
     cubehelix3.gamma = cubehelixGamma;
     return cubehelix3;
-  }(1);
+  })(1);
 }
 var cubehelix_default = cubehelix2(hue2);
 var cubehelixLong = cubehelix2(nogamma);
@@ -37971,9 +37966,9 @@ function readRefPosData(content3) {
   const numSamples = lines.length;
   let samples = new Array(numSamples);
   const numFields = lines[0].trim().split(/\s+/).length;
-  const numPCs = numFields - 2;
+  const numPCs = numFields - 3;
   if (numPCs < 1) {
-    throw new Error(`Expected at least 3 columns per line (sampleID, PCs and a popname), but found ${numFields} in the first line.`);
+    throw new Error(`Expected at least 4 columns per line (sampleID, PCs, popName and popGroup), but found ${numFields} in the first line.`);
   }
   for (let i2 = 0; i2 < numSamples; i2++) {
     const fields = lines[i2].trim().split(/\s+/);
@@ -37982,7 +37977,8 @@ function readRefPosData(content3) {
     }
     samples[i2] = {
       sampleID: fields[0],
-      popName: fields[numFields - 1],
+      popName: fields[numFields - 2],
+      popGroup: fields[numFields - 1],
       pcValues: new Array(numPCs)
     };
     for (let j = 0; j < numPCs; j++) {
@@ -38006,11 +38002,12 @@ function readSnpWeights(snpWeightText) {
   let alleles1 = new Array(numSNPs);
   let alleles2 = new Array(numSNPs);
   let firstLineFields = lines[0].trim().split(/\s+/);
-  if (firstLineFields.length < 6) {
-    throw new Error(`For SnpWeights expected at least 6 columns per line (snpIDs, chrom, pos, allele1, allele2, and at least one PC), but found ${firstLineFields.length} in the first line.`);
+  if (firstLineFields.length < 7) {
+    throw new Error(`For SnpWeights expected at least 7 columns per line (snpIDs, chrom, pos, allele1, allele2, and at least one PC and one frequency), but found ${firstLineFields.length} in the first line.`);
   }
-  let numPCs = firstLineFields.length - 5;
+  let numPCs = firstLineFields.length - 6;
   let pcWeights = new Float32Array(numSNPs * numPCs);
+  let frequencies = new Float32Array(numSNPs);
   for (let i2 = 0; i2 < numSNPs; i2++) {
     const fields = lines[i2].trim().split(/\s+/);
     snpIDs[i2] = fields[0];
@@ -38024,8 +38021,8 @@ function readSnpWeights(snpWeightText) {
     }
     alleles1[i2] = fields[3];
     alleles2[i2] = fields[4];
-    if (fields.length !== numPCs + 5) {
-      throw new Error(`Inconsistent number of columns in line ${i2 + 1}: expected ${numPCs + 5}, found ${fields.length}`);
+    if (fields.length !== numPCs + 6) {
+      throw new Error(`Inconsistent number of columns in line ${i2 + 1}: expected ${numPCs + 6}, found ${fields.length}`);
     }
     for (let j = 0; j < numPCs; j++) {
       pcWeights[i2 * numPCs + j] = parseFloat(fields[5 + j]);
@@ -38033,9 +38030,13 @@ function readSnpWeights(snpWeightText) {
         throw new Error(`Invalid weight for SNP ${snpIDs[i2]} PC${j + 1}: ${fields[5 + j]}`);
       }
     }
+    frequencies[i2] = parseFloat(fields[5 + numPCs]);
+    if (isNaN(frequencies[i2])) {
+      throw new Error(`Invalid frequency for SNP ${snpIDs[i2]}: ${fields[5 + numPCs]}`);
+    }
   }
   console.log(`Loaded ${numSNPs} SNPs with ${numPCs} PCs from weight file.`);
-  return { snpIDs, chromosomes, positions: positions2, alleles1, alleles2, pcWeights, numSNPs, numPCs };
+  return { snpIDs, chromosomes, positions: positions2, alleles1, alleles2, pcWeights, frequencies, numSNPs, numPCs };
 }
 
 // output/Web.Encoding.TextDecoder/foreign.js
@@ -38089,6 +38090,7 @@ function readAsArrayBuffer(blob3) {
 var toEventTarget = unsafeCoerce2;
 
 // output/App.Interface/index.js
+var show2 = /* @__PURE__ */ show(showInt);
 var discard3 = /* @__PURE__ */ discard(discardUnit);
 var bind12 = /* @__PURE__ */ bind(bindHalogenM);
 var get6 = /* @__PURE__ */ get(monadStateHalogenM);
@@ -38099,13 +38101,12 @@ var whole3 = /* @__PURE__ */ whole(typedArrayUint8);
 var fetch3 = /* @__PURE__ */ fetch2()()(/* @__PURE__ */ toCoreRequestOptionsRowRo()()(toCoreRequestOptionsHelpe));
 var bind22 = /* @__PURE__ */ bind(bindMaybe);
 var items2 = /* @__PURE__ */ items(unfoldableArray);
-var show2 = /* @__PURE__ */ show(showInt);
 var slot_3 = /* @__PURE__ */ slot_()({
   reflectSymbol: function() {
     return "refChart";
   }
 })(ordUnit);
-var PlinkFileSpec = /* @__PURE__ */ function() {
+var PlinkFileSpec = /* @__PURE__ */ (function() {
   function PlinkFileSpec2(value0, value1, value22) {
     this.value0 = value0;
     this.value1 = value1;
@@ -38120,15 +38121,15 @@ var PlinkFileSpec = /* @__PURE__ */ function() {
     };
   };
   return PlinkFileSpec2;
-}();
-var LoadRefData = /* @__PURE__ */ function() {
+})();
+var LoadRefData = /* @__PURE__ */ (function() {
   function LoadRefData2() {
   }
   ;
   LoadRefData2.value = new LoadRefData2();
   return LoadRefData2;
-}();
-var GotGenoDataFileEvent = /* @__PURE__ */ function() {
+})();
+var GotGenoDataFileEvent = /* @__PURE__ */ (function() {
   function GotGenoDataFileEvent2(value0) {
     this.value0 = value0;
   }
@@ -38137,21 +38138,46 @@ var GotGenoDataFileEvent = /* @__PURE__ */ function() {
     return new GotGenoDataFileEvent2(value0);
   };
   return GotGenoDataFileEvent2;
-}();
-var RunProjectionEvent = /* @__PURE__ */ function() {
+})();
+var RunProjectionEvent = /* @__PURE__ */ (function() {
   function RunProjectionEvent2() {
   }
   ;
   RunProjectionEvent2.value = new RunProjectionEvent2();
   return RunProjectionEvent2;
-}();
-var MakeChart = /* @__PURE__ */ function() {
+})();
+var MakeChart = /* @__PURE__ */ (function() {
   function MakeChart2() {
   }
   ;
   MakeChart2.value = new MakeChart2();
   return MakeChart2;
-}();
+})();
+var refDataBox = function(dictMonadAff) {
+  return function(st) {
+    return div2([classes(["box"])])([h22([classes(["title", "is-3"])])([text("Reference Data")]), (function() {
+      if (st.snpWeights instanceof Nothing) {
+        return div_([text("Loading weight file..."), br_]);
+      }
+      ;
+      if (st.snpWeights instanceof Just) {
+        return div_([text("Selected weight file with SNPs: " + (show2(st.snpWeights.value0.numSNPs) + (", PCs: " + show2(st.snpWeights.value0.numPCs)))), br_]);
+      }
+      ;
+      throw new Error("Failed pattern match at App.Interface (line 124, column 7 - line 126, column 134): " + [st.snpWeights.constructor.name]);
+    })(), (function() {
+      if (st.refData instanceof Nothing) {
+        return div_([text("Loading reference position file..."), br_]);
+      }
+      ;
+      if (st.refData instanceof Just) {
+        return div_([text("Reference Position Data loaded. Samples: " + (show2(st.refData.value0.numSamples) + (", PCs: " + show2(st.refData.value0.numPCs)))), br_]);
+      }
+      ;
+      throw new Error("Failed pattern match at App.Interface (line 127, column 7 - line 129, column 146): " + [st.refData.constructor.name]);
+    })()]);
+  };
+};
 var readFileAsArrayBufferAff = function(dictMonadAff) {
   var liftAff2 = liftAff(dictMonadAff);
   return function(file) {
@@ -38176,7 +38202,12 @@ var readFileAsArrayBufferAff = function(dictMonadAff) {
     }));
   };
 };
-var initialState2 = /* @__PURE__ */ function() {
+var projChartBox = function(dictMonadAff) {
+  return function(v) {
+    return div2([classes(["box"])])([h22([classes(["title", "is-3"])])([text("Projection Results Chart")]), text("Projection results chart will be displayed here after running the projection.")]);
+  };
+};
+var initialState2 = /* @__PURE__ */ (function() {
   return $$const({
     selectedPlinkFiles: Nothing.value,
     statusPlinkFilesLoading: false,
@@ -38187,32 +38218,107 @@ var initialState2 = /* @__PURE__ */ function() {
     projectionResults: Nothing.value,
     errorNote: Nothing.value
   });
-}();
-var fileInputForm = /* @__PURE__ */ function() {
+})();
+var fileInputForm = /* @__PURE__ */ (function() {
   return form_([label_([text("Select Plink genotype data files: ")]), input([type_(isPropInputType)(InputFile.value), multiple(true), onChange(GotGenoDataFileEvent.create)]), br_]);
-}();
+})();
+var userDataBox = function(dictMonadAff) {
+  return function(st) {
+    return div2([classes(["box"])])([h22([classes(["title", "is-3"])])([text("User Data")]), label_([text("Select Plink genotype data files: ")]), fileInputForm, (function() {
+      if (st.selectedPlinkFiles instanceof Nothing) {
+        return div_([text("No plink files selected"), br_]);
+      }
+      ;
+      if (st.selectedPlinkFiles instanceof Just) {
+        return div_([text("Selected fam file: " + name3(st.selectedPlinkFiles.value0.value0)), br_, text("Selected bim file: " + name3(st.selectedPlinkFiles.value0.value1)), br_, text("Selected bed file: " + name3(st.selectedPlinkFiles.value0.value2))]);
+      }
+      ;
+      throw new Error("Failed pattern match at App.Interface (line 138, column 13 - line 146, column 10): " + [st.selectedPlinkFiles.constructor.name]);
+    })(), (function() {
+      if (st.statusPlinkFilesLoading) {
+        return div_([text("Loading plink files..."), br_]);
+      }
+      ;
+      return text("");
+    })(), (function() {
+      if (st.plinkData instanceof Nothing) {
+        return text("");
+      }
+      ;
+      if (st.plinkData instanceof Just) {
+        return div_([text("Plink Data loaded. Individuals: " + (show2(st.plinkData.value0.numIndividuals) + (", SNPs: " + show2(st.plinkData.value0.numSNPs)))), br_]);
+      }
+      ;
+      throw new Error("Failed pattern match at App.Interface (line 151, column 7 - line 153, column 143): " + [st.plinkData.constructor.name]);
+    })(), (function() {
+      var $95 = isJust(st.snpWeights) && (isJust(st.plinkData) && (!st.projectionRunning && isNothing(st.projectionResults)));
+      if ($95) {
+        return button([onClick(function(v) {
+          return RunProjectionEvent.value;
+        })])([text("Run Projection")]);
+      }
+      ;
+      return text("");
+    })(), (function() {
+      if (st.projectionRunning) {
+        return div_([text("Projection running..."), br_]);
+      }
+      ;
+      return text("");
+    })(), (function() {
+      if (st.projectionResults instanceof Nothing) {
+        return text("");
+      }
+      ;
+      if (st.projectionResults instanceof Just) {
+        return div_([text("Projection done. Overlapping SNPs: " + (show2(st.projectionResults.value0.overlappingPositions) + (", PCs: " + (show2(st.projectionResults.value0.numPCs) + (", Individuals: " + show2(st.projectionResults.value0.numIndividuals)))))), br_]);
+      }
+      ;
+      throw new Error("Failed pattern match at App.Interface (line 162, column 7 - line 164, column 197): " + [st.projectionResults.constructor.name]);
+    })(), (function() {
+      if (st.errorNote instanceof Nothing) {
+        return text("");
+      }
+      ;
+      if (st.errorNote instanceof Just) {
+        return div_([text("Error: " + st.errorNote.value0), br_]);
+      }
+      ;
+      throw new Error("Failed pattern match at App.Interface (line 165, column 7 - line 167, column 73): " + [st.errorNote.constructor.name]);
+    })(), (function() {
+      var $101 = isJust(st.refData) || isJust(st.projectionResults);
+      if ($101) {
+        return button([onClick(function(v) {
+          return MakeChart.value;
+        })])([text("Make Chart")]);
+      }
+      ;
+      return text("");
+    })()]);
+  };
+};
 var checkAndRunProjection = function(dictMonadAff) {
   return bind12(get6)(function(st) {
-    return discard22(function() {
+    return discard22((function() {
       var v = new Tuple(st.snpWeights, st.plinkData);
       if (v.value0 instanceof Just && v.value1 instanceof Just) {
         var projResult = projectPlinkOnWeights(v.value1.value0)(v.value0.value0);
         return modify_4(function(v1) {
-          var $75 = {};
-          for (var $76 in v1) {
-            if ({}.hasOwnProperty.call(v1, $76)) {
-              $75[$76] = v1[$76];
+          var $103 = {};
+          for (var $104 in v1) {
+            if ({}.hasOwnProperty.call(v1, $104)) {
+              $103[$104] = v1[$104];
             }
             ;
           }
           ;
-          $75.projectionResults = new Just(projResult);
-          return $75;
+          $103.projectionResults = new Just(projResult);
+          return $103;
         });
       }
       ;
       return pure12(unit);
-    }())(function() {
+    })())(function() {
       return pure12(unit);
     });
   });
@@ -38238,70 +38344,70 @@ var handleAction2 = function(dictMonadAff) {
   return function(v) {
     if (v instanceof LoadRefData) {
       return bind12(liftAff2(fetch3("./assets/weights_joined.tsv")({})))(function(f1) {
-        return discard22(function() {
+        return discard22((function() {
           if (f1.ok) {
             return bind12(liftAff2(f1.text))(function(content3) {
               var snpWeightData = readSnpWeights(content3);
               return modify_4(function(v1) {
-                var $84 = {};
-                for (var $85 in v1) {
-                  if ({}.hasOwnProperty.call(v1, $85)) {
-                    $84[$85] = v1[$85];
+                var $112 = {};
+                for (var $113 in v1) {
+                  if ({}.hasOwnProperty.call(v1, $113)) {
+                    $112[$113] = v1[$113];
                   }
                   ;
                 }
                 ;
-                $84.snpWeights = new Just(snpWeightData);
-                return $84;
+                $112.snpWeights = new Just(snpWeightData);
+                return $112;
               });
             });
           }
           ;
           return modify_4(function(v1) {
-            var $87 = {};
-            for (var $88 in v1) {
-              if ({}.hasOwnProperty.call(v1, $88)) {
-                $87[$88] = v1[$88];
+            var $115 = {};
+            for (var $116 in v1) {
+              if ({}.hasOwnProperty.call(v1, $116)) {
+                $115[$116] = v1[$116];
               }
               ;
             }
             ;
-            $87.errorNote = new Just("Failed to load weight data");
-            $87.snpWeights = Nothing.value;
-            return $87;
+            $115.errorNote = new Just("Failed to load weight data");
+            $115.snpWeights = Nothing.value;
+            return $115;
           });
-        }())(function() {
+        })())(function() {
           return bind12(liftAff2(fetch3("./assets/reference_positions.tsv")({})))(function(f2) {
             if (f2.ok) {
               return bind12(liftAff2(f2.text))(function(content3) {
                 var refData = readRefPosData(content3);
                 return modify_4(function(v1) {
-                  var $91 = {};
-                  for (var $92 in v1) {
-                    if ({}.hasOwnProperty.call(v1, $92)) {
-                      $91[$92] = v1[$92];
+                  var $119 = {};
+                  for (var $120 in v1) {
+                    if ({}.hasOwnProperty.call(v1, $120)) {
+                      $119[$120] = v1[$120];
                     }
                     ;
                   }
                   ;
-                  $91.refData = new Just(refData);
-                  return $91;
+                  $119.refData = new Just(refData);
+                  return $119;
                 });
               });
             }
             ;
             return modify_4(function(v1) {
-              var $94 = {};
-              for (var $95 in v1) {
-                if ({}.hasOwnProperty.call(v1, $95)) {
-                  $94[$95] = v1[$95];
+              var $122 = {};
+              for (var $123 in v1) {
+                if ({}.hasOwnProperty.call(v1, $123)) {
+                  $122[$123] = v1[$123];
                 }
                 ;
               }
               ;
-              $94.errorNote = new Just("Failed to load reference data");
-              $94.refData = Nothing.value;
-              return $94;
+              $122.errorNote = new Just("Failed to load reference data");
+              $122.refData = Nothing.value;
+              return $122;
             });
           });
         });
@@ -38310,7 +38416,7 @@ var handleAction2 = function(dictMonadAff) {
     ;
     if (v instanceof GotGenoDataFileEvent) {
       var mInputElem = bind22(target(v.value0))(fromEventTarget);
-      return discard22(function() {
+      return discard22((function() {
         if (mInputElem instanceof Nothing) {
           return pure12(unit);
         }
@@ -38328,17 +38434,17 @@ var handleAction2 = function(dictMonadAff) {
               })(files2);
               if (v1.length === 0) {
                 return modify_4(function(v22) {
-                  var $100 = {};
-                  for (var $101 in v22) {
-                    if ({}.hasOwnProperty.call(v22, $101)) {
-                      $100[$101] = v22[$101];
+                  var $128 = {};
+                  for (var $129 in v22) {
+                    if ({}.hasOwnProperty.call(v22, $129)) {
+                      $128[$129] = v22[$129];
                     }
                     ;
                   }
                   ;
-                  $100.errorNote = new Just("No .fam file selected");
-                  $100.selectedPlinkFiles = Nothing.value;
-                  return $100;
+                  $128.errorNote = new Just("No .fam file selected");
+                  $128.selectedPlinkFiles = Nothing.value;
+                  return $128;
                 });
               }
               ;
@@ -38348,17 +38454,17 @@ var handleAction2 = function(dictMonadAff) {
                 })(files2);
                 if (v2.length === 0) {
                   return modify_4(function(v32) {
-                    var $104 = {};
-                    for (var $105 in v32) {
-                      if ({}.hasOwnProperty.call(v32, $105)) {
-                        $104[$105] = v32[$105];
+                    var $132 = {};
+                    for (var $133 in v32) {
+                      if ({}.hasOwnProperty.call(v32, $133)) {
+                        $132[$133] = v32[$133];
                       }
                       ;
                     }
                     ;
-                    $104.errorNote = new Just("No .bim file selected");
-                    $104.selectedPlinkFiles = Nothing.value;
-                    return $104;
+                    $132.errorNote = new Just("No .bim file selected");
+                    $132.selectedPlinkFiles = Nothing.value;
+                    return $132;
                   });
                 }
                 ;
@@ -38368,45 +38474,45 @@ var handleAction2 = function(dictMonadAff) {
                   })(files2);
                   if (v3.length === 0) {
                     return modify_4(function(v4) {
-                      var $108 = {};
-                      for (var $109 in v4) {
-                        if ({}.hasOwnProperty.call(v4, $109)) {
-                          $108[$109] = v4[$109];
+                      var $136 = {};
+                      for (var $137 in v4) {
+                        if ({}.hasOwnProperty.call(v4, $137)) {
+                          $136[$137] = v4[$137];
                         }
                         ;
                       }
                       ;
-                      $108.errorNote = new Just("No .bed file selected");
-                      $108.selectedPlinkFiles = Nothing.value;
-                      return $108;
+                      $136.errorNote = new Just("No .bed file selected");
+                      $136.selectedPlinkFiles = Nothing.value;
+                      return $136;
                     });
                   }
                   ;
                   if (v3.length === 1) {
                     return discard22(modify_4(function(v4) {
-                      var $111 = {};
-                      for (var $112 in v4) {
-                        if ({}.hasOwnProperty.call(v4, $112)) {
-                          $111[$112] = v4[$112];
+                      var $139 = {};
+                      for (var $140 in v4) {
+                        if ({}.hasOwnProperty.call(v4, $140)) {
+                          $139[$140] = v4[$140];
                         }
                         ;
                       }
                       ;
-                      $111.selectedPlinkFiles = new Just(new PlinkFileSpec(v1[0], v2[0], v3[0]));
-                      $111.errorNote = Nothing.value;
-                      return $111;
+                      $139.selectedPlinkFiles = new Just(new PlinkFileSpec(v1[0], v2[0], v3[0]));
+                      $139.errorNote = Nothing.value;
+                      return $139;
                     }))(function() {
                       return discard22(modify_4(function(v4) {
-                        var $114 = {};
-                        for (var $115 in v4) {
-                          if ({}.hasOwnProperty.call(v4, $115)) {
-                            $114[$115] = v4[$115];
+                        var $142 = {};
+                        for (var $143 in v4) {
+                          if ({}.hasOwnProperty.call(v4, $143)) {
+                            $142[$143] = v4[$143];
                           }
                           ;
                         }
                         ;
-                        $114.statusPlinkFilesLoading = true;
-                        return $114;
+                        $142.statusPlinkFilesLoading = true;
+                        return $142;
                       }))(function() {
                         return bind12(bind12(readFileAsArrayBufferAff1(v1[0]))(arrayBufferToString1))(function(famContent) {
                           return bind12(bind12(readFileAsArrayBufferAff1(v2[0]))(arrayBufferToString1))(function(bimContent) {
@@ -38414,21 +38520,21 @@ var handleAction2 = function(dictMonadAff) {
                               var famResults = readFamData(famContent);
                               var bimResults = readBimData(bimContent);
                               return bind12(liftEffect9(checkBedFileMagicBytes(bedContent)))(function(bedCheck) {
-                                var $117 = !bedCheck;
-                                if ($117) {
+                                var $145 = !bedCheck;
+                                if ($145) {
                                   return modify_4(function(v4) {
-                                    var $118 = {};
-                                    for (var $119 in v4) {
-                                      if ({}.hasOwnProperty.call(v4, $119)) {
-                                        $118[$119] = v4[$119];
+                                    var $146 = {};
+                                    for (var $147 in v4) {
+                                      if ({}.hasOwnProperty.call(v4, $147)) {
+                                        $146[$147] = v4[$147];
                                       }
                                       ;
                                     }
                                     ;
-                                    $118.errorNote = new Just("Invalid .bed file (incorrect magic numbers in the first three bytes)");
-                                    $118.selectedPlinkFiles = Nothing.value;
-                                    $118.statusPlinkFilesLoading = false;
-                                    return $118;
+                                    $146.errorNote = new Just("Invalid .bed file (incorrect magic numbers in the first three bytes)");
+                                    $146.selectedPlinkFiles = Nothing.value;
+                                    $146.statusPlinkFilesLoading = false;
+                                    return $146;
                                   });
                                 }
                                 ;
@@ -38440,17 +38546,17 @@ var handleAction2 = function(dictMonadAff) {
                                   numSNPs: length(bimResults.snpIDs)
                                 };
                                 return modify_4(function(v4) {
-                                  var $121 = {};
-                                  for (var $122 in v4) {
-                                    if ({}.hasOwnProperty.call(v4, $122)) {
-                                      $121[$122] = v4[$122];
+                                  var $149 = {};
+                                  for (var $150 in v4) {
+                                    if ({}.hasOwnProperty.call(v4, $150)) {
+                                      $149[$150] = v4[$150];
                                     }
                                     ;
                                   }
                                   ;
-                                  $121.plinkData = new Just(plinkData);
-                                  $121.statusPlinkFilesLoading = false;
-                                  return $121;
+                                  $149.plinkData = new Just(plinkData);
+                                  $149.statusPlinkFilesLoading = false;
+                                  return $149;
                                 });
                               });
                             });
@@ -38461,86 +38567,86 @@ var handleAction2 = function(dictMonadAff) {
                   }
                   ;
                   return modify_4(function(v4) {
-                    var $125 = {};
-                    for (var $126 in v4) {
-                      if ({}.hasOwnProperty.call(v4, $126)) {
-                        $125[$126] = v4[$126];
+                    var $153 = {};
+                    for (var $154 in v4) {
+                      if ({}.hasOwnProperty.call(v4, $154)) {
+                        $153[$154] = v4[$154];
                       }
                       ;
                     }
                     ;
-                    $125.errorNote = new Just("Multiple .bed files selected");
-                    $125.selectedPlinkFiles = Nothing.value;
-                    return $125;
+                    $153.errorNote = new Just("Multiple .bed files selected");
+                    $153.selectedPlinkFiles = Nothing.value;
+                    return $153;
                   });
                 }
                 ;
                 return modify_4(function(v32) {
-                  var $129 = {};
-                  for (var $130 in v32) {
-                    if ({}.hasOwnProperty.call(v32, $130)) {
-                      $129[$130] = v32[$130];
+                  var $157 = {};
+                  for (var $158 in v32) {
+                    if ({}.hasOwnProperty.call(v32, $158)) {
+                      $157[$158] = v32[$158];
                     }
                     ;
                   }
                   ;
-                  $129.errorNote = new Just("Multiple .bim files selected");
-                  $129.selectedPlinkFiles = Nothing.value;
-                  return $129;
+                  $157.errorNote = new Just("Multiple .bim files selected");
+                  $157.selectedPlinkFiles = Nothing.value;
+                  return $157;
                 });
               }
               ;
               return modify_4(function(v22) {
-                var $133 = {};
-                for (var $134 in v22) {
-                  if ({}.hasOwnProperty.call(v22, $134)) {
-                    $133[$134] = v22[$134];
+                var $161 = {};
+                for (var $162 in v22) {
+                  if ({}.hasOwnProperty.call(v22, $162)) {
+                    $161[$162] = v22[$162];
                   }
                   ;
                 }
                 ;
-                $133.errorNote = new Just("Multiple .fam files selected");
-                $133.selectedPlinkFiles = Nothing.value;
-                return $133;
+                $161.errorNote = new Just("Multiple .fam files selected");
+                $161.selectedPlinkFiles = Nothing.value;
+                return $161;
               });
             }
             ;
-            throw new Error("Failed pattern match at App.Interface (line 204, column 7 - line 231, column 111): " + [mFileList.constructor.name]);
+            throw new Error("Failed pattern match at App.Interface (line 235, column 7 - line 262, column 111): " + [mFileList.constructor.name]);
           });
         }
         ;
-        throw new Error("Failed pattern match at App.Interface (line 200, column 3 - line 231, column 111): " + [mInputElem.constructor.name]);
-      }())(function() {
+        throw new Error("Failed pattern match at App.Interface (line 231, column 3 - line 262, column 111): " + [mInputElem.constructor.name]);
+      })())(function() {
         return pure12(unit);
       });
     }
     ;
     if (v instanceof RunProjectionEvent) {
       return discard22(modify_4(function(v1) {
-        var $139 = {};
-        for (var $140 in v1) {
-          if ({}.hasOwnProperty.call(v1, $140)) {
-            $139[$140] = v1[$140];
+        var $167 = {};
+        for (var $168 in v1) {
+          if ({}.hasOwnProperty.call(v1, $168)) {
+            $167[$168] = v1[$168];
           }
           ;
         }
         ;
-        $139.projectionRunning = true;
-        $139.projectionResults = Nothing.value;
-        return $139;
+        $167.projectionRunning = true;
+        $167.projectionResults = Nothing.value;
+        return $167;
       }))(function() {
         return discard22(checkAndRunProjection1)(function() {
           return discard22(modify_4(function(v1) {
-            var $142 = {};
-            for (var $143 in v1) {
-              if ({}.hasOwnProperty.call(v1, $143)) {
-                $142[$143] = v1[$143];
+            var $170 = {};
+            for (var $171 in v1) {
+              if ({}.hasOwnProperty.call(v1, $171)) {
+                $170[$171] = v1[$171];
               }
               ;
             }
             ;
-            $142.projectionRunning = false;
-            return $142;
+            $170.projectionRunning = false;
+            return $170;
           }))(function() {
             return pure12(unit);
           });
@@ -38558,110 +38664,20 @@ var handleAction2 = function(dictMonadAff) {
           return liftEffect9(drawChart(st.refData.value0)(0)(1));
         }
         ;
-        throw new Error("Failed pattern match at App.Interface (line 242, column 3 - line 245, column 36): " + [st.refData.constructor.name]);
+        throw new Error("Failed pattern match at App.Interface (line 273, column 3 - line 276, column 36): " + [st.refData.constructor.name]);
       });
     }
     ;
-    throw new Error("Failed pattern match at App.Interface (line 179, column 1 - line 179, column 107): " + [v.constructor.name]);
+    throw new Error("Failed pattern match at App.Interface (line 210, column 1 - line 210, column 107): " + [v.constructor.name]);
   };
 };
-var _refChart = /* @__PURE__ */ function() {
+var _refChart = /* @__PURE__ */ (function() {
   return $$Proxy.value;
-}();
-var render3 = function(dictMonadAff) {
+})();
+var refChartBox = function(dictMonadAff) {
   var component1 = component2(dictMonadAff);
   return function(st) {
-    return section([classes(["section"])])([div2([classes(["container"])])([h12([classes(["title"])])([text("PC Projection Tool")]), h3_([text("Upload files")]), fileInputForm, function() {
-      if (st.selectedPlinkFiles instanceof Nothing) {
-        return div_([text("No plink files selected"), br_]);
-      }
-      ;
-      if (st.selectedPlinkFiles instanceof Just) {
-        return div_([text("Selected fam file: " + name3(st.selectedPlinkFiles.value0.value0)), br_, text("Selected bim file: " + name3(st.selectedPlinkFiles.value0.value1)), br_, text("Selected bed file: " + name3(st.selectedPlinkFiles.value0.value2))]);
-      }
-      ;
-      throw new Error("Failed pattern match at App.Interface (line 113, column 9 - line 121, column 14): " + [st.selectedPlinkFiles.constructor.name]);
-    }(), function() {
-      if (st.snpWeights instanceof Nothing) {
-        return div_([text("Loading weight file..."), br_]);
-      }
-      ;
-      if (st.snpWeights instanceof Just) {
-        return div_([text("Selected weight file with SNPs: " + (show2(st.snpWeights.value0.numSNPs) + (", PCs: " + show2(st.snpWeights.value0.numPCs)))), br_]);
-      }
-      ;
-      throw new Error("Failed pattern match at App.Interface (line 122, column 9 - line 124, column 136): " + [st.snpWeights.constructor.name]);
-    }(), function() {
-      if (st.refData instanceof Nothing) {
-        return div_([text("Loading reference position file..."), br_]);
-      }
-      ;
-      if (st.refData instanceof Just) {
-        return div_([text("Reference Position Data loaded. Samples: " + (show2(st.refData.value0.numSamples) + (", PCs: " + show2(st.refData.value0.numPCs)))), br_]);
-      }
-      ;
-      throw new Error("Failed pattern match at App.Interface (line 125, column 9 - line 127, column 148): " + [st.refData.constructor.name]);
-    }(), function() {
-      if (st.statusPlinkFilesLoading) {
-        return div_([text("Loading plink files..."), br_]);
-      }
-      ;
-      return text("");
-    }(), function() {
-      if (st.plinkData instanceof Nothing) {
-        return text("");
-      }
-      ;
-      if (st.plinkData instanceof Just) {
-        return div_([text("Plink Data loaded. Individuals: " + (show2(st.plinkData.value0.numIndividuals) + (", SNPs: " + show2(st.plinkData.value0.numSNPs)))), br_]);
-      }
-      ;
-      throw new Error("Failed pattern match at App.Interface (line 132, column 9 - line 134, column 145): " + [st.plinkData.constructor.name]);
-    }(), function() {
-      var $159 = isJust(st.snpWeights) && (isJust(st.plinkData) && (!st.projectionRunning && isNothing(st.projectionResults)));
-      if ($159) {
-        return button([onClick(function(v) {
-          return RunProjectionEvent.value;
-        })])([text("Run Projection")]);
-      }
-      ;
-      return text("");
-    }(), function() {
-      if (st.projectionRunning) {
-        return div_([text("Projection running..."), br_]);
-      }
-      ;
-      return text("");
-    }(), function() {
-      if (st.projectionResults instanceof Nothing) {
-        return text("");
-      }
-      ;
-      if (st.projectionResults instanceof Just) {
-        return div_([text("Projection done. Overlapping SNPs: " + (show2(st.projectionResults.value0.overlappingPositions) + (", PCs: " + (show2(st.projectionResults.value0.numPCs) + (", Individuals: " + show2(st.projectionResults.value0.numIndividuals)))))), br_]);
-      }
-      ;
-      throw new Error("Failed pattern match at App.Interface (line 143, column 9 - line 145, column 199): " + [st.projectionResults.constructor.name]);
-    }(), function() {
-      if (st.errorNote instanceof Nothing) {
-        return text("");
-      }
-      ;
-      if (st.errorNote instanceof Just) {
-        return div_([text("Error: " + st.errorNote.value0), br_]);
-      }
-      ;
-      throw new Error("Failed pattern match at App.Interface (line 146, column 9 - line 148, column 75): " + [st.errorNote.constructor.name]);
-    }(), function() {
-      var $165 = isJust(st.refData) || isJust(st.projectionResults);
-      if ($165) {
-        return button([onClick(function(v) {
-          return MakeChart.value;
-        })])([text("Make Chart")]);
-      }
-      ;
-      return text("");
-    }(), function() {
+    return div2([classes(["box"])])([h22([classes(["title", "is-3"])])([text("Reference Data Chart")]), (function() {
       if (st.refData instanceof Nothing) {
         return text("");
       }
@@ -38672,8 +38688,17 @@ var render3 = function(dictMonadAff) {
         })]);
       }
       ;
-      throw new Error("Failed pattern match at App.Interface (line 153, column 9 - line 155, column 96): " + [st.refData.constructor.name]);
-    }()])]);
+      throw new Error("Failed pattern match at App.Interface (line 178, column 7 - line 180, column 94): " + [st.refData.constructor.name]);
+    })()]);
+  };
+};
+var render3 = function(dictMonadAff) {
+  var refDataBox1 = refDataBox(dictMonadAff);
+  var userDataBox1 = userDataBox(dictMonadAff);
+  var refChartBox1 = refChartBox(dictMonadAff);
+  var projChartBox1 = projChartBox(dictMonadAff);
+  return function(st) {
+    return section([classes(["section"])])([h12([classes(["title", "is-1"])])([text("PC Projection Tool")]), div2([classes(["columns"])])([div2([classes(["column"])])([refDataBox1(st)]), div2([classes(["column"])])([userDataBox1(st)])]), div2([classes(["columns"])])([div2([classes(["column"])])([refChartBox1(st)]), div2([classes(["column"])])([projChartBox1(st)])])]);
   };
 };
 var component3 = function(dictMonadAff) {
@@ -38701,27 +38726,27 @@ function _readyState(doc) {
 }
 
 // output/Web.HTML.HTMLDocument.ReadyState/index.js
-var Loading = /* @__PURE__ */ function() {
+var Loading = /* @__PURE__ */ (function() {
   function Loading2() {
   }
   ;
   Loading2.value = new Loading2();
   return Loading2;
-}();
-var Interactive = /* @__PURE__ */ function() {
+})();
+var Interactive = /* @__PURE__ */ (function() {
   function Interactive2() {
   }
   ;
   Interactive2.value = new Interactive2();
   return Interactive2;
-}();
-var Complete = /* @__PURE__ */ function() {
+})();
+var Complete = /* @__PURE__ */ (function() {
   function Complete2() {
   }
   ;
   Complete2.value = new Complete2();
   return Complete2;
-}();
+})();
 var parse3 = function(v) {
   if (v === "loading") {
     return new Just(Loading.value);
@@ -38743,12 +38768,12 @@ var map28 = /* @__PURE__ */ map(functorEffect);
 var toParentNode = unsafeCoerce2;
 var toDocument = unsafeCoerce2;
 var readyState = function(doc) {
-  return map28(function() {
+  return map28((function() {
     var $4 = fromMaybe(Loading.value);
     return function($5) {
       return $4(parse3($5));
     };
-  }())(function() {
+  })())(function() {
     return _readyState(doc);
   });
 };
@@ -38775,12 +38800,12 @@ var map29 = /* @__PURE__ */ map(functorEffect);
 var discard4 = /* @__PURE__ */ discard(discardUnit);
 var throwError2 = /* @__PURE__ */ throwError(monadThrowAff);
 var selectElement = function(query2) {
-  return bind8(liftEffect5(bindFlipped6(composeKleisliFlipped2(function() {
+  return bind8(liftEffect5(bindFlipped6(composeKleisliFlipped2((function() {
     var $16 = querySelector(query2);
     return function($17) {
       return $16(toParentNode($17));
     };
-  }())(document2))(windowImpl)))(function(mel) {
+  })())(document2))(windowImpl)))(function(mel) {
     return pure8(bindFlipped1(fromElement)(mel));
   });
 };
@@ -39084,12 +39109,12 @@ var evalM = function(render4) {
           }
           ;
           if (v1 instanceof Par) {
-            return sequential2(retractFreeAp2(hoistFreeAp(function() {
+            return sequential2(retractFreeAp2(hoistFreeAp((function() {
               var $119 = evalM(render4)(ref3);
               return function($120) {
                 return parallel3($119($120));
               };
-            }())(v1.value0)));
+            })())(v1.value0)));
           }
           ;
           if (v1 instanceof Fork) {
@@ -39204,34 +39229,34 @@ var tailRecM3 = /* @__PURE__ */ tailRecM(monadRecEffect);
 var voidLeft3 = /* @__PURE__ */ voidLeft(functorEffect);
 var bind14 = /* @__PURE__ */ bind(bindAff);
 var liftEffect1 = /* @__PURE__ */ liftEffect(monadEffectEffect);
-var newLifecycleHandlers = /* @__PURE__ */ function() {
+var newLifecycleHandlers = /* @__PURE__ */ (function() {
   return $$new({
     initializers: Nil.value,
     finalizers: Nil.value
   });
-}();
+})();
 var handlePending = function(ref3) {
   return function __do2() {
     var queue = read(ref3)();
     write(Nothing.value)(ref3)();
-    return for_2(queue)(function() {
+    return for_2(queue)((function() {
       var $59 = traverse_5(fork4);
       return function($60) {
         return handleAff($59(reverse2($60)));
       };
-    }())();
+    })())();
   };
 };
 var cleanupSubscriptionsAndForks = function(v) {
   return function __do2() {
     bindFlipped8(traverse_23(traverse_33(unsubscribe)))(read(v.subscriptions))();
     write(Nothing.value)(v.subscriptions)();
-    bindFlipped8(traverse_33(function() {
+    bindFlipped8(traverse_33((function() {
       var $61 = killFiber(error("finalized"));
       return function($62) {
         return handleAff($61($62));
       };
-    }()))(read(v.forks))();
+    })()))(read(v.forks))();
     return write(empty3)(v.forks)();
   };
 };
@@ -39270,14 +39295,14 @@ var runUI = function(renderSpec2) {
                   initializers: Nil.value,
                   finalizers: pre2.finalizers
                 })(lchs)();
-                bindFlipped8(unDriverStateX(function() {
+                bindFlipped8(unDriverStateX((function() {
                   var $63 = render4(lchs);
                   return function($64) {
-                    return $63(function(v) {
+                    return $63((function(v) {
                       return v.selfRef;
-                    }($64));
+                    })($64));
                   };
-                }()))(read($$var2))();
+                })()))(read($$var2))();
                 bindFlipped8(squashChildInitializers(lchs)(pre2.initializers))(read($$var2))();
                 return $$var2;
               };
@@ -39292,18 +39317,18 @@ var runUI = function(renderSpec2) {
               return unComponentSlot(function(slot) {
                 return function __do2() {
                   var childrenIn = map31(slot.pop)(read(childrenInRef))();
-                  var $$var2 = function() {
+                  var $$var2 = (function() {
                     if (childrenIn instanceof Just) {
                       write(childrenIn.value0.value1)(childrenInRef)();
                       var dsx = read(childrenIn.value0.value0)();
                       unDriverStateX(function(st) {
                         return function __do3() {
-                          flip(write)(st.handlerRef)(function() {
+                          flip(write)(st.handlerRef)((function() {
                             var $65 = maybe(pure14(unit))(handler3);
                             return function($66) {
                               return $65(slot.output($66));
                             };
-                          }())();
+                          })())();
                           return handleAff(evalM(render4)(st.selfRef)(st["component"]["eval"](new Receive(slot.input, unit))))();
                         };
                       })(dsx)();
@@ -39311,16 +39336,16 @@ var runUI = function(renderSpec2) {
                     }
                     ;
                     if (childrenIn instanceof Nothing) {
-                      return runComponent(lchs)(function() {
+                      return runComponent(lchs)((function() {
                         var $67 = maybe(pure14(unit))(handler3);
                         return function($68) {
                           return $67(slot.output($68));
                         };
-                      }())(slot.input)(slot.component)();
+                      })())(slot.input)(slot.component)();
                     }
                     ;
                     throw new Error("Failed pattern match at Halogen.Aff.Driver (line 213, column 14 - line 222, column 98): " + [childrenIn.constructor.name]);
-                  }();
+                  })();
                   var isDuplicate = map31(function($69) {
                     return isJust(slot.get($69));
                   })(read(childrenOutRef))();
@@ -39351,19 +39376,19 @@ var runUI = function(renderSpec2) {
             when2(shouldProcessHandlers)(write(new Just(Nil.value))(v.pendingHandlers))();
             write(empty4)(v.childrenOut)();
             write(v.children)(v.childrenIn)();
-            var handler3 = function() {
+            var handler3 = (function() {
               var $70 = queueOrRun(v.pendingHandlers);
               var $71 = evalF(render4)(v.selfRef);
               return function($72) {
                 return $70($$void9($71($72)));
               };
-            }();
-            var childHandler = function() {
+            })();
+            var childHandler = (function() {
               var $73 = queueOrRun(v.pendingQueries);
               return function($74) {
                 return $73(handler3(Action.create($74)));
               };
-            }();
+            })();
             var rendering = renderSpec2.render(function($75) {
               return handleAff(handler3($75));
             })(renderChild(lchs)(childHandler)(v.childrenIn)(v.childrenOut))(v.component.render(v.state))(v.rendering)();
@@ -39400,12 +39425,12 @@ var runUI = function(renderSpec2) {
               return function __do3() {
                 var handlers = read(v.pendingHandlers)();
                 write(new Just(Nil.value))(v.pendingHandlers)();
-                traverse_23(function() {
+                traverse_23((function() {
                   var $76 = traverse_5(fork4);
                   return function($77) {
                     return handleAff($76(reverse2($77)));
                   };
-                }())(handlers)();
+                })())(handlers)();
                 var mmore = read(v.pendingHandlers)();
                 var $52 = maybe(false)($$null2)(mmore);
                 if ($52) {
@@ -39476,12 +39501,12 @@ var runUI = function(renderSpec2) {
         return bind14(liftEffect7($$new(false)))(function(disposed) {
           return handleLifecycle(lchs)(function __do2() {
             var sio = create();
-            var dsx = bindFlipped8(read)(runComponent(lchs)(function() {
+            var dsx = bindFlipped8(read)(runComponent(lchs)((function() {
               var $78 = notify(sio.listener);
               return function($79) {
                 return liftEffect7($78($79));
               };
-            }())(i2)(component5))();
+            })())(i2)(component5))();
             return unDriverStateX(function(st) {
               return pure10({
                 query: evalDriver(disposed)(st.selfRef),
@@ -39541,18 +39566,18 @@ function removeChild2(node) {
 
 // output/Web.DOM.Node/index.js
 var map32 = /* @__PURE__ */ map(functorEffect);
-var parentNode2 = /* @__PURE__ */ function() {
+var parentNode2 = /* @__PURE__ */ (function() {
   var $6 = map32(toMaybe);
   return function($7) {
     return $6(_parentNode($7));
   };
-}();
-var nextSibling = /* @__PURE__ */ function() {
+})();
+var nextSibling = /* @__PURE__ */ (function() {
   var $15 = map32(toMaybe);
   return function($16) {
     return $15(_nextSibling($16));
   };
-}();
+})();
 
 // output/Halogen.VDom.Driver/index.js
 var $runtime_lazy8 = function(name16, moduleName, init4) {
@@ -39750,13 +39775,6 @@ export {
    *)
 
 chart.js/dist/chunks/helpers.dataset.js:
-  (*!
-   * Chart.js v4.5.1
-   * https://www.chartjs.org
-   * (c) 2025 Chart.js Contributors
-   * Released under the MIT License
-   *)
-
 chart.js/dist/chart.js:
   (*!
    * Chart.js v4.5.1

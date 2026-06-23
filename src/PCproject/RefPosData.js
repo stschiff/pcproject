@@ -3,9 +3,9 @@ export function readRefPosData(content) {
     const numSamples = lines.length;
     let samples = new Array(numSamples);
     const numFields = lines[0].trim().split(/\s+/).length;
-    const numPCs = numFields - 2;
+    const numPCs = numFields - 3;
     if (numPCs < 1) {
-        throw new Error(`Expected at least 3 columns per line (sampleID, PCs and a popname), but found ${numFields} in the first line.`);
+        throw new Error(`Expected at least 4 columns per line (sampleID, PCs, popName and popGroup), but found ${numFields} in the first line.`);
     }
     for (let i = 0; i < numSamples; i++) {
         const fields = lines[i].trim().split(/\s+/);
@@ -14,7 +14,8 @@ export function readRefPosData(content) {
         }
         samples[i] = {
             sampleID: fields[0],
-            popName: fields[numFields - 1],
+            popName: fields[numFields - 2],
+            popGroup: fields[numFields - 1],
             pcValues: new Array(numPCs)
         };
         for (let j = 0; j < numPCs; j++) {
