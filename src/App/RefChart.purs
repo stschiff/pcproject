@@ -16,7 +16,7 @@ import Halogen.HTML as HH
 import PCproject.RefPosData (RefPosData)
 import Type.Proxy (Proxy(..))
 
-foreign import tooltipLabelImpl :: EffectFn1 TooltipItem String
+foreign import tooltipLabelImpl :: Array (Array String) -> EffectFn1 TooltipItem String
 
 type State =
     { refPosData :: RefPosData
@@ -50,6 +50,7 @@ render st =
             let groupName = (head group).popGroup
                 dataPoints = mapMaybe (\sample -> XY <$> (sample.pcValues !! (st.xPc - 1)) <*> (sample.pcValues !! (st.yPc - 1))) group
             pure $ defaultDataset { label = groupName, data = dataPoints }
+             nn
         chartInput =
             { config : defaultConfig
                 { chartType = Scatter
@@ -61,7 +62,7 @@ render st =
                 }
             , callbacks : defaultCallbacks
                 { tooltipCallbacks = Just (defaultTooltipCallbacks
-                    { label = Just tooltipLabelImpl
+                    { label = Just (tooltipLabelImpl 
                     })
                 }
             }
