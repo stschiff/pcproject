@@ -2,17 +2,21 @@ module App.RefChart where
 
 import Prelude
 
-import Chartjs (defaultConfig, defaultDataset, simpleInput, defaultOptions)
-import Chartjs.Types (defaultInteractionConfig)
+import Chartjs (defaultConfig, defaultDataset, defaultOptions)
+import Chartjs.Callbacks (defaultTooltipCallbacks, defaultCallbacks, TooltipItem)
+import Chartjs.Types (defaultInteractionConfig, InteractionMode(..), DataPoint(..), ChartType(..))
 import Chartjs.Halogen as HC
-import Chartjs.Types (DataPoint(..), ChartType(..))
 import Data.Array ((!!), groupAllBy)
 import Data.Array.NonEmpty (head, mapMaybe)
+import Data.Maybe (Maybe(..))
 import Effect.Aff.Class (class MonadAff)
+import Effect.Uncurried (EffectFn1)
 import Halogen as H
 import Halogen.HTML as HH
 import PCproject.RefPosData (RefPosData)
 import Type.Proxy (Proxy(..))
+
+foreign import tooltipLabelImpl :: EffectFn1 TooltipItem String
 
 type State =
     { refPosData :: RefPosData
@@ -46,11 +50,19 @@ render st =
             let groupName = (head group).popGroup
                 dataPoints = mapMaybe (\sample -> XY <$> (sample.pcValues !! (st.xPc - 1)) <*> (sample.pcValues !! (st.yPc - 1))) group
             pure $ defaultDataset { label = groupName, data = dataPoints }
-        chartInput = simpleInput $ defaultConfig
-            { chartType = Scatter
-            , datasets = datasets
-            , options = defaultOptions {
-                hover = defaultInteractionConfig { mode = "nearest" }
-            }
+        chartInput =
+            { config : defaultConfig
+                { chartType = Scatter
+                , datasets = datasets
+                , options =
+                    defaultOptions {
+                        interaction = Just ( defaultInteractionConfig { mode = Just IMNearest } )
+                    }
+                }
+            , callbacks : defaultCallbacks
+                { tooltipCallbacks = Just (defaultTooltipCallbacks
+                    { label = Just tooltipLabelImpl
+                    })
+                }
             }
     in  HH.div_ [ HH.slot_ _chart unit HC.component chartInput ]

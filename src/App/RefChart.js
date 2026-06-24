@@ -1,0 +1,1 @@
+export function tooltipLabelImpl(t) { return "Data Index: " + t.dataIndex; }

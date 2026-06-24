@@ -120,7 +120,7 @@ render st =
 refDataBox :: forall action slots m . (MonadAff m) => State -> H.ComponentHTML action slots m
 refDataBox st = 
   HH.div [ HP.classes [ HH.ClassName "box" ] ]
-    [ HH.h2 [ HP.classes [ HH.ClassName "title", HH.ClassName "is-3" ] ] [ HH.text "Reference Data" ]
+    [ HH.h2 [ HP.classes [ HH.ClassName "title", HH.ClassName "is-4" ] ] [ HH.text "Reference Data" ]
     , case st.snpWeights of
         Nothing -> HH.div_ [ HH.text "Loading weight file...", HH.br_ ]
         Just sw -> HH.div_ [ HH.text $ "Selected weight file with SNPs: " <> show sw.numSNPs <> ", PCs: " <> show sw.numPCs, HH.br_ ]
@@ -132,7 +132,7 @@ refDataBox st =
 userDataBox :: forall slots m . (MonadAff m) => State -> H.ComponentHTML Action slots m
 userDataBox st =
   HH.div [ HP.classes [ HH.ClassName "box" ] ]
-    [ HH.h2 [ HP.classes [ HH.ClassName "title", HH.ClassName "is-3" ] ] [ HH.text "User Data" ]
+    [ HH.h2 [ HP.classes [ HH.ClassName "title", HH.ClassName "is-4" ] ] [ HH.text "User Data" ]
     , HH.label_ [ HH.text "Select Plink genotype data files: " ]
     , fileInputForm
           , case st.selectedPlinkFiles of
@@ -174,7 +174,7 @@ userDataBox st =
 refChartBox :: forall action m . (MonadAff m) => State -> H.ComponentHTML action Slots m
 refChartBox st =
   HH.div [ HP.classes [ HH.ClassName "box" ] ]
-    [ HH.h2 [ HP.classes [ HH.ClassName "title", HH.ClassName "is-3" ] ] [ HH.text "Reference Data Chart" ]
+    [ HH.h2 [ HP.classes [ HH.ClassName "title", HH.ClassName "is-4" ] ] [ HH.text "Reference Data Chart" ]
     , case st.refData of
         Nothing -> HH.text ""
         Just rd -> HH.div_ [ HH.slot_ _refChart unit RefChart.component { refPosData:  rd } ]
@@ -183,7 +183,7 @@ refChartBox st =
 projChartBox :: forall action slots m . (MonadAff m) => State -> H.ComponentHTML action slots m
 projChartBox _ =
   HH.div [ HP.classes [ HH.ClassName "box" ] ]
-    [ HH.h2 [ HP.classes [ HH.ClassName "title", HH.ClassName "is-3" ] ] [ HH.text "Projection Results Chart" ]
+    [ HH.h2 [ HP.classes [ HH.ClassName "title", HH.ClassName "is-4" ] ] [ HH.text "Projection Results Chart" ]
     , HH.text "Projection results chart will be displayed here after running the projection."
     ]
 
