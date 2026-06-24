@@ -39,36 +39,6 @@ import Web.File.FileReader (fileReader, readAsArrayBuffer, result, toEventTarget
 import Web.HTML.Event.EventTypes (load, error) as ET
 import Web.HTML.HTMLInputElement (fromEventTarget, files)
 
--- Function to read file contents using FileReader API with makeAff
-readFileAsArrayBufferAff :: forall m. MonadAff m => File -> m ArrayBuffer
-readFileAsArrayBufferAff file = liftAff $ makeAff \callback -> do
-  reader <- fileReader
-  
-  -- Set up success handler
-  loadListener <- eventListener \_ -> do
-    foreignResult <- result reader
-    callback (Right $ unsafeFromForeign foreignResult)
-  
-  -- Set up error handler  
-  errorListener <- eventListener \_ -> do
-    callback (Left (error "FileReader error"))
-  
-  -- Add event listeners to the reader (converted to EventTarget)
-  let eventTarget = toEventTarget reader
-  addEventListener ET.load loadListener false eventTarget
-  addEventListener ET.error errorListener false eventTarget
-  
-  -- Start reading (convert File to Blob first)
-  readAsArrayBuffer (toBlob file) reader
-  
-  pure nonCanceler
-
-arrayBufferToString :: forall m. MonadEffect m => ArrayBuffer -> m String
-arrayBufferToString buffer = liftEffect $ do
-  decoder <- TextDecoder.new UtfLabel.utf8
-  arrayView <- whole buffer :: Effect (Uint8Array)
-  TextDecoder.decode arrayView decoder
-
 data PlinkFileSpec = PlinkFileSpec File File File
 
 type State =
@@ -120,35 +90,14 @@ render st =
 refDataBox :: forall action slots m . (MonadAff m) => State -> H.ComponentHTML action slots m
 refDataBox st = 
   HH.div [ HP.classes [ HH.ClassName "box" ] ]
-    [ HH.h2 [ HP.classes [ HH.ClassName "title", HH.ClassName "is-4" ] ] [ HH.text "Reference Data" ]
+    [ HH.h2 [ HP.classes [ HH.ClassName "title", HH.ClassName "is-4" ] ] [ HH.text "Data Monitor" ]
     , case st.snpWeights of
         Nothing -> HH.div_ [ HH.text "Loading weight file...", HH.br_ ]
         Just sw -> HH.div_ [ HH.text $ "Selected weight file with SNPs: " <> show sw.numSNPs <> ", PCs: " <> show sw.numPCs, HH.br_ ]
     , case st.refData of
         Nothing -> HH.div_ [ HH.text "Loading reference position file...", HH.br_ ]
         Just rd -> HH.div_ [ HH.text $ "Reference Position Data loaded. Samples: " <> show rd.numSamples <> ", PCs: " <> show rd.numPCs, HH.br_ ]
-    ]
-
-userDataBox :: forall slots m . (MonadAff m) => State -> H.ComponentHTML Action slots m
-userDataBox st =
-  HH.div [ HP.classes [ HH.ClassName "box" ] ]
-    [ HH.h2 [ HP.classes [ HH.ClassName "title", HH.ClassName "is-4" ] ] [ HH.text "User Data" ]
-    , HH.label_ [ HH.text "Select Plink genotype data files: " ]
-    , fileInputForm
-          , case st.selectedPlinkFiles of
-      Nothing -> HH.div_ [ HH.text "No plink files selected", HH.br_ ]
-      Just (PlinkFileSpec famFile bimFile bedFile) -> HH.div_
-        [ HH.text $ "Selected fam file: " <> name famFile
-        , HH.br_
-        , HH.text $ "Selected bim file: " <> name bimFile
-        , HH.br_
-        , HH.text $ "Selected bed file: " <> name bedFile
-        ]
-    , if st.statusPlinkFilesLoading then
-        HH.div_ [ HH.text "Loading plink files...", HH.br_ ]
-      else
-        HH.text ""
-    , case st.plinkData of
+        , case st.plinkData of
         Nothing -> HH.text ""
         Just pd -> HH.div_ [ HH.text $ "Plink Data loaded. Individuals: " <> show pd.numIndividuals <> ", SNPs: " <> show pd.numSNPs, HH.br_ ]
     , if isJust st.snpWeights && isJust st.plinkData && (not st.projectionRunning) && (isNothing st.projectionResults) then
@@ -165,10 +114,6 @@ userDataBox st =
     , case st.errorNote of
         Nothing -> HH.text ""
         Just errMsg -> HH.div_ [ HH.text $ "Error: " <> errMsg, HH.br_ ]
-    , if isJust st.refData || isJust st.projectionResults then
-        HH.button [ HE.onClick (\_ -> MakeChart) ] [ HH.text "Make Chart" ]
-      else
-        HH.text ""
     ]
 
 refChartBox :: forall action m . (MonadAff m) => State -> H.ComponentHTML action Slots m
