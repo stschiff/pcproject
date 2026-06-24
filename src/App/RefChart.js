@@ -1,1 +1,5 @@
-export function tooltipLabelImpl(t) { return "Data Index: " + Object.keys(t.parsed); }
+export function tooltipLabelImpl(labels) {
+    return function(t) {
+        return labels[t.datasetIndex][t.dataIndex];
+    };
+}

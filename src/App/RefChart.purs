@@ -7,7 +7,7 @@ import Chartjs.Callbacks (defaultTooltipCallbacks, defaultCallbacks, TooltipItem
 import Chartjs.Types (defaultInteractionConfig, InteractionMode(..), DataPoint(..), ChartType(..))
 import Chartjs.Halogen as HC
 import Data.Array ((!!), groupAllBy)
-import Data.Array.NonEmpty (head, mapMaybe)
+import Data.Array.NonEmpty (head, mapMaybe, toArray)
 import Data.Maybe (Maybe(..))
 import Effect.Aff.Class (class MonadAff)
 import Effect.Uncurried (EffectFn1)
@@ -50,19 +50,20 @@ render st =
             let groupName = (head group).popGroup
                 dataPoints = mapMaybe (\sample -> XY <$> (sample.pcValues !! (st.xPc - 1)) <*> (sample.pcValues !! (st.yPc - 1))) group
             pure $ defaultDataset { label = groupName, data = dataPoints }
-             nn
+        labels = map (\sampleGroup -> map (\sample -> sample.popName) (toArray sampleGroup)) groupedSamples
         chartInput =
             { config : defaultConfig
                 { chartType = Scatter
                 , datasets = datasets
                 , options =
-                    defaultOptions {
-                        interaction = Just ( defaultInteractionConfig { mode = Just IMNearest } )
-                    }
+                    defaultOptions
+                        { interaction = Just ( defaultInteractionConfig { mode = Just IMNearest } )
+                        , aspectRatio = Just 1.2
+                        }
                 }
             , callbacks : defaultCallbacks
                 { tooltipCallbacks = Just (defaultTooltipCallbacks
-                    { label = Just (tooltipLabelImpl 
+                    { label = Just (tooltipLabelImpl labels)
                     })
                 }
             }
