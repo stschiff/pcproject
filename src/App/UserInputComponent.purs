@@ -13,6 +13,7 @@ import Effect.Class (liftEffect, class MonadEffect)
 import Effect.Aff (makeAff, nonCanceler)
 import Effect.Aff.Class (class MonadAff, liftAff)
 import Effect.Exception (error)
+import Fetch (fetch)
 import Foreign (unsafeFromForeign)
 import Halogen as H
 import Halogen.HTML as HH
@@ -169,7 +170,7 @@ handleAction RequestSampleData = do
         then do
             famContent <- H.liftAff $ famFetch.text
             bimContent <- H.liftAff $ bimFetch.text
-            bedContent <- H.liftAff $ bedFetch.text
+            bedContent <- H.liftAff $ bedFetch.arrayBuffer
             let famResults = readFamData famContent
             let bimResults = readBimData bimContent
             H.raise
@@ -179,3 +180,5 @@ handleAction RequestSampleData = do
                 , numIndividuals : length famResults.indNames
                 , numSNPs : length bimResults.snpIDs
                 }
+        else
+            H.modify_ _ { errorNote = Just "Failed to load example data" }

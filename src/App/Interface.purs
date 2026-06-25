@@ -3,48 +3,30 @@ module App.Interface where
 import Prelude
 
 import App.RefChart as RefChart
+import App.UserInputComponent as UserInputComponent
 import PCproject.PCproject (ProjectionResult, projectPlinkOnWeights)
-import PCproject.PlinkData (PlinkData, readBimData, readFamData, checkBedFileMagicBytes)
+import PCproject.PlinkData (PlinkData)
 import PCproject.Plot (drawChart)
 import PCproject.RefPosData (RefPosData, readRefPosData)
 import PCproject.SnpWeights (SnpWeights, readSnpWeights)
 
-import Data.Array (filter, length)
-import Data.ArrayBuffer.Typed (whole)
-import Data.ArrayBuffer.Types (ArrayBuffer, Uint8Array)
-import Data.Either (Either(..))
 import Data.Maybe (Maybe(..), isJust, isNothing)
-import Data.String.Utils (endsWith)
 import Data.Tuple (Tuple(..))
-import Effect (Effect)
-import Effect.Aff (makeAff, nonCanceler)
-import Effect.Aff.Class (class MonadAff, liftAff)
-import Effect.Class (liftEffect, class MonadEffect)
+import Effect.Aff.Class (class MonadAff)
+import Effect.Class (liftEffect)
 -- import Effect.Class.Console (log)
-import Effect.Exception (error)
 import Fetch (fetch)
-import Foreign (unsafeFromForeign)
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 import Type.Proxy (Proxy(..))
-import Web.Encoding.TextDecoder as TextDecoder
-import Web.Encoding.UtfLabel as UtfLabel
-import Web.Event.Event as WE
-import Web.Event.EventTarget (addEventListener, eventListener)
-import Web.File.File (File, name, toBlob)
-import Web.File.FileList (items)
-import Web.File.FileReader (fileReader, readAsArrayBuffer, result, toEventTarget)
-import Web.HTML.Event.EventTypes (load, error) as ET
-import Web.HTML.HTMLInputElement (fromEventTarget, files)
+import Web.File.File (File)
 
 data PlinkFileSpec = PlinkFileSpec File File File
 
 type State =
-  { selectedPlinkFiles :: Maybe PlinkFileSpec
-  , statusPlinkFilesLoading :: Boolean
-  , snpWeights :: Maybe SnpWeights
+  { snpWeights :: Maybe SnpWeights
   , plinkData :: Maybe PlinkData
   , refData :: Maybe RefPosData
   , projectionRunning :: Boolean
@@ -54,13 +36,14 @@ type State =
 
 data Action
   = LoadRefData
-  | GotGenoDataFileEvent WE.Event
+  | GotPlinkData PlinkData
   | RunProjectionEvent
   | MakeChart
 
-type Slots = ( refChart :: forall q o . H.Slot q o Unit )
+type Slots = ( refChart :: forall q o . H.Slot q o Unit, userInputComponent :: forall q . H.Slot q UserInputComponent.Output Unit )
 
 _refChart = Proxy :: Proxy "refChart"
+_userInputComponent = Proxy :: Proxy "userInputComponent"
 
 component :: forall query input output m. MonadAff m => H.Component query input output m
 component =
@@ -79,7 +62,8 @@ render st =
     [ HH.h1 [ HP.classes [ HH.ClassName "title", HH.ClassName "is-1"] ] [ HH.text "PC Projection Tool" ]
     , HH.div [ HP.classes [ HH.ClassName "columns" ] ]
       [ HH.div [ HP.classes [ HH.ClassName "column" ] ] [ refDataBox st ]
-      , HH.div [ HP.classes [ HH.ClassName "column" ] ] [ userDataBox st ]
+      , HH.div [ HP.classes [ HH.ClassName "column" ] ]
+          [ HH.slot _userInputComponent unit UserInputComponent.component unit GotPlinkData ]
       ]
     , HH.div [ HP.classes [ HH.ClassName "columns" ] ]
       [ HH.div [ HP.classes [ HH.ClassName "column" ] ] [ refChartBox st ]
@@ -87,7 +71,7 @@ render st =
       ]
     ]
 
-refDataBox :: forall action slots m . (MonadAff m) => State -> H.ComponentHTML action slots m
+refDataBox :: forall slots m . (MonadAff m) => State -> H.ComponentHTML Action slots m
 refDataBox st = 
   HH.div [ HP.classes [ HH.ClassName "box" ] ]
     [ HH.h2 [ HP.classes [ HH.ClassName "title", HH.ClassName "is-4" ] ] [ HH.text "Data Monitor" ]
@@ -132,19 +116,9 @@ projChartBox _ =
     , HH.text "Projection results chart will be displayed here after running the projection."
     ]
 
-fileInputForm :: forall slots m . H.ComponentHTML Action slots m
-fileInputForm = HH.form_
-    [ HH.label_ [ HH.text "Select Plink genotype data files: " ]
-    , HH.input  
-      [ HP.type_ HP.InputFile, HP.multiple true, HE.onChange GotGenoDataFileEvent ]
-    , HH.br_
-    ]
-
 initialState :: forall input. input -> State
 initialState = const
-  { selectedPlinkFiles: Nothing
-  , statusPlinkFilesLoading : false
-  , snpWeights : Nothing
+  { snpWeights : Nothing
   , plinkData : Nothing
   , refData : Nothing
   , projectionRunning : false
@@ -171,41 +145,8 @@ handleAction LoadRefData = do
     else
       H.modify_ _ { errorNote = Just "Failed to load reference data", refData = Nothing}
 
-handleAction (GotGenoDataFileEvent ev) = do
-  let mInputElem = WE.target ev >>= fromEventTarget
-  case mInputElem of
-    Nothing -> pure unit
-    Just inputElem -> do
-      mFileList <- liftEffect $ files inputElem
-      case mFileList of
-        Nothing -> pure unit
-        Just fileList -> do
-          let files = items fileList
-          case filter (\f -> endsWith ".fam" (name f)) files of
-            [] -> H.modify_ _ { errorNote = Just "No .fam file selected", selectedPlinkFiles = Nothing }
-            [famFile] -> case filter (\f -> endsWith ".bim" (name f)) files of
-              [] -> H.modify_ _ { errorNote = Just "No .bim file selected", selectedPlinkFiles = Nothing }
-              [bimFile] -> case filter (\f -> endsWith ".bed" (name f)) files of
-                [] -> H.modify_ _ { errorNote = Just "No .bed file selected", selectedPlinkFiles = Nothing }
-                [bedFile] -> do
-                  H.modify_ _ { selectedPlinkFiles = Just (PlinkFileSpec famFile bimFile bedFile), errorNote = Nothing }
-                  H.modify_ _ { statusPlinkFilesLoading = true }
-                  -- Read the files asynchronously using makeAff
-                  famContent <- readFileAsArrayBufferAff famFile >>= arrayBufferToString
-                  bimContent <- readFileAsArrayBufferAff bimFile >>= arrayBufferToString
-                  bedContent <- readFileAsArrayBufferAff bedFile
-                  let famResults = readFamData famContent
-                  let bimResults = readBimData bimContent
-                  bedCheck <- liftEffect $ checkBedFileMagicBytes bedContent
-                  if (not bedCheck) then
-                    H.modify_ _ { errorNote = Just "Invalid .bed file (incorrect magic numbers in the first three bytes)", selectedPlinkFiles = Nothing, statusPlinkFilesLoading = false }
-                  else do
-                    let plinkData = { famData : famResults, bimData : bimResults, bedData : bedContent, numIndividuals : length famResults.indNames, numSNPs : length bimResults.snpIDs }
-                    H.modify_ _ { plinkData = Just plinkData, statusPlinkFilesLoading = false } 
-                _ -> H.modify_ _ { errorNote = Just "Multiple .bed files selected", selectedPlinkFiles = Nothing }
-              _ -> H.modify_ _ { errorNote = Just "Multiple .bim files selected", selectedPlinkFiles = Nothing }
-            _ -> H.modify_ _ { errorNote = Just "Multiple .fam files selected", selectedPlinkFiles = Nothing }
-  pure unit
+handleAction (GotPlinkData pd) = do
+  H.modify_ _ { plinkData = Just pd, errorNote = Nothing }
 
 handleAction RunProjectionEvent = do
   H.modify_ _ { projectionRunning = true, projectionResults = Nothing }
