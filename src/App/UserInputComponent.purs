@@ -3,22 +3,23 @@ module App.UserInputComponent where
 import Prelude
 
 import Data.Array (filter, length)
-import Data.ArrayBuffer.Types (ArrayBuffer, Uint8Array)
 import Data.ArrayBuffer.Typed (whole)
+import Data.ArrayBuffer.Types (ArrayBuffer, Uint8Array)
 import Data.Either (Either(..))
 import Data.Maybe (Maybe(..))
 import Data.String.Utils (endsWith)
 import Effect (Effect)
-import Effect.Class (liftEffect, class MonadEffect)
 import Effect.Aff (makeAff, nonCanceler)
 import Effect.Aff.Class (class MonadAff, liftAff)
+import Effect.Class (liftEffect, class MonadEffect)
 import Effect.Exception (error)
 import Fetch (fetch)
 import Foreign (unsafeFromForeign)
 import Halogen as H
 import Halogen.HTML as HH
-import Halogen.HTML.Properties as HP
 import Halogen.HTML.Events as HE
+import Halogen.HTML.Properties as HP
+import PCproject.PlinkData (PlinkData, readBimData, readFamData, checkBedFileMagicBytes)
 import Web.Encoding.TextDecoder as TextDecoder
 import Web.Encoding.UtfLabel as UtfLabel
 import Web.Event.Event as WE
@@ -29,7 +30,6 @@ import Web.File.FileReader (fileReader, readAsArrayBuffer, result, toEventTarget
 import Web.HTML.Event.EventTypes as ET
 import Web.HTML.HTMLInputElement (fromEventTarget, files)
 
-import PCproject.PlinkData (PlinkData, readBimData, readFamData, checkBedFileMagicBytes)
 data PlinkFileSpec = PlinkFileSpec File File File | ExampleData
 
 type State =
@@ -94,36 +94,38 @@ initialState _ =
 
 render :: forall slots m . (MonadAff m) => State -> H.ComponentHTML Action slots m
 render st =
-  HH.div [ HP.classes [ HH.ClassName "box" ] ]
-    [ HH.h2 [ HP.classes [ HH.ClassName "title", HH.ClassName "is-4" ] ]
-        [ HH.text "User Data" ]
-    , HH.label_ [ HH.text "Select Plink genotype data files: " ]
-    , HH.form_
-        [ HH.label_ [ HH.text "Select Plink genotype data files: " ]
-        , HH.input  
-            [ HP.type_ HP.InputFile, HP.multiple true, HE.onChange GotGenoDataFileEvent ]
-        , HH.br_
+    HH.div [ HP.classes [ HH.ClassName "box" ] ]
+        [ HH.h2 [ HP.classes [ HH.ClassName "title", HH.ClassName "is-4" ] ]
+            [ HH.text "User Data" ]
+        , HH.div [ HP.classes [ HH.ClassName "field" ] ]
+            [ HH.label_ [ HH.text "Select Plink genotype data files: " ]
+            , HH.div [ HP.classes [ HH.ClassName "control" ] ]
+                [ HH.input
+                    [ HP.type_ HP.InputFile, HP.multiple true, HE.onChange GotGenoDataFileEvent ]
+                ]
+            ]
+        , case st.selectedPlinkFiles of
+            Nothing -> HH.div_ [ HH.text "No plink files selected", HH.br_ ]
+            Just (PlinkFileSpec famFile bimFile bedFile) -> HH.div_
+                [ HH.text $ "Selected fam file: " <> name famFile
+                , HH.br_
+                , HH.text $ "Selected bim file: " <> name bimFile
+                , HH.br_
+                , HH.text $ "Selected bed file: " <> name bedFile
+                ]
+            Just ExampleData -> HH.div_ [ HH.text "Using example data", HH.br_ ]
+        , HH.div [ HP.classes [ HH.ClassName "control" ] ]
+            [ HH.button
+                [ HP.classes [ HH.ClassName "button", HH.ClassName "is-primary" ]
+                , HE.onClick (\_ -> RequestSampleData)
+                ]
+                [ HH.text "Load Example Data" ]
+            ]
+        , if st.statusPlinkFilesLoading then
+            HH.div_ [ HH.text "Loading plink files...", HH.br_ ]
+        else
+            HH.text ""
         ]
-    , case st.selectedPlinkFiles of
-        Nothing -> HH.div_ [ HH.text "No plink files selected", HH.br_ ]
-        Just (PlinkFileSpec famFile bimFile bedFile) -> HH.div_
-          [ HH.text $ "Selected fam file: " <> name famFile
-          , HH.br_
-          , HH.text $ "Selected bim file: " <> name bimFile
-          , HH.br_
-          , HH.text $ "Selected bed file: " <> name bedFile
-          ]
-        Just ExampleData -> HH.div_ [ HH.text "Using example data", HH.br_ ]
-    , HH.button
-        [ HP.classes [ HH.ClassName "button", HH.ClassName "is-primary" ]
-        , HE.onClick (\_ -> RequestSampleData)
-        ]
-        [ HH.text "Load Example Data" ]
-    , if st.statusPlinkFilesLoading then
-        HH.div_ [ HH.text "Loading plink files...", HH.br_ ]
-      else
-        HH.text ""
-    ]
 
 handleAction :: forall slots m. MonadAff m => Action -> H.HalogenM State Action slots Output m Unit
 handleAction (GotGenoDataFileEvent ev) = do
