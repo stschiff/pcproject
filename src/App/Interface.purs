@@ -1,4 +1,19 @@
-module App.Interface where
+module App.Interface
+  ( Action(..)
+  , PlinkFileSpec(..)
+  , Slots
+  , State
+  , _refChart
+  , _userInputComponent
+  , component
+  , handleAction
+  , initialState
+  , projChartBox
+  , refChartBox
+  , refDataBox
+  , render
+  )
+  where
 
 import Prelude
 
@@ -6,14 +21,12 @@ import App.RefChart as RefChart
 import App.UserInputComponent as UserInputComponent
 import PCproject.PCproject (ProjectionResult, projectPlinkOnWeights)
 import PCproject.PlinkData (PlinkData)
-import PCproject.Plot (drawChart)
 import PCproject.RefPosData (RefPosData, readRefPosData)
 import PCproject.SnpWeights (SnpWeights, readSnpWeights)
 
 import Data.Maybe (Maybe(..), isJust, isNothing)
 import Data.Tuple (Tuple(..))
 import Effect.Aff.Class (class MonadAff)
-import Effect.Class (liftEffect)
 -- import Effect.Class.Console (log)
 import Fetch (fetch)
 import Halogen as H
@@ -38,9 +51,10 @@ data Action
   = LoadRefData
   | GotPlinkData PlinkData
   | RunProjectionEvent
-  | MakeChart
 
-type Slots = ( refChart :: forall q o . H.Slot q o Unit, userInputComponent :: forall q . H.Slot q UserInputComponent.Output Unit )
+type Slots = ( refChart :: forall q o . H.Slot q o Unit
+             , userInputComponent :: forall q . H.Slot q UserInputComponent.Output Unit
+             )
 
 _refChart = Proxy :: Proxy "refChart"
 _userInputComponent = Proxy :: Proxy "userInputComponent"
@@ -58,116 +72,135 @@ component =
 
 render :: forall m . (MonadAff m) => State -> H.ComponentHTML Action Slots m
 render st =
-  HH.section [ HP.classes [ HH.ClassName "section" ] ]
-    [ HH.h1 [ HP.classes [ HH.ClassName "title", HH.ClassName "is-1"] ] [ HH.text "PC Projection Tool" ]
-    , HH.div [ HP.classes [ HH.ClassName "columns" ] ]
-      [ HH.div [ HP.classes [ HH.ClassName "column" ] ] [ refDataBox st ]
-      , HH.div [ HP.classes [ HH.ClassName "column" ] ]
-          [ HH.slot _userInputComponent unit UserInputComponent.component unit GotPlinkData ]
-      ]
-    , HH.div [ HP.classes [ HH.ClassName "columns" ] ]
-      [ HH.div [ HP.classes [ HH.ClassName "column" ] ] [ refChartBox st ]
-      , HH.div [ HP.classes [ HH.ClassName "column" ] ] [ projChartBox st ]
-      ]
-    ]
+    HH.section [ HP.classes [ HH.ClassName "section" ] ]
+        [ HH.h1 [ HP.classes [ HH.ClassName "title", HH.ClassName "is-1"] ]
+            [ HH.text "PC Projection Tool" ]
+        , HH.div [ HP.classes [ HH.ClassName "columns" ] ]
+            [ HH.div [ HP.classes [ HH.ClassName "column" ] ] [ refDataBox st ]
+            , HH.div [ HP.classes [ HH.ClassName "column" ] ]
+                [ HH.slot _userInputComponent unit UserInputComponent.component unit GotPlinkData ]
+            ]
+        , HH.div [ HP.classes [ HH.ClassName "columns" ] ]
+            [ HH.div [ HP.classes [ HH.ClassName "column" ] ] [ refChartBox st ]
+            , HH.div [ HP.classes [ HH.ClassName "column" ] ] [ projChartBox st ]
+            ]
+        ]
 
 refDataBox :: forall slots m . (MonadAff m) => State -> H.ComponentHTML Action slots m
 refDataBox st = 
-  HH.div [ HP.classes [ HH.ClassName "box" ] ]
-    [ HH.h2 [ HP.classes [ HH.ClassName "title", HH.ClassName "is-4" ] ] [ HH.text "Data Monitor" ]
-    , case st.snpWeights of
-        Nothing -> HH.div_ [ HH.text "Loading weight file...", HH.br_ ]
-        Just sw -> HH.div_ [ HH.text $ "Selected weight file with SNPs: " <> show sw.numSNPs <> ", PCs: " <> show sw.numPCs, HH.br_ ]
-    , case st.refData of
-        Nothing -> HH.div_ [ HH.text "Loading reference position file...", HH.br_ ]
-        Just rd -> HH.div_ [ HH.text $ "Reference Position Data loaded. Samples: " <> show rd.numSamples <> ", PCs: " <> show rd.numPCs, HH.br_ ]
-        , case st.plinkData of
-        Nothing -> HH.text ""
-        Just pd -> HH.div_ [ HH.text $ "Plink Data loaded. Individuals: " <> show pd.numIndividuals <> ", SNPs: " <> show pd.numSNPs, HH.br_ ]
-    , if isJust st.snpWeights && isJust st.plinkData && (not st.projectionRunning) && (isNothing st.projectionResults) then
-        HH.button [ HE.onClick (\_ -> RunProjectionEvent) ] [ HH.text "Run Projection" ]
-      else
-        HH.text ""
-    , if st.projectionRunning then
-        HH.div_ [ HH.text "Projection running...", HH.br_ ]
-      else
-        HH.text ""
-    , case st.projectionResults of
-        Nothing -> HH.text ""
-        Just pr -> HH.div_ [ HH.text $ "Projection done. Overlapping SNPs: " <> show pr.overlappingPositions <> ", PCs: " <> show pr.numPCs <> ", Individuals: " <> show pr.numIndividuals, HH.br_ ]
-    , case st.errorNote of
-        Nothing -> HH.text ""
-        Just errMsg -> HH.div_ [ HH.text $ "Error: " <> errMsg, HH.br_ ]
-    ]
+    HH.div [ HP.classes [ HH.ClassName "box" ] ]
+        [ HH.h2 [ HP.classes [ HH.ClassName "title", HH.ClassName "is-4" ] ]
+            [ HH.text "Data Monitor" ]
+        , case st.snpWeights of
+            Nothing -> HH.div_ [ HH.text "Loading weight file...", HH.br_ ]
+            Just sw -> HH.div_
+                [ HH.text $ "Selected weight file with SNPs: " <>
+                    show sw.numSNPs <> ", PCs: " <> show sw.numPCs, HH.br_
+                ]
+        , case st.refData of
+            Nothing -> HH.div_ [ HH.text "Loading reference position file...", HH.br_ ]
+            Just rd -> HH.div_
+                [ HH.text $ "Reference Position Data loaded. Samples: " <>
+                    show rd.numSamples <> ", PCs: " <> show rd.numPCs, HH.br_
+                ]
+            , case st.plinkData of
+                Nothing -> HH.text ""
+                Just pd -> HH.div_
+                    [ HH.text $ "Plink Data loaded. Individuals: " <>
+                        show pd.numIndividuals <> ", SNPs: " <> show pd.numSNPs, HH.br_
+                    ]
+        , if isJust st.snpWeights && isJust st.plinkData &&
+            (not st.projectionRunning) && (isNothing st.projectionResults) then
+            HH.div [ HP.classes [ HH.ClassName "control" ] ]
+                [ HH.button
+                    [ HP.classes [ HH.ClassName "button", HH.ClassName "is-primary" ]
+                    , HE.onClick (\_ -> RunProjectionEvent)
+                    ]
+                    [ HH.text "Run Projection" ]
+                ]
+        else
+            HH.text ""
+        , if st.projectionRunning then
+            HH.div_ [ HH.text "Projection running...", HH.br_ ]
+        else
+            HH.text ""
+        , case st.projectionResults of
+            Nothing -> HH.text ""
+            Just pr -> HH.div_
+                [ HH.text $ "Projection done. Overlapping SNPs: " <>
+                    show pr.overlappingPositions <> ", PCs: " <>
+                    show pr.numPCs <> ", Individuals: " <>
+                    show pr.numIndividuals, HH.br_
+                ]
+        , case st.errorNote of
+            Nothing -> HH.text ""
+            Just errMsg -> HH.div_ [ HH.text $ "Error: " <> errMsg, HH.br_ ]
+        ]
 
 refChartBox :: forall action m . (MonadAff m) => State -> H.ComponentHTML action Slots m
 refChartBox st =
-  HH.div [ HP.classes [ HH.ClassName "box" ] ]
-    [ HH.h2 [ HP.classes [ HH.ClassName "title", HH.ClassName "is-4" ] ] [ HH.text "Reference Data Chart" ]
-    , case st.refData of
-        Nothing -> HH.text ""
-        Just rd -> HH.div_ [ HH.slot_ _refChart unit RefChart.component { refPosData:  rd } ]
-    ]
+    HH.div [ HP.classes [ HH.ClassName "box" ] ]
+        [ HH.h2 [ HP.classes [ HH.ClassName "title", HH.ClassName "is-4" ] ]
+            [ HH.text "Reference Data Chart" ]
+        , case st.refData of
+            Nothing -> HH.text ""
+            Just rd -> HH.div_
+                [ HH.slot_ _refChart unit RefChart.component { refPosData:  rd } ]
+        ]
 
 projChartBox :: forall action slots m . (MonadAff m) => State -> H.ComponentHTML action slots m
 projChartBox _ =
-  HH.div [ HP.classes [ HH.ClassName "box" ] ]
-    [ HH.h2 [ HP.classes [ HH.ClassName "title", HH.ClassName "is-4" ] ] [ HH.text "Projection Results Chart" ]
-    , HH.text "Projection results chart will be displayed here after running the projection."
-    ]
+    HH.div [ HP.classes [ HH.ClassName "box" ] ]
+        [ HH.h2 [ HP.classes [ HH.ClassName "title", HH.ClassName "is-4" ] ]
+            [ HH.text "Projection Results Chart" ]
+        , HH.text "Projection results chart will be displayed here after running the projection."
+        ]
 
 initialState :: forall input. input -> State
 initialState = const
-  { snpWeights : Nothing
-  , plinkData : Nothing
-  , refData : Nothing
-  , projectionRunning : false
-  , projectionResults : Nothing
-  , errorNote : Nothing
-  }
+    { snpWeights : Nothing
+    , plinkData : Nothing
+    , refData : Nothing
+    , projectionRunning : false
+    , projectionResults : Nothing
+    , errorNote : Nothing
+    }
 
 handleAction :: forall output slots m. MonadAff m => Action -> H.HalogenM State Action slots output m Unit
 handleAction LoadRefData = do
-  f1 <- H.liftAff $ fetch "./assets/weights_joined.tsv" {}
-  if f1.ok
-    then do
-      content <- H.liftAff $ f1.text
-      let snpWeightData = readSnpWeights content
-      H.modify_ _ { snpWeights = Just snpWeightData}
-    else
-      H.modify_ _ { errorNote = Just "Failed to load weight data", snpWeights = Nothing}
-  f2 <- H.liftAff $ fetch "./assets/reference_positions.tsv" {}
-  if f2.ok
-    then do
-      content <- H.liftAff $ f2.text
-      let refData = readRefPosData content
-      H.modify_ _ { refData = Just refData}
-    else
-      H.modify_ _ { errorNote = Just "Failed to load reference data", refData = Nothing}
+    f1 <- H.liftAff $ fetch "./assets/weights_joined.tsv" {}
+    if f1.ok
+        then do
+            content <- H.liftAff $ f1.text
+            let snpWeightData = readSnpWeights content
+            H.modify_ _ { snpWeights = Just snpWeightData}
+        else
+            H.modify_ _ { errorNote = Just "Failed to load weight data", snpWeights = Nothing}
+    f2 <- H.liftAff $ fetch "./assets/reference_positions.tsv" {}
+    if f2.ok
+        then do
+            content <- H.liftAff $ f2.text
+            let refData = readRefPosData content
+            H.modify_ _ { refData = Just refData}
+        else
+            H.modify_ _ { errorNote = Just "Failed to load reference data", refData = Nothing}
 
 handleAction (GotPlinkData pd) = do
-  H.modify_ _ { plinkData = Just pd, errorNote = Nothing }
+    H.modify_ _ { plinkData = Just pd, errorNote = Nothing }
 
 handleAction RunProjectionEvent = do
-  H.modify_ _ { projectionRunning = true, projectionResults = Nothing }
-  checkAndRunProjection
-  H.modify_ _ { projectionRunning = false }
-  pure unit
-
-handleAction MakeChart = do
-  st <- H.get
-  case st.refData of
-    Nothing -> pure unit
-    Just rd ->
-      liftEffect $ drawChart rd 0 1
+    H.modify_ _ { projectionRunning = true, projectionResults = Nothing }
+    checkAndRunProjection
+    H.modify_ _ { projectionRunning = false }
+    pure unit
 
 checkAndRunProjection :: forall output slots m. MonadAff m => H.HalogenM State Action slots output m Unit
 checkAndRunProjection = do
-  st <- H.get
-  case Tuple st.snpWeights st.plinkData of
-    Tuple (Just sw) (Just pd) -> do
-      let projResult = projectPlinkOnWeights pd sw
-      H.modify_ _ { projectionResults = Just projResult }
-    _ -> pure unit
-  pure unit
+    st <- H.get
+    case Tuple st.snpWeights st.plinkData of
+        Tuple (Just sw) (Just pd) -> do
+            let projResult = projectPlinkOnWeights pd sw
+            H.modify_ _ { projectionResults = Just projResult }
+        _ -> pure unit
+    pure unit
 
