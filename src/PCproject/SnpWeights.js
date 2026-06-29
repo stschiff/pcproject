@@ -2,10 +2,10 @@ export function readSnpWeights(snpWeightText) {
     const lines = snpWeightText.trim().split('\n');
     const numSNPs = lines.length;
     let snpIDs = new Array(numSNPs);
-    let chromosomes = new Array(numSNPs);
+    let chromosomes = new Uint8Array(numSNPs);
     let positions = new Uint32Array(numSNPs);
-    let alleles1 = new Array(numSNPs);
-    let alleles2 = new Array(numSNPs);
+    let alleles1 = new Uint8Array(numSNPs);
+    let alleles2 = new Uint8Array(numSNPs);
     let firstLineFields = lines[0].trim().split(/\s+/);
     if (firstLineFields.length < 7) {
         throw new Error(`For SnpWeights expected at least 7 columns per line (snpIDs, chrom, pos, allele1, allele2, and at least one PC and one frequency), but found ${firstLineFields.length} in the first line.`);
@@ -24,8 +24,8 @@ export function readSnpWeights(snpWeightText) {
         if (isNaN(positions[i])) {
             throw new Error(`Invalid position for SNP ${snpIDs[i]}: ${fields[2]}`);
         }
-        alleles1[i] = fields[3];
-        alleles2[i] = fields[4];
+        alleles1[i] = fields[3].charCodeAt(0);
+        alleles2[i] = fields[4].charCodeAt(0);
         if (fields.length !== numPCs + 6) {
             throw new Error(`Inconsistent number of columns in line ${i + 1}: expected ${numPCs + 6}, found ${fields.length}`);
         }

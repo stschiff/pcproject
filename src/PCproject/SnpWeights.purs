@@ -7,10 +7,10 @@ import Data.ArrayBuffer.Types (Float32Array, Uint32Array)
 -- We store columns rather than row-wise structs for better memory- and overall efficiency.
 type SnpWeights =
   { snpIDs      :: Array String
-  , chromosomes :: Array Int
+  , chromosomes :: Uint8Array
   , positions   :: Uint32Array
-  , alleles1  :: Array String
-  , alleles2  :: Array String
+  , alleles1  :: Uint8Array
+  , alleles2  :: Uint8Array
   , pcWeights   :: Float32Array -- Flattened 2D array: numSnps * numPCs
   , frequencies :: Float32Array
   , numSNPs     :: Int

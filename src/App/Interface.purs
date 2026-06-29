@@ -184,23 +184,18 @@ handleAction LoadRefData = do
             H.modify_ _ { refData = Just refData}
         else
             H.modify_ _ { errorNote = Just "Failed to load reference data", refData = Nothing}
+    st <- H.get
+    when (isJust st.plinkData) $
+        handleAction RunProjectionEvent
 
 handleAction (GotPlinkData pd) = do
     H.modify_ _ { plinkData = Just pd, errorNote = Nothing }
-
+    st <- H.get
+    when (isJust st.snpWeights && isJust st.refData) $
+        handleAction RunProjectionEvent
+ 
 handleAction RunProjectionEvent = do
     H.modify_ _ { projectionRunning = true, projectionResults = Nothing }
-    checkAndRunProjection
+    overlapReport <- liftEffect $ overlapReport st.plinkData st.snpWeights
     H.modify_ _ { projectionRunning = false }
     pure unit
-
-checkAndRunProjection :: forall output slots m. MonadAff m => H.HalogenM State Action slots output m Unit
-checkAndRunProjection = do
-    st <- H.get
-    case Tuple st.snpWeights st.plinkData of
-        Tuple (Just sw) (Just pd) -> do
-            let projResult = projectPlinkOnWeights pd sw
-            H.modify_ _ { projectionResults = Just projResult }
-        _ -> pure unit
-    pure unit
-
