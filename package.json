@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@observablehq/plot": "^0.6.17",
+    "@rreusser/blapack": "github:stschiff/blahpack#09c542d1e13f16d6c64aa9f1aa32233f43e1fe8e",
     "@stdlib/array": "^0.5.1",
     "chart": "^0.1.2",
     "chart.js": "^4.5.1"
