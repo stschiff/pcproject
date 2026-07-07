@@ -43,9 +43,8 @@ export function readBedData(bedArrayBuffer, numSnps, numInds) {
     if (bytes.length < 3 || bytes[0] !== 0b01101100 || bytes[1] !== 0b00011011 || bytes[2] !== 0b00000001) {
         throw new Error("Invalid .bed file: incorrect magic numbers");
     }
-    let returnArray = new Float32Array(numSnps * numInds);
+    let returnArray = new Uint8Array(numSnps * numInds);
     let blockSize = Math.ceil(numInds / 4);
-    let genotypeData = new Uint8Array(numSnps * blockSize);
     for (let i = 0; i < numSnps; i++) {
         for (let j = 0; j < numInds; j++) {
             const byteIndex = 3 + i * blockSize + Math.floor(j / 4);
@@ -55,11 +54,11 @@ export function readBedData(bedArrayBuffer, numSnps, numInds) {
                 case 0b00:
                     returnArray[i * numInds + j] = 0; // Homozygous reference
                 case 0b10:
-                    returnArray[i * numInds + j] = 0.5; // Heterozygous
+                    returnArray[i * numInds + j] = 1; // Heterozygous
                 case 0b11:
-                    returnArray[i * numInds + j] = 1; // Homozygous alternate
+                    returnArray[i * numInds + j] = 2; // Homozygous alternate
                 case 0b01:
-                    returnArray[i * numInds + j] = null; // Missing genotype
+                    returnArray[i * numInds + j] = 3; // Missing genotype
             }
         }
     }

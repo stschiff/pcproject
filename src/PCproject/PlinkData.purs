@@ -2,11 +2,11 @@ module PCproject.PlinkData where
 
 import Prelude
 
-import Data.UInt (toInt)
 import Data.ArrayBuffer.Typed (whole, (!))
-import Data.ArrayBuffer.Types (Uint8Array, Uint32Array, ArrayBuffer)
+import Data.ArrayBuffer.Types (ArrayBuffer, Uint32Array, Uint8Array)
 import Data.Maybe (Maybe(..))
 import Data.Traversable (sequence)
+import Data.UInt (toInt)
 import Effect (Effect)
 
 type PlinkBimData =
@@ -22,7 +22,7 @@ type PlinkFamData =
   , popNames :: Array String
   }
 
-type PlinkBedData = ArrayBuffer
+type PlinkBedData = Uint8Array
 
 type PlinkData =
   { bimData :: PlinkBimData
