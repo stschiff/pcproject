@@ -1,25 +1,24 @@
-import BooleanArray from '@stdlib/array-bool';
 import mskfilter from '@stdlib/array-mskfilter';
 import strided2array from '@stdlib/array-base-from-strided';
 
-export function getOverlapMasks(plinkData, snpWeights) {
+export function getOverlapMasksImpl(plinkBimData, snpWeights) {
     let snpWeightMask = new Uint8Array(snpWeights.numSNPs);
-    let plinkMask = new Uint8Array(plinkData.numSNPs);
-    let flipMask = new Uint8Array(plinkData.numSNPs);
+    let plinkMask = new Uint8Array(plinkBimData.length);
+    let flipMask = new Uint8Array(plinkBimData.length);
     let plinkIndex = 0;
     let removedStrandAmbiguous = 0;
     let removedInconsistent = 0;
 
     for (let i = 0; i < snpWeights.numSNPs; i++) {
-        while (plinkData.bimData.chromosomes[plinkIndex] < snpWeights.chromosomes[i] ||
-               (plinkData.bimData.chromosomes[plinkIndex] == snpWeights.chromosomes[i] &&
-                plinkData.bimData.positions[plinkIndex] < snpWeights.positions[i])) {
+        while (plinkBimData.chromosomes[plinkIndex] < snpWeights.chromosomes[i] ||
+               (plinkBimData.chromosomes[plinkIndex] == snpWeights.chromosomes[i] &&
+                plinkBimData.positions[plinkIndex] < snpWeights.positions[i])) {
             plinkIndex++;
         }
-        if (plinkData.bimData.chromosomes[plinkIndex] === snpWeights.chromosomes[i] &&
-            plinkData.bimData.positions[plinkIndex] === snpWeights.positions[i]) {
-            const pa1 = plinkData.bimData.alleles1[plinkIndex];
-            const pa2 = plinkData.bimData.alleles2[plinkIndex];
+        if (plinkBimData.chromosomes[plinkIndex] === snpWeights.chromosomes[i] &&
+            plinkBimData.positions[plinkIndex] === snpWeights.positions[i]) {
+            const pa1 = plinkBimData.alleles1[plinkIndex];
+            const pa2 = plinkBimData.alleles2[plinkIndex];
             const sa1 = String.fromCharCode(snpWeights.alleles1[i]);
             const sa2 = String.fromCharCode(snpWeights.alleles2[i]);
             if (!strandAmbiguous(sa1, sa2)) {
@@ -44,9 +43,7 @@ export function getOverlapMasks(plinkData, snpWeights) {
             break;
         }
     }
-    const snpWeightOverlap = mskfilter(snpWeights, snpWeightMask);
-    const flipMaskReduced = mskfilter(flipMask, plinkMask);
-    return { snpWeightOverlap, plinkMask, flipMaskReduced, removedStrandAmbiguous, removedInconsistent };
+    return { snpWeightMask, plinkMask, flipMask, removedStrandAmbiguous, removedInconsistent };
 }
 
 function strandAmbiguous(a1, a2) {
@@ -78,34 +75,22 @@ function complement(a) {
     }
 }
 
-export function projectImpl(snpWeightOverlap, plinkMask, flipMask, genoVec) {
+export function projectImpl(overlapResult, snpWeights, genoVec) {
     const nrSnps = snpWeightOverlap.length;
     const genoVecOverlap = mskfilter(genoVec, plinkMask);
 
-    // would like to use Float32Array, but stdlib's dgels expects Float64 for now.
-    const freqVec = Float64Array.from(genoVecOverlap, (g, i) => {
+    const freqVecRaw = genoVecOverlap.map((g, i) => {
         if (flipMask[i])
-            return makeFreqFlipped(g);
+            return 2 - g;
         else
-            return makeFreq(g);
+            return g;
     });
+    
+    const nonMissingMask = genoVecOverlap.map(isNaN);
+    
+    // would like to use Float32Array, but stdlib's dgels expects Float64 for now.
+    const freqVecNonMissing = Float64Array.from(mskfilter(freqVecRaw, nonMissingMask));
+    const snpWeightsNonMissing = Float64Array.from(mskfilter(snpWeightOverlap, nonMissingMask));
 
-    for (let i = 0; i < nrSnps; i++) {
-        if(plinkMask[i]) {
-    }
-    for (let i = 0; i < plinkData.numIndividuals; i++) {
-        const individualGenotypes =
-            strided2array(plinkData.numSnps, plinkData.bedData, plinkData.numSnps, i);
-        const individualGenotypeOverlap = mskfilter(individualGenotypes, plinkMask);
-    }
 }
 
-function flipFreq(g) {
-    switch (g) {
-        case 0:
-            return 0.0;
-        case 1:
-            return 0.5;
-        case 2:
-            return 1.0;
-}
