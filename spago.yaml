@@ -11,6 +11,7 @@ package:
     - either
     - exceptions
     - fetch
+    - fetch-argonaut
     - foldable-traversable
     - foreign
     - halogen

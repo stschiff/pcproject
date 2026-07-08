@@ -1,6 +1,6 @@
 module PCproject.SnpWeights where
 
-import Data.ArrayBuffer.Types (Float32Array, Uint32Array)
+import Data.ArrayBuffer.Types (Float32Array, Uint32Array, Uint8Array)
 
 -- Column-wise storage of SNP weights
 -- Each SNP has an ID, chromosome, position, and weights for each PC

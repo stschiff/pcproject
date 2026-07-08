@@ -1,4 +1,4 @@
-export function readBimData(bimText) {
+export function readBimDataImpl(bimText) {
     const lines = bimText.trim().split('\n');
     const nrSNPs = lines.length;
     let chromosomes = new Uint8Array(nrSNPs);
@@ -24,7 +24,7 @@ export function readBimData(bimText) {
     return { snpIDs, chromosomes, positions, alleles1, alleles2 };
 }
 
-export function readFamData(famText) {
+export function readFamDataImpl(famText) {
     const lines = famText.trim().split('\n');
     const nrSamples = lines.length;
     let popNames = new Array(nrSamples);
@@ -38,7 +38,7 @@ export function readFamData(famText) {
     return { indNames, popNames };
 }
 
-export function readBedData(bedArrayBuffer, numSnps, numInds) {
+export function readBedDataImpl(bedArrayBuffer, numSnps, numInds) {
     const bytes = new Uint8Array(bedArrayBuffer);
     if (bytes.length < 3 || bytes[0] !== 0b01101100 || bytes[1] !== 0b00011011 || bytes[2] !== 0b00000001) {
         throw new Error("Invalid .bed file: incorrect magic numbers");

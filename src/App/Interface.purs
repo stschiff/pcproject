@@ -1,34 +1,15 @@
-module App.Interface
-  ( Action(..)
-  , PlinkFileSpec(..)
-  , Slots
-  , State
-  , _refChart
-  , _userInputComponent
-  , component
-  , handleAction
-  , initialState
-  , projChartBox
-  , refChartBox
-  , refDataBox
-  , render
-  )
-  where
+module App.Interface where
 
 import Prelude
 
 import App.RefChart as RefChart
 import App.UserInputComponent as UserInputComponent
-import PCproject.PCproject (ProjectionResult, projectPlinkOnWeights)
-import PCproject.PlinkData (PlinkData)
-import PCproject.RefPosData (RefPosData, readRefPosData)
-import PCproject.SnpWeights (SnpWeights, readSnpWeights)
-
-import Data.Maybe (Maybe(..), isJust, isNothing)
-import Data.Tuple (Tuple(..))
+import Data.Maybe (Maybe(..))
+import Data.Tuple.Nested ((/\))
 import Effect.Aff.Class (class MonadAff)
--- import Effect.Class.Console (log)
+import Effect.Class (liftEffect)
 import Fetch (fetch)
+import Fetch.Argonaut.Json (fromJson)
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
@@ -36,21 +17,27 @@ import Halogen.HTML.Properties as HP
 import Type.Proxy (Proxy(..))
 import Web.File.File (File)
 
+import PCproject.PCproject (ProjectionResult, projectSamples, PCAparams, getOverlapMasks, reducePcWeights, extractAndTransposeGenotypes)
+import PCproject.PlinkData (PlinkData)
+import PCproject.RefPosData (RefPosData, readRefPosData)
+import PCproject.SnpWeights (SnpWeights, readSnpWeights)
+
 data PlinkFileSpec = PlinkFileSpec File File File
 
 type State =
   { snpWeights :: Maybe SnpWeights
-  , plinkData :: Maybe PlinkData
+  , userData :: Maybe PlinkData
   , refData :: Maybe RefPosData
+  , pcaParams :: Maybe PCAparams
+  , projectionResults :: Maybe (Array ProjectionResult)
   , projectionRunning :: Boolean
-  , projectionResults :: Maybe ProjectionResult
   , errorNote :: Maybe String
   }
 
 data Action
   = LoadRefData
-  | GotPlinkData PlinkData
-  | RunProjectionEvent
+  | GotUserData PlinkData
+  | RunProjection PlinkData SnpWeights PCAparams
 
 type Slots = ( refChart :: forall q o . H.Slot q o Unit
              , userInputComponent :: forall q . H.Slot q UserInputComponent.Output Unit
@@ -77,8 +64,9 @@ render st =
             [ HH.text "PC Projection Tool" ]
         , HH.div [ HP.classes [ HH.ClassName "columns" ] ]
             [ HH.div [ HP.classes [ HH.ClassName "column" ] ] [ refDataBox st ]
+            , HH.div [ HP.classes [ HH.ClassName "column" ] ] [ projectionMonitor st ]
             , HH.div [ HP.classes [ HH.ClassName "column" ] ]
-                [ HH.slot _userInputComponent unit UserInputComponent.component unit GotPlinkData ]
+                [ HH.slot _userInputComponent unit UserInputComponent.component unit GotUserData ]
             ]
         , HH.div [ HP.classes [ HH.ClassName "columns" ] ]
             [ HH.div [ HP.classes [ HH.ClassName "column" ] ] [ refChartBox st ]
@@ -90,7 +78,7 @@ refDataBox :: forall slots m . (MonadAff m) => State -> H.ComponentHTML Action s
 refDataBox st = 
     HH.div [ HP.classes [ HH.ClassName "box" ] ]
         [ HH.h2 [ HP.classes [ HH.ClassName "title", HH.ClassName "is-4" ] ]
-            [ HH.text "Data Monitor" ]
+            [ HH.text "Reference Data" ]
         , case st.snpWeights of
             Nothing -> HH.div_ [ HH.text "Loading weight file...", HH.br_ ]
             Just sw -> HH.div_
@@ -103,38 +91,44 @@ refDataBox st =
                 [ HH.text $ "Reference Position Data loaded. Samples: " <>
                     show rd.numSamples <> ", PCs: " <> show rd.numPCs, HH.br_
                 ]
-            , case st.plinkData of
-                Nothing -> HH.text ""
-                Just pd -> HH.div_
-                    [ HH.text $ "Plink Data loaded. Individuals: " <>
-                        show pd.numIndividuals <> ", SNPs: " <> show pd.numSNPs, HH.br_
-                    ]
-        , if isJust st.snpWeights && isJust st.plinkData &&
-            (not st.projectionRunning) && (isNothing st.projectionResults) then
-            HH.div [ HP.classes [ HH.ClassName "control" ] ]
-                [ HH.button
-                    [ HP.classes [ HH.ClassName "button", HH.ClassName "is-primary" ]
-                    , HE.onClick (\_ -> RunProjectionEvent)
-                    ]
-                    [ HH.text "Run Projection" ]
-                ]
-        else
-            HH.text ""
+        , case st.errorNote of
+            Nothing -> HH.text ""
+            Just errMsg -> HH.div_ [ HH.text $ "Error: " <> errMsg, HH.br_ ]
+        ]
+
+projectionMonitor :: forall slots m . (MonadAff m) => State -> H.ComponentHTML Action slots m
+projectionMonitor st =
+    HH.div [ HP.classes [ HH.ClassName "box" ] ]
+        [ HH.h2 [ HP.classes [ HH.ClassName "title", HH.ClassName "is-4" ] ]
+            [ HH.text "Projection Monitor" ]
         , if st.projectionRunning then
-            HH.div_ [ HH.text "Projection running...", HH.br_ ]
-        else
+            HH.div_ [ HH.text "Projection is running..." ]
+          else
             HH.text ""
+        , case st.snpWeights /\ st.userData /\ st.pcaParams of
+            Just sw /\ Just pd /\ Just pp -> 
+                if st.projectionRunning then
+                    HH.div [ HP.classes [ HH.ClassName "control" ] ]
+                        [ HH.button
+                            [ HP.classes [ HH.ClassName "button", HH.ClassName "is-primary", HH.ClassName "is-loading" ] ]
+                            [ HH.text "Running" ]
+                        ]
+                else
+                    HH.div [ HP.classes [ HH.ClassName "control" ] ]
+                        [ HH.button
+                            [ HP.classes [ HH.ClassName "button", HH.ClassName "is-primary"]
+                            , HE.onClick (\_ -> RunProjection pd sw pp)
+                            ]
+                            [ HH.text "Run Projection" ]
+                        ]
+            _ ->
+                HH.text ""
         , case st.projectionResults of
             Nothing -> HH.text ""
             Just pr -> HH.div_
                 [ HH.text $ "Projection done. Overlapping SNPs: " <>
-                    show pr.overlappingPositions <> ", PCs: " <>
-                    show pr.numPCs <> ", Individuals: " <>
-                    show pr.numIndividuals, HH.br_
+                    show (map (\p -> p.nonMissingCount) pr)
                 ]
-        , case st.errorNote of
-            Nothing -> HH.text ""
-            Just errMsg -> HH.div_ [ HH.text $ "Error: " <> errMsg, HH.br_ ]
         ]
 
 refChartBox :: forall action m . (MonadAff m) => State -> H.ComponentHTML action Slots m
@@ -159,43 +153,50 @@ projChartBox _ =
 initialState :: forall input. input -> State
 initialState = const
     { snpWeights : Nothing
-    , plinkData : Nothing
+    , userData : Nothing
     , refData : Nothing
-    , projectionRunning : false
+    , pcaParams : Nothing
     , projectionResults : Nothing
+    , projectionRunning : false
     , errorNote : Nothing
     }
 
 handleAction :: forall output slots m. MonadAff m => Action -> H.HalogenM State Action slots output m Unit
 handleAction LoadRefData = do
-    f1 <- H.liftAff $ fetch "./assets/weights_joined.tsv" {}
+    f1 <- H.liftAff $ fetch "./assets/Joscha_HiRes_WestEurasia_weights_with_freqs.tsv" {}
     if f1.ok
         then do
             content <- H.liftAff $ f1.text
             let snpWeightData = readSnpWeights content
-            H.modify_ _ { snpWeights = Just snpWeightData}
+            H.modify_ _ { snpWeights = Just snpWeightData }
         else
             H.modify_ _ { errorNote = Just "Failed to load weight data", snpWeights = Nothing}
-    f2 <- H.liftAff $ fetch "./assets/reference_positions.tsv" {}
+    f2 <- H.liftAff $ fetch "./assets/Joscha_HiRes_WestEurasia_evec_with_groups.tsv" {}
     if f2.ok
         then do
             content <- H.liftAff $ f2.text
             let refData = readRefPosData content
-            H.modify_ _ { refData = Just refData}
+            H.modify_ _ { refData = Just refData }
         else
             H.modify_ _ { errorNote = Just "Failed to load reference data", refData = Nothing}
-    st <- H.get
-    when (isJust st.plinkData) $
-        handleAction RunProjectionEvent
+    f3 <- H.liftAff $ fetch "./assets/Joscha_HiRes_WestEurasia_parameters.json" {}
+    if f3.ok
+        then do
+            pcaParams <- H.liftAff $ fromJson f3.json
+            H.modify_ _ { pcaParams = Just pcaParams }
+        else
+            H.modify_ _ { errorNote = Just "Failed to load PCA parameters", pcaParams = Nothing}
+            
 
-handleAction (GotPlinkData pd) = do
-    H.modify_ _ { plinkData = Just pd, errorNote = Nothing }
-    st <- H.get
-    when (isJust st.snpWeights && isJust st.refData) $
-        handleAction RunProjectionEvent
- 
-handleAction RunProjectionEvent = do
+handleAction (GotUserData pd) = do
+    H.modify_ _ { userData = Just pd, errorNote = Nothing }
+
+handleAction (RunProjection pd sw pp) = do
     H.modify_ _ { projectionRunning = true, projectionResults = Nothing }
-    overlapReport <- liftEffect $ overlapReport st.plinkData st.snpWeights
-    H.modify_ _ { projectionRunning = false }
+    overlap <- liftEffect $ getOverlapMasks pd.bimData sw
+    reducedSnpWeights <- liftEffect $ reducePcWeights sw overlap
+    genotypes <- liftEffect $ extractAndTransposeGenotypes pd.bedData pd.numSNPs pd.numIndividuals overlap
+    pResults <- liftEffect $ projectSamples genotypes reducedSnpWeights.pcWeights reducedSnpWeights.frequencies
+        pd.numIndividuals reducedSnpWeights.numPCs pp
+    H.modify_ _ { projectionRunning = false, projectionResults = Just pResults }
     pure unit

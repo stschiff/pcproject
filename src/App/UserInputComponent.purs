@@ -8,18 +8,19 @@ import Data.ArrayBuffer.Types (ArrayBuffer, Uint8Array)
 import Data.Either (Either(..))
 import Data.Maybe (Maybe(..))
 import Data.String.Utils (endsWith)
+import Data.Traversable (sequence)
+import Data.Tuple (Tuple(..))
 import Effect (Effect)
-import Effect.Aff (makeAff, nonCanceler)
+import Effect.Aff (makeAff, nonCanceler, attempt)
 import Effect.Aff.Class (class MonadAff, liftAff)
 import Effect.Class (liftEffect, class MonadEffect)
-import Effect.Exception (error)
+import Effect.Exception (error, try)
 import Fetch (fetch)
 import Foreign (unsafeFromForeign)
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
-import PCproject.PlinkData (PlinkData, readBimData, readFamData, checkBedFileMagicBytes)
 import Web.Encoding.TextDecoder as TextDecoder
 import Web.Encoding.UtfLabel as UtfLabel
 import Web.Event.Event as WE
@@ -30,12 +31,14 @@ import Web.File.FileReader (fileReader, readAsArrayBuffer, result, toEventTarget
 import Web.HTML.Event.EventTypes as ET
 import Web.HTML.HTMLInputElement (fromEventTarget, files)
 
+import PCproject.PlinkData (PlinkData, readBimData, readFamData, readBedData)
+
 data PlinkFileSpec = PlinkFileSpec File File File | ExampleData
 
 type State =
   { selectedPlinkFiles :: Maybe PlinkFileSpec
-  , statusPlinkFilesLoading :: Boolean
   , errorNote :: Maybe String
+  , plinkData :: Maybe PlinkData
   }
 
 type Output = PlinkData
@@ -89,8 +92,9 @@ component =
 initialState :: forall i. i -> State
 initialState _ =
     { selectedPlinkFiles: Nothing
-    , statusPlinkFilesLoading: false
-    , errorNote: Nothing }
+    , errorNote: Nothing
+    , plinkData: Nothing
+    }
 
 render :: forall slots m . (MonadAff m) => State -> H.ComponentHTML Action slots m
 render st =
@@ -121,11 +125,15 @@ render st =
                 ]
                 [ HH.text "Load Example Data" ]
             ]
-        , if st.statusPlinkFilesLoading then
-            HH.div_ [ HH.text "Loading plink files...", HH.br_ ]
-        else
-            HH.text ""
-        ]
+        , case Tuple st.plinkData st.selectedPlinkFiles of
+            Tuple _ Nothing -> HH.text ""
+            Tuple Nothing _ -> HH.div_ [ HH.text "Loading plink files...", HH.br_ ]
+            Tuple (Just pd) _ ->
+              HH.div_
+                [ HH.text $ "Nr of samples to project: " <> show pd.numIndividuals, HH.br_
+                , HH.text $ "Nr of SNPs: " <> show pd.numSNPs, HH.br_
+                ] 
+        ] 
 
 handleAction :: forall slots m. MonadAff m => Action -> H.HalogenM State Action slots Output m Unit
 handleAction (GotGenoDataFileEvent ev) = do
@@ -146,41 +154,46 @@ handleAction (GotGenoDataFileEvent ev) = do
                 [] -> H.modify_ _ { errorNote = Just "No .bed file selected", selectedPlinkFiles = Nothing }
                 [bedFile] -> do
                   H.modify_ _ { selectedPlinkFiles = Just (PlinkFileSpec famFile bimFile bedFile), errorNote = Nothing }
-                  H.modify_ _ { statusPlinkFilesLoading = true }
                   -- Read the files asynchronously using makeAff
-                  famContent <- readFileAsArrayBufferAff famFile >>= arrayBufferToString
-                  bimContent <- readFileAsArrayBufferAff bimFile >>= arrayBufferToString
-                  bedContent <- readFileAsArrayBufferAff bedFile
-                  let famResults = readFamData famContent
-                  let bimResults = readBimData bimContent
-                  bedCheck <- liftEffect $ checkBedFileMagicBytes bedContent
-                  if (not bedCheck) then
-                    H.modify_ _ { errorNote = Just "Invalid .bed file (incorrect magic numbers in the first three bytes)", selectedPlinkFiles = Nothing, statusPlinkFilesLoading = false }
-                  else do
-                    let plinkData = { famData : famResults, bimData : bimResults, bedData : bedContent, numIndividuals : length famResults.indNames, numSNPs : length bimResults.snpIDs }
-                    H.modify_ _ { statusPlinkFilesLoading = false }
-                    H.raise plinkData
+                  famResult <- liftAff $ attempt (readFileAsArrayBufferAff famFile >>= arrayBufferToString >>= readFamData)
+                  bimResult <- liftAff $ attempt (readFileAsArrayBufferAff bimFile >>= arrayBufferToString >>= readBimData)
+                  case Tuple famResult bimResult of
+                    Tuple (Right fam) (Right bim) -> do
+                      let numInds = length fam.indNames
+                      let numSNPs = length bim.snpIDs
+                      bedResult <- liftAff $ attempt (readFileAsArrayBufferAff bedFile >>= \bedContent -> readBedData bedContent numSNPs numInds)
+                      case bedResult of
+                        Left err -> H.modify_ _ { errorNote = Just $ "Error reading .bed file: " <> show err }
+                        Right bed -> do
+                          let plinkData = { famData : fam, bimData : bim, bedData : bed, numIndividuals : numInds, numSNPs : numSNPs }
+                          H.modify_ _ { plinkData = Just plinkData }
+                          H.raise plinkData
+                    Tuple (Left err) _ -> H.modify_ _ { errorNote = Just $ "Error: " <> show err }
+                    Tuple _ (Left err) -> H.modify_ _ { errorNote = Just $ "Error: " <> show err }
                 _ -> H.modify_ _ { errorNote = Just "Multiple .bed files selected", selectedPlinkFiles = Nothing }
               _ -> H.modify_ _ { errorNote = Just "Multiple .bim files selected", selectedPlinkFiles = Nothing }
             _ -> H.modify_ _ { errorNote = Just "Multiple .fam files selected", selectedPlinkFiles = Nothing }
 
 handleAction RequestSampleData = do
-    famFetch <- H.liftAff $ fetch "./assets/2024_Gretzinger_EarlyCelts_shortened.fam" {}
-    bimFetch <- H.liftAff $ fetch "./assets/2024_Gretzinger_EarlyCelts_shortened.bim" {}
-    bedFetch <- H.liftAff $ fetch "./assets/2024_Gretzinger_EarlyCelts_shortened.bed" {}
+    famFetch <- H.liftAff $ fetch "./assets/2024_Gretzinger_EarlyCelts.fam" {}
+    bimFetch <- H.liftAff $ fetch "./assets/2024_Gretzinger_EarlyCelts.bim" {}
+    bedFetch <- H.liftAff $ fetch "./assets/2024_Gretzinger_EarlyCelts.bed" {}
     if famFetch.ok && bimFetch.ok && bedFetch.ok
         then do
-            famContent <- H.liftAff $ famFetch.text
-            bimContent <- H.liftAff $ bimFetch.text
-            bedContent <- H.liftAff $ bedFetch.arrayBuffer
-            let famResults = readFamData famContent
-            let bimResults = readBimData bimContent
-            H.raise
-                { famData : famResults
-                , bimData : bimResults
-                , bedData : bedContent
-                , numIndividuals : length famResults.indNames
-                , numSNPs : length bimResults.snpIDs
-                }
+            famResult <- H.liftAff $ attempt (famFetch.text >>= readFamData)
+            bimResult <- H.liftAff $ attempt (bimFetch.text >>= readBimData)
+            case Tuple famResult bimResult of
+                Tuple (Right fam) (Right bim) -> do
+                    let numInds = length fam.indNames
+                    let numSNPs = length bim.snpIDs
+                    bedResult <- H.liftAff $ attempt (bedFetch.arrayBuffer >>= \bedContent -> readBedData bedContent numSNPs numInds)
+                    case bedResult of
+                        Left err -> H.modify_ _ { errorNote = Just $ "Error reading .bed file: " <> show err }
+                        Right bed -> do
+                            let plinkData = { famData : fam, bimData : bim, bedData : bed, numIndividuals : numInds, numSNPs : numSNPs }
+                            H.modify_ _ { plinkData = Just plinkData, selectedPlinkFiles = Just ExampleData, errorNote = Nothing }
+                            H.raise plinkData
+                Tuple (Left err) _ -> H.modify_ _ { errorNote = Just $ "Error: " <> show err }
+                Tuple _ (Left err) -> H.modify_ _ { errorNote = Just $ "Error: " <> show err }
         else
             H.modify_ _ { errorNote = Just "Failed to load example data" }

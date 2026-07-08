@@ -130,7 +130,7 @@ function flip(geno) {
 }
 
 function projectSamplesImpl(transposedGenotypeMatrix, pcWeights, frequencies,
-                        numInds, numPCs, nScale, yScale, eigenValues) {
+                        numInds, numPCs, { nScale, yScale, eigenValues }) {
     let ret = [];
     const numSNPs = frequencies.length;
     const aBuf = new Float64Array(pcWeights.length);
