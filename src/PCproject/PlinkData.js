@@ -52,15 +52,16 @@ export function readBedDataImpl(bedArrayBuffer, numSnps, numInds) {
             const genotypeBits = (bytes[byteIndex] >> bitOffset) & 0b11;
             switch (genotypeBits) {
                 case 0b00:
-                    returnArray[i * numInds + j] = 0; // Homozygous reference
+                    returnArray[i * numInds + j] = 0; break; // Homozygous reference
                 case 0b10:
-                    returnArray[i * numInds + j] = 1; // Heterozygous
+                    returnArray[i * numInds + j] = 1; break; // Heterozygous
                 case 0b11:
-                    returnArray[i * numInds + j] = 2; // Homozygous alternate
+                    returnArray[i * numInds + j] = 2; break; // Homozygous alternate
                 case 0b01:
-                    returnArray[i * numInds + j] = 3; // Missing genotype
+                    returnArray[i * numInds + j] = 3; break; // Missing genotype
             }
         }
     }
+    console.log(`Loaded ${numSnps * numInds} genotypes from BED file.`);
     return returnArray;
 }

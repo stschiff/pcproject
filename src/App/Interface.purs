@@ -8,6 +8,7 @@ import Data.Maybe (Maybe(..))
 import Data.Tuple.Nested ((/\))
 import Effect.Aff.Class (class MonadAff)
 import Effect.Class (liftEffect)
+import Effect.Console (log)
 import Fetch (fetch)
 import Fetch.Argonaut.Json (fromJson)
 import Halogen as H
@@ -17,7 +18,9 @@ import Halogen.HTML.Properties as HP
 import Type.Proxy (Proxy(..))
 import Web.File.File (File)
 
-import PCproject.PCproject (ProjectionResult, projectSamples, PCAparams, getOverlapMasks, reducePcWeights, extractAndTransposeGenotypes)
+import PCproject.PCproject (ProjectionResult, projectSamples, PCAparams,
+        getOverlapMasks, reducePcWeights, extractAndTransposeGenotypes,
+        OverlapMasks(..))
 import PCproject.PlinkData (PlinkData)
 import PCproject.RefPosData (RefPosData, readRefPosData)
 import PCproject.SnpWeights (SnpWeights, readSnpWeights)
@@ -32,6 +35,7 @@ type State =
   , projectionResults :: Maybe (Array ProjectionResult)
   , projectionRunning :: Boolean
   , errorNote :: Maybe String
+  , overlap :: Maybe OverlapMasks
   }
 
 data Action
@@ -123,12 +127,20 @@ projectionMonitor st =
                         ]
             _ ->
                 HH.text ""
+        , case st.overlap of
+            Nothing -> HH.text ""
+            Just overlap ->
+                HH.div_
+                    [ HH.text $ "Overlap Masks: "
+                        <> "Included SNPs: " <> show overlap.nrIncluded
+                        <> ", Strand Ambiguous Removed: " <> show overlap.removedStrandAmbiguous
+                        <> ", Inconsistent Removed: " <> show overlap.removedInconsistent
+                        <> ", To Be Flipped: " <> show overlap.nrToBeFlipped
+                    ]
         , case st.projectionResults of
             Nothing -> HH.text ""
             Just pr -> HH.div_
-                [ HH.text $ "Projection done. Overlapping SNPs: " <>
-                    show (map (\p -> p.nonMissingCount) pr)
-                ]
+                [ HH.text $ "Projection done" ]
         ]
 
 refChartBox :: forall action m . (MonadAff m) => State -> H.ComponentHTML action Slots m
@@ -159,11 +171,12 @@ initialState = const
     , projectionResults : Nothing
     , projectionRunning : false
     , errorNote : Nothing
+    , overlap : Nothing
     }
 
 handleAction :: forall output slots m. MonadAff m => Action -> H.HalogenM State Action slots output m Unit
 handleAction LoadRefData = do
-    f1 <- H.liftAff $ fetch "./assets/Joscha_HiRes_WestEurasia_weights_with_freqs.tsv" {}
+    f1 <- H.liftAff $ fetch "./assets/Joscha_HiRes_WestEurasia_weights_with_freqs.txt" {}
     if f1.ok
         then do
             content <- H.liftAff $ f1.text
@@ -183,6 +196,7 @@ handleAction LoadRefData = do
     if f3.ok
         then do
             pcaParams <- H.liftAff $ fromJson f3.json
+            liftEffect <<< log $ "Loaded PCA parameters: " <> show pcaParams
             H.modify_ _ { pcaParams = Just pcaParams }
         else
             H.modify_ _ { errorNote = Just "Failed to load PCA parameters", pcaParams = Nothing}
@@ -194,6 +208,7 @@ handleAction (GotUserData pd) = do
 handleAction (RunProjection pd sw pp) = do
     H.modify_ _ { projectionRunning = true, projectionResults = Nothing }
     overlap <- liftEffect $ getOverlapMasks pd.bimData sw
+    H.modify_ _ { overlap = Just overlap }
     reducedSnpWeights <- liftEffect $ reducePcWeights sw overlap
     genotypes <- liftEffect $ extractAndTransposeGenotypes pd.bedData pd.numSNPs pd.numIndividuals overlap
     pResults <- liftEffect $ projectSamples genotypes reducedSnpWeights.pcWeights reducedSnpWeights.frequencies

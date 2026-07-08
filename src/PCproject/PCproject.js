@@ -102,7 +102,9 @@ function reducePcWeightsImpl(snpWeights, overlap) {
                 reducedIndex++;
             }
         }
-        return {pcWeights, frequencies, snpIDs, chromosomes, positions, numPCs: snpWeights.numPCs};
+        const ret = {pcWeights, frequencies, snpIDs, chromosomes, positions, numPCs: snpWeights.numPCs};
+        console.log(`Reduced SNP weights: ${ret.snpIDs.length} SNPs, ${ret.numPCs} PCs`);
+        return ret;
     }
 }
 
@@ -119,6 +121,7 @@ function extractAndTransposeGenotypesImpl(plinkBedDat, numSNPs, numInds, overlap
             reducedIndex++;
         }
     }
+    console.log(`Extracted and transposed genotypes: ${numInds} individuals, ${overlap.nrIncluded} SNPs`);
     return newGenotypeMatrix;
 }
 
@@ -163,6 +166,7 @@ function projectSamplesImpl(transposedGenotypeMatrix, pcWeights, frequencies,
             nonMissingCount: nonMissing
         });
     }
+    console.log(`Projected ${numInds} samples onto ${numPCs} PCs`);
     return ret;
 }
 

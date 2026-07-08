@@ -16,12 +16,12 @@ type OverlapMasks = {
     removedInconsistent :: Int,
     nrIncluded :: Int,
     nrToBeFlipped :: Int
-}
+} 
 
 type ProjectionResult = {
     pcCoordinates :: Array Number,
     nonMissingCount :: Int
-}
+} 
 
 type PCAparams =
     { yScale      :: Number
