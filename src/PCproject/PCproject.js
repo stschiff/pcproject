@@ -1,6 +1,6 @@
 import dgels from '@rreusser/blapack/lapack/base/dgels';
 
-function getOverlapMasks(sampleBimData, snpWeights) {
+function getOverlapMasksImpl(sampleBimData, snpWeights) {
     const snpWeightMask = new Uint8Array(snpWeights.snpIDs.length);
     const plinkMask = new Uint8Array(sampleBimData.snpIDs.length);
     const flipMask = new Uint8Array(sampleBimData.snpIDs.length);
@@ -81,7 +81,7 @@ function complement(a) {
     }
 }
 
-function reducePcWeights(snpWeights, overlap) {
+function reducePcWeightsImpl(snpWeights, overlap) {
     if (snpWeights.snpIDs.length == overlap.nrIncluded) {
         return snpWeights; // no reduction needed
     } else {
@@ -106,7 +106,7 @@ function reducePcWeights(snpWeights, overlap) {
     }
 }
 
-function extractAndTransposeGenotypes(plinkBedDat, numSNPs, numInds, overlap) {
+function extractAndTransposeGenotypesImpl(plinkBedDat, numSNPs, numInds, overlap) {
     const newGenotypeMatrix = new Uint8Array(numInds * overlap.nrIncluded); // we transpose the output
     let reducedIndex = 0;
     for(let i = 0; i < numSNPs; i++) {
@@ -129,7 +129,7 @@ function flip(geno) {
         return 2 - geno;
 }
 
-function projectSamples(transposedGenotypeMatrix, pcWeights, frequencies,
+function projectSamplesImpl(transposedGenotypeMatrix, pcWeights, frequencies,
                         numInds, numPCs, nScale, yScale, eigenValues) {
     let ret = [];
     const numSNPs = frequencies.length;
@@ -166,4 +166,4 @@ function projectSamples(transposedGenotypeMatrix, pcWeights, frequencies,
     return ret;
 }
 
-export { getOverlapMasks, reducePcWeights, extractAndTransposeGenotypes, projectSamples, dgels };
+export { getOverlapMasksImpl, reducePcWeightsImpl, extractAndTransposeGenotypesImpl, projectSamplesImpl };

@@ -1,9 +1,10 @@
 module PCproject.PCproject where
 
 import Data.ArrayBuffer.Types (Uint8Array, Float32Array)
-import Effect.Uncurried (EffectFn2, EffectFn4, runEffectFn2, runEffectFn4)
+import Effect (Effect)
+import Effect.Uncurried (EffectFn2, EffectFn4, EffectFn8, runEffectFn2, runEffectFn4, runEffectFn8)
 
-import PCproject.PlinkData (PlinkData, PlinkBimData)
+import PCproject.PlinkData (PlinkBimData)
 import PCproject.SnpWeights (SnpWeights)
 
 type OverlapMasks = {
@@ -21,10 +22,22 @@ type ProjectionResult = {
     nonMissingCount :: Number
 }
 
-getOverlapMasks :: BimData -> SnpWeights -> OverlapMasks
+foreign import getOverlapMasksImpl :: EffectFn2 PlinkBimData SnpWeights OverlapMasks
+getOverlapMasks :: PlinkBimData -> SnpWeights -> Effect OverlapMasks
+getOverlapMasks sampleBimData snpWeights =
+    runEffectFn2 getOverlapMasksImpl sampleBimData snpWeights
 
-reducePcWeights :: SnpWeights -> OverlapMasks -> SnpWeights
+foreign import reducePcWeightsImpl :: EffectFn2 SnpWeights OverlapMasks SnpWeights
+reducePcWeights :: SnpWeights -> OverlapMasks -> Effect SnpWeights
+reducePcWeights snpWeights overlap =
+    runEffectFn2 reducePcWeightsImpl snpWeights overlap
 
-extractAndTransposeGenotypes :: Uint8Array -> number -> number -> OverlapMasks -> Uint8Array
+foreign import extractAndTransposeGenotypesImpl :: EffectFn4 Uint8Array Number Number OverlapMasks Uint8Array
+extractAndTransposeGenotypes :: Uint8Array -> Number -> Number -> OverlapMasks -> Effect Uint8Array
+extractAndTransposeGenotypes plinkBedDat numSNPs numInds overlap =
+    runEffectFn4 extractAndTransposeGenotypesImpl plinkBedDat numSNPs numInds overlap
 
-projectSamples :: Uint8Array -> Float32Array -> Float32Array -> number -> number -> number -> number -> Array Number -> Array ProjectionResult
+foreign import projectSamplesImpl :: EffectFn8 Uint8Array Float32Array Float32Array Number Number Number Number (Array Number) (Array ProjectionResult)
+projectSamples :: Uint8Array -> Float32Array -> Float32Array -> Number -> Number -> Number -> Number -> Array Number -> Effect (Array ProjectionResult)
+projectSamples transposedGenotypeMatrix pcWeight frequencies numInds numPCs nScale yScale eigenValues =
+    runEffectFn8 projectSamplesImpl transposedGenotypeMatrix pcWeight frequencies numInds numPCs nScale yScale eigenValues
