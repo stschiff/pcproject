@@ -2,23 +2,27 @@ module App.Interface where
 
 import Prelude
 
-import App.RefChart as RefChart
-import App.UserInputComponent as UserInputComponent
+import Data.Array (length)
+import Data.Either (Either(..))
 import Data.Maybe (Maybe(..))
-import Data.Time.Duration (Milliseconds(..))
 import Data.Tuple.Nested ((/\))
-import Effect.Aff (delay)
-import Effect.Aff.Class (class MonadAff)
+import Effect.Aff (makeAff, nonCanceler)
+import Effect.Aff.Class (class MonadAff, liftAff)
 import Effect.Class (liftEffect)
-import Effect.Console (log)
+-- import Effect.Console (log)
 import Fetch (fetch)
 import Fetch.Argonaut.Json (fromJson)
 import Halogen as H
 import Halogen.HTML as HH
-import Halogen.HTML.Events as HE
+-- import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 import Type.Proxy (Proxy(..))
-import Web.File.File (File)
+import Web.HTML (window)
+import Web.HTML.Window (requestAnimationFrame)
+
+import App.RefChart as RefChart
+import App.UserInputComponent as UserInputComponent
+import App.Utils (RemoteData(..))
 
 import PCproject.PCproject (ProjectionResult, projectSamples, PCAparams,
         getOverlapMasks, reducePcWeights, extractAndTransposeGenotypes,
@@ -27,23 +31,27 @@ import PCproject.PlinkData (PlinkData)
 import PCproject.RefPosData (RefPosData, readRefPosData)
 import PCproject.SnpWeights (SnpWeights, readSnpWeights)
 
-data PlinkFileSpec = PlinkFileSpec File File File
+type ReferenceBundle = {
+  snpWeights :: SnpWeights,
+  refPosData :: RefPosData,
+  pcaParams :: PCAparams
+}
+
+type ProjectionBundle = {
+  projectionResults :: Array ProjectionResult,
+  overlapReport :: OverlapMasks
+}
 
 type State =
-  { snpWeights :: Maybe SnpWeights
+  { refBundle :: RemoteData String ReferenceBundle
   , userData :: Maybe PlinkData
-  , refData :: Maybe RefPosData
-  , pcaParams :: Maybe PCAparams
-  , projectionResults :: Maybe (Array ProjectionResult)
-  , projectionRunning :: Boolean
-  , errorNote :: Maybe String
-  , overlap :: Maybe OverlapMasks
+  , projectionResults :: RemoteData String ProjectionBundle
   }
 
 data Action
   = LoadRefData
   | GotUserData PlinkData
-  | RunProjection PlinkData SnpWeights PCAparams
+  | RunProjection
 
 type Slots = ( refChart :: forall q o . H.Slot q o Unit
              , userInputComponent :: forall q . H.Slot q UserInputComponent.Output Unit
@@ -85,21 +93,16 @@ refDataBox st =
     HH.div [ HP.classes [ HH.ClassName "box" ] ]
         [ HH.h2 [ HP.classes [ HH.ClassName "title", HH.ClassName "is-4" ] ]
             [ HH.text "Reference Data" ]
-        , case st.snpWeights of
-            Nothing -> HH.div_ [ HH.text "Loading weight file...", HH.br_ ]
-            Just sw -> HH.div_
-                [ HH.text $ "Selected weight file with SNPs: " <>
-                    show sw.numSNPs <> ", PCs: " <> show sw.numPCs, HH.br_
+        , case st.refBundle of
+            NotAsked -> HH.div_ [ HH.text "No reference data yet", HH.br_ ]
+            Loading -> HH.div_ [ HH.text "Loading refernece data...", HH.br_ ]
+            Failure err -> HH.div_ [ HH.text $ "Error loading refernece bundle: " <> err, HH.br_ ]
+            Success rb -> HH.div_
+                [ HH.text $ "Selected reference data with " <>
+                    show rb.snpWeights.numSNPs <> " SNPs for " <>
+                    show rb.snpWeights.numPCs <> " PCs and " <>
+                    show rb.refPosData.numSamples <> " individuals", HH.br_
                 ]
-        , case st.refData of
-            Nothing -> HH.div_ [ HH.text "Loading reference position file...", HH.br_ ]
-            Just rd -> HH.div_
-                [ HH.text $ "Reference Position Data loaded. Samples: " <>
-                    show rd.numSamples <> ", PCs: " <> show rd.numPCs, HH.br_
-                ]
-        , case st.errorNote of
-            Nothing -> HH.text ""
-            Just errMsg -> HH.div_ [ HH.text $ "Error: " <> errMsg, HH.br_ ]
         ]
 
 projectionMonitor :: forall slots m . (MonadAff m) => State -> H.ComponentHTML Action slots m
@@ -107,42 +110,19 @@ projectionMonitor st =
     HH.div [ HP.classes [ HH.ClassName "box" ] ]
         [ HH.h2 [ HP.classes [ HH.ClassName "title", HH.ClassName "is-4" ] ]
             [ HH.text "Projection Monitor" ]
-        , if st.projectionRunning then
-            HH.div_ [ HH.text "Projection is running..." ]
-          else
-            HH.text ""
-        , case st.snpWeights /\ st.userData /\ st.pcaParams of
-            Just sw /\ Just pd /\ Just pp -> 
-                if st.projectionRunning then
-                    HH.div [ HP.classes [ HH.ClassName "control" ] ]
-                        [ HH.button
-                            [ HP.classes [ HH.ClassName "button", HH.ClassName "is-primary", HH.ClassName "is-loading" ] ]
-                            [ HH.text "Running" ]
-                        ]
-                else
-                    HH.div [ HP.classes [ HH.ClassName "control" ] ]
-                        [ HH.button
-                            [ HP.classes [ HH.ClassName "button", HH.ClassName "is-primary"]
-                            , HE.onClick (\_ -> RunProjection pd sw pp)
-                            ]
-                            [ HH.text "Run Projection" ]
-                        ]
-            _ ->
-                HH.text ""
-        , case st.overlap of
-            Nothing -> HH.text ""
-            Just overlap ->
-                HH.div_
-                    [ HH.text $ "Overlap Masks: "
-                        <> "Included SNPs: " <> show overlap.nrIncluded
-                        <> ", Strand Ambiguous Removed: " <> show overlap.removedStrandAmbiguous
-                        <> ", Inconsistent Removed: " <> show overlap.removedInconsistent
-                        <> ", To Be Flipped: " <> show overlap.nrToBeFlipped
-                    ]
         , case st.projectionResults of
-            Nothing -> HH.text ""
-            Just _ -> HH.div_
-                [ HH.text $ "Projection done" ]
+            NotAsked -> HH.text "No projection performed yet"
+            Loading -> HH.text "Projection running..."
+            Failure err -> HH.text $ "Error during projection: " <> err
+            Success pr -> HH.div_
+                [ HH.text "Projection completed successfully"
+                , HH.text $ "Number of samples projected: " <> show (length pr.projectionResults)
+                , HH.text $ "Overlap Masks: "
+                        <> "Included SNPs: " <> show pr.overlapReport.nrIncluded
+                        <> ", Strand Ambiguous Removed: " <> show pr.overlapReport.removedStrandAmbiguous
+                        <> ", Inconsistent Removed: " <> show pr.overlapReport.removedInconsistent
+                        <> ", To Be Flipped: " <> show pr.overlapReport.nrToBeFlipped
+                ]
         ]
 
 refChartBox :: forall action m . (MonadAff m) => State -> H.ComponentHTML action Slots m
@@ -150,10 +130,10 @@ refChartBox st =
     HH.div [ HP.classes [ HH.ClassName "box" ] ]
         [ HH.h2 [ HP.classes [ HH.ClassName "title", HH.ClassName "is-4" ] ]
             [ HH.text "Reference Data Chart" ]
-        , case st.refData of
-            Nothing -> HH.text ""
-            Just rd -> HH.div_
-                [ HH.slot_ _refChart unit RefChart.component { refPosData:  rd } ]
+        , case st.refBundle of
+            Success rb -> HH.div_
+                [ HH.slot_ _refChart unit RefChart.component { refPosData:  rb.refPosData } ]
+            _ -> HH.text ""
         ]
 
 projChartBox :: forall action slots m . (MonadAff m) => State -> H.ComponentHTML action slots m
@@ -166,55 +146,54 @@ projChartBox _ =
 
 initialState :: forall input. input -> State
 initialState = const
-    { snpWeights : Nothing
+    { refBundle : NotAsked
+    , projectionResults : NotAsked
     , userData : Nothing
-    , refData : Nothing
-    , pcaParams : Nothing
-    , projectionResults : Nothing
-    , projectionRunning : false
-    , errorNote : Nothing
-    , overlap : Nothing
     }
 
 handleAction :: forall output slots m. MonadAff m => Action -> H.HalogenM State Action slots output m Unit
 handleAction LoadRefData = do
     f1 <- H.liftAff $ fetch "./assets/Joscha_HiRes_WestEurasia_weights_with_freqs.txt" {}
-    if f1.ok
-        then do
-            content <- H.liftAff $ f1.text
-            let snpWeightData = readSnpWeights content
-            H.modify_ _ { snpWeights = Just snpWeightData }
-        else
-            H.modify_ _ { errorNote = Just "Failed to load weight data", snpWeights = Nothing}
     f2 <- H.liftAff $ fetch "./assets/Joscha_HiRes_WestEurasia_evec_with_groups.tsv" {}
-    if f2.ok
-        then do
-            content <- H.liftAff $ f2.text
-            let refData = readRefPosData content
-            H.modify_ _ { refData = Just refData }
-        else
-            H.modify_ _ { errorNote = Just "Failed to load reference data", refData = Nothing}
     f3 <- H.liftAff $ fetch "./assets/Joscha_HiRes_WestEurasia_parameters.json" {}
-    if f3.ok
-        then do
-            pcaParams <- H.liftAff $ fromJson f3.json
-            liftEffect <<< log $ "Loaded PCA parameters: " <> show pcaParams
-            H.modify_ _ { pcaParams = Just pcaParams }
+    if f1.ok 
+        then if f2.ok
+            then if f3.ok
+                then do
+                    snpWeights <- readSnpWeights <$> H.liftAff f1.text
+                    refPosData <- readRefPosData <$> H.liftAff f2.text
+                    pcaParams <- H.liftAff $ fromJson f3.json
+                    H.modify_ _ { refBundle = Success { snpWeights, refPosData, pcaParams } }
+                    handleAction RunProjection
+                else
+                    H.modify_ _ { refBundle = Failure "Failed to load PCA parameters file"}
+            else
+                H.modify_ _ { refBundle = Failure "Failed to load reference position data file"}
         else
-            H.modify_ _ { errorNote = Just "Failed to load PCA parameters", pcaParams = Nothing}
-            
+            H.modify_ _ { refBundle = Failure "Failed to load weight data file"}
 
 handleAction (GotUserData pd) = do
-    H.modify_ _ { userData = Just pd, errorNote = Nothing }
+    H.modify_ _ { userData = Just pd }
+    handleAction RunProjection
 
-handleAction (RunProjection pd sw pp) = do
-    H.modify_ _ { projectionRunning = true, projectionResults = Nothing }
-    H.liftAff $ delay (Milliseconds 0.0)   -- yields to the event loop, lets the spinner paint
-    overlap <- liftEffect $ getOverlapMasks pd.bimData sw
-    H.modify_ _ { overlap = Just overlap }
-    reducedSnpWeights <- liftEffect $ reducePcWeights sw overlap
-    genotypes <- liftEffect $ extractAndTransposeGenotypes pd.bedData pd.numSNPs pd.numIndividuals overlap
-    pResults <- liftEffect $ projectSamples genotypes reducedSnpWeights.pcWeights reducedSnpWeights.frequencies
-        pd.numIndividuals reducedSnpWeights.numPCs pp
-    H.modify_ _ { projectionRunning = false, projectionResults = Just pResults }
-    pure unit
+handleAction RunProjection = do
+    st <- H.get
+    case st.refBundle /\ st.userData of
+        Success rb /\ Just pd -> do
+            H.modify_ _ { projectionResults = Loading }
+            nextAnimationFrame -- hack to get the Spinner running
+            nextAnimationFrame
+            overlap <- liftEffect $ getOverlapMasks pd.bimData rb.snpWeights
+            reducedSnpWeights <- liftEffect $ reducePcWeights rb.snpWeights overlap
+            genotypes <- liftEffect $ extractAndTransposeGenotypes pd.bedData pd.numSNPs pd.numIndividuals overlap
+            pResults <- liftEffect $ projectSamples genotypes reducedSnpWeights.pcWeights reducedSnpWeights.frequencies
+                pd.numIndividuals reducedSnpWeights.numPCs rb.pcaParams
+            H.modify_ _ { projectionResults = Success { projectionResults: pResults, overlapReport: overlap } }
+        _ -> H.modify_ _ { projectionResults = NotAsked }
+
+-- This is just a hack for now, to make sure the spinner starts running while the synchronous projection computation runs.
+nextAnimationFrame :: forall m. MonadAff m => m Unit
+nextAnimationFrame = liftAff $ makeAff \callback -> do
+  win <- window
+  _ <- requestAnimationFrame (callback (Right unit)) win
+  pure nonCanceler
