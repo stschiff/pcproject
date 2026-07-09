@@ -4264,7 +4264,7 @@ var require_main75 = __commonJS({
     setReadOnlyAccessor(Complex64Array.prototype, "length", function get5() {
       return this._length;
     });
-    setReadOnly4(Complex64Array.prototype, "map", function map35(fcn, thisArg) {
+    setReadOnly4(Complex64Array.prototype, "map", function map36(fcn, thisArg) {
       var outbuf;
       var buf;
       var out;
@@ -5696,7 +5696,7 @@ var require_main78 = __commonJS({
       }
       return -1;
     });
-    setReadOnly4(Complex128Array.prototype, "map", function map35(fcn, thisArg) {
+    setReadOnly4(Complex128Array.prototype, "map", function map36(fcn, thisArg) {
       var outbuf;
       var buf;
       var out;
@@ -6928,7 +6928,7 @@ var require_main79 = __commonJS({
     setReadOnlyAccessor(BooleanArray.prototype, "length", function get5() {
       return this._length;
     });
-    setReadOnly4(BooleanArray.prototype, "map", function map35(fcn, thisArg) {
+    setReadOnly4(BooleanArray.prototype, "map", function map36(fcn, thisArg) {
       var outbuf;
       var out;
       var buf;
@@ -7871,10 +7871,10 @@ var map = function(dict) {
   return dict.map;
 };
 var mapFlipped = function(dictFunctor) {
-  var map113 = map(dictFunctor);
+  var map114 = map(dictFunctor);
   return function(fa) {
     return function(f) {
-      return map113(f)(fa);
+      return map114(f)(fa);
     };
   };
 };
@@ -7882,17 +7882,17 @@ var $$void = function(dictFunctor) {
   return map(dictFunctor)($$const(unit));
 };
 var voidLeft = function(dictFunctor) {
-  var map113 = map(dictFunctor);
+  var map114 = map(dictFunctor);
   return function(f) {
     return function(x) {
-      return map113($$const(x))(f);
+      return map114($$const(x))(f);
     };
   };
 };
 var voidRight = function(dictFunctor) {
-  var map113 = map(dictFunctor);
+  var map114 = map(dictFunctor);
   return function(x) {
-    return map113($$const(x));
+    return map114($$const(x));
   };
 };
 var functorArray = {
@@ -7964,10 +7964,10 @@ var apply = function(dict) {
 };
 var applySecond = function(dictApply) {
   var apply1 = apply(dictApply);
-  var map35 = map(dictApply.Functor0());
+  var map36 = map(dictApply.Functor0());
   return function(a2) {
     return function(b2) {
-      return apply1(map35($$const(identity2))(a2))(b2);
+      return apply1(map36($$const(identity2))(a2))(b2);
     };
   };
 };
@@ -8009,11 +8009,11 @@ var when = function(dictApplicative) {
   };
 };
 var liftA1 = function(dictApplicative) {
-  var apply3 = apply(dictApplicative.Apply0());
+  var apply4 = apply(dictApplicative.Apply0());
   var pure16 = pure(dictApplicative);
   return function(f) {
     return function(a2) {
-      return apply3(pure16(f))(a2);
+      return apply4(pure16(f))(a2);
     };
   };
 };
@@ -9290,6 +9290,9 @@ var textAlignToString = function(v) {
   ;
   throw new Error("Failed pattern match at Chartjs.Types (line 174, column 21 - line 177, column 20): " + [v.constructor.name]);
 };
+var single = function($1791) {
+  return Just.create(Single.create($1791));
+};
 var scaleTypeToString = function(v) {
   if (v instanceof LinearScale) {
     return "linear";
@@ -9575,6 +9578,16 @@ var drawTimeToString = function(v) {
   ;
   throw new Error("Failed pattern match at Chartjs.Types (line 423, column 20 - line 426, column 45): " + [v.constructor.name]);
 };
+var defaultPluginsConfig = /* @__PURE__ */ function() {
+  return {
+    title: Nothing.value,
+    subtitle: Nothing.value,
+    legend: Nothing.value,
+    tooltip: Nothing.value,
+    decimation: Nothing.value,
+    filler: Nothing.value
+  };
+}();
 var defaultOptions = /* @__PURE__ */ function() {
   return {
     responsive: Nothing.value,
@@ -9593,6 +9606,21 @@ var defaultOptions = /* @__PURE__ */ function() {
     cutout: Nothing.value,
     rotation: Nothing.value,
     circumference: Nothing.value
+  };
+}();
+var defaultLegendConfig = /* @__PURE__ */ function() {
+  return {
+    display: Nothing.value,
+    position: Nothing.value,
+    align: Nothing.value,
+    maxHeight: Nothing.value,
+    maxWidth: Nothing.value,
+    fullSize: Nothing.value,
+    reverse: Nothing.value,
+    rtl: Nothing.value,
+    textDirection: Nothing.value,
+    labels: Nothing.value,
+    title: Nothing.value
   };
 }();
 var defaultInteractionConfig = /* @__PURE__ */ function() {
@@ -9702,6 +9730,9 @@ var cubicInterpolationModeToString = function(v) {
   ;
   throw new Error("Failed pattern match at Chartjs.Types (line 287, column 34 - line 289, column 25): " + [v.constructor.name]);
 };
+var css = /* @__PURE__ */ function() {
+  return CSSColor.create;
+}();
 var chartTypeToString = function(v) {
   if (v instanceof Line) {
     return "line";
@@ -9928,6 +9959,14 @@ var sortByImpl = /* @__PURE__ */ function() {
     return out;
   };
 }();
+var zipWithImpl = function(f, xs, ys) {
+  var l = xs.length < ys.length ? xs.length : ys.length;
+  var result2 = new Array(l);
+  for (var i2 = 0; i2 < l; i2++) {
+    result2[i2] = f(xs[i2])(ys[i2]);
+  }
+  return result2;
+};
 var anyImpl = function(p2, xs) {
   var len = xs.length;
   for (var i2 = 0; i2 < len; i2++) {
@@ -10931,8 +10970,8 @@ var traverseArrayImpl = /* @__PURE__ */ function() {
       return xs.concat(ys);
     };
   }
-  return function(apply3) {
-    return function(map35) {
+  return function(apply4) {
+    return function(map36) {
       return function(pure16) {
         return function(f) {
           return function(array) {
@@ -10941,14 +10980,14 @@ var traverseArrayImpl = /* @__PURE__ */ function() {
                 case 0:
                   return pure16([]);
                 case 1:
-                  return map35(array1)(f(array[bot]));
+                  return map36(array1)(f(array[bot]));
                 case 2:
-                  return apply3(map35(array2)(f(array[bot])))(f(array[bot + 1]));
+                  return apply4(map36(array2)(f(array[bot])))(f(array[bot + 1]));
                 case 3:
-                  return apply3(apply3(map35(array3)(f(array[bot])))(f(array[bot + 1])))(f(array[bot + 2]));
+                  return apply4(apply4(map36(array3)(f(array[bot])))(f(array[bot + 1])))(f(array[bot + 2]));
                 default:
                   var pivot = bot + Math.floor((top2 - bot) / 4) * 2;
-                  return apply3(map35(concat2)(go2(bot, pivot)))(go2(pivot, top2));
+                  return apply4(map36(concat2)(go2(bot, pivot)))(go2(pivot, top2));
               }
             }
             return go2(0, array.length);
@@ -11057,6 +11096,7 @@ var unfoldableArray = {
 var $$void4 = /* @__PURE__ */ $$void(functorST);
 var fromJust4 = /* @__PURE__ */ fromJust();
 var eq12 = /* @__PURE__ */ eq(eqOrdering);
+var zipWith = /* @__PURE__ */ runFn3(zipWithImpl);
 var sortBy = function(comp) {
   return runFn3(sortByImpl)(comp)(function(v) {
     if (v instanceof GT) {
@@ -11254,10 +11294,10 @@ var catchError = function(dict) {
 var $$try2 = function(dictMonadError) {
   var catchError1 = catchError(dictMonadError);
   var Monad0 = dictMonadError.MonadThrow0().Monad0();
-  var map35 = map(Monad0.Bind1().Apply0().Functor0());
+  var map36 = map(Monad0.Bind1().Apply0().Functor0());
   var pure16 = pure(Monad0.Applicative0());
   return function(a2) {
-    return catchError1(map35(Right.create)(a2))(function($52) {
+    return catchError1(map36(Right.create)(a2))(function($52) {
       return pure16(Left.create($52));
     });
   };
@@ -11314,10 +11354,10 @@ var mapExceptT = function(f) {
   };
 };
 var functorExceptT = function(dictFunctor) {
-  var map113 = map(dictFunctor);
+  var map114 = map(dictFunctor);
   return {
     map: function(f) {
-      return mapExceptT(map113(map7(f)));
+      return mapExceptT(map114(map7(f)));
     }
   };
 };
@@ -13994,7 +14034,7 @@ var Defaults = class {
     });
   }
   apply(appliers) {
-    appliers.forEach((apply3) => apply3(this));
+    appliers.forEach((apply4) => apply4(this));
   }
 };
 var defaults = /* @__PURE__ */ new Defaults({
@@ -20524,11 +20564,11 @@ var Registry = class {
       }
     });
   }
-  _exec(method2, registry2, component6) {
+  _exec(method2, registry2, component7) {
     const camelMethod = _capitalize(method2);
-    callback(component6["before" + camelMethod], [], component6);
-    registry2[method2](component6);
-    callback(component6["after" + camelMethod], [], component6);
+    callback(component7["before" + camelMethod], [], component7);
+    registry2[method2](component7);
+    callback(component7["after" + camelMethod], [], component7);
   }
   _getRegistryForType(type) {
     for (let i2 = 0; i2 < this._typedRegistries.length; i2++) {
@@ -26538,13 +26578,13 @@ function addTick(ticks, time3, timestamps) {
     ticks[timestamp] = true;
   }
 }
-function setMajorTicks(scale, ticks, map35, majorUnit) {
+function setMajorTicks(scale, ticks, map36, majorUnit) {
   const adapter = scale._adapter;
   const first = +adapter.startOf(ticks[0].value, majorUnit);
   const last3 = ticks[ticks.length - 1].value;
   let major, index5;
   for (major = first; major <= last3; major = +adapter.add(major, 1, majorUnit)) {
-    index5 = map35[major];
+    index5 = map36[major];
     if (index5 >= 0) {
       ticks[index5].major = true;
     }
@@ -26553,18 +26593,18 @@ function setMajorTicks(scale, ticks, map35, majorUnit) {
 }
 function ticksFromTimestamps(scale, values, majorUnit) {
   const ticks = [];
-  const map35 = {};
+  const map36 = {};
   const ilen = values.length;
   let i2, value12;
   for (i2 = 0; i2 < ilen; ++i2) {
     value12 = values[i2];
-    map35[value12] = i2;
+    map36[value12] = i2;
     ticks.push({
       value: value12,
       major: false
     });
   }
-  return ilen === 0 || !majorUnit ? ticks : setMajorTicks(scale, ticks, map35, majorUnit);
+  return ilen === 0 || !majorUnit ? ticks : setMajorTicks(scale, ticks, map36, majorUnit);
 }
 var TimeScale2 = class extends Scale {
   static id = "time";
@@ -29083,7 +29123,7 @@ var goLeft = function(dictApplicative) {
   };
 };
 var goApply = function(dictApplicative) {
-  var apply3 = apply(dictApplicative.Apply0());
+  var apply4 = apply(dictApplicative.Apply0());
   return function(fStack) {
     return function(vals) {
       return function(gVal) {
@@ -29092,7 +29132,7 @@ var goApply = function(dictApplicative) {
         }
         ;
         if (fStack instanceof Cons) {
-          var gRes = apply3(fStack.value0.func)(gVal);
+          var gRes = apply4(fStack.value0.func)(gVal);
           var $31 = fStack.value0.count === 1;
           if ($31) {
             if (fStack.value1 instanceof Nil) {
@@ -29562,18 +29602,18 @@ var liftF = function(f) {
 };
 var foldFree = function(dictMonadRec) {
   var Monad0 = dictMonadRec.Monad0();
-  var map113 = map(Monad0.Bind1().Apply0().Functor0());
+  var map114 = map(Monad0.Bind1().Apply0().Functor0());
   var pure16 = pure(Monad0.Applicative0());
   var tailRecM4 = tailRecM(dictMonadRec);
   return function(k) {
     var go2 = function(f) {
       var v = toView(f);
       if (v instanceof Return) {
-        return map113(Done.create)(pure16(v.value0));
+        return map114(Done.create)(pure16(v.value0));
       }
       ;
       if (v instanceof Bind) {
-        return map113(function($199) {
+        return map114(function($199) {
           return Loop.create(v.value1($199));
         })(k(v.value0));
       }
@@ -31524,9 +31564,9 @@ var slot_ = function() {
       var componentSlot22 = componentSlot1(dictOrd);
       return function(label5) {
         return function(p2) {
-          return function(component6) {
+          return function(component7) {
             return function(input3) {
-              return widget(new ComponentSlot(componentSlot22(label5)(p2)(component6)(input3)($$const(Nothing.value))));
+              return widget(new ComponentSlot(componentSlot22(label5)(p2)(component7)(input3)($$const(Nothing.value))));
             };
           };
         };
@@ -31541,10 +31581,10 @@ var slot = function() {
       var componentSlot22 = componentSlot1(dictOrd);
       return function(label5) {
         return function(p2) {
-          return function(component6) {
+          return function(component7) {
             return function(input3) {
               return function(outputQuery) {
-                return widget(new ComponentSlot(componentSlot22(label5)(p2)(component6)(input3)(function($11) {
+                return widget(new ComponentSlot(componentSlot22(label5)(p2)(component7)(input3)(function($11) {
                   return Just.create(outputQuery($11));
                 })));
               };
@@ -31715,6 +31755,244 @@ var component2 = function(dictMonadAff) {
   return mkComponent({
     initialState,
     render: render2(dictMonadAff),
+    "eval": mkEval(defaultEval)
+  });
+};
+
+// output/App.ProjChart/index.js
+var apply3 = /* @__PURE__ */ apply(applyMaybe);
+var map22 = /* @__PURE__ */ map(functorMaybe);
+var map111 = /* @__PURE__ */ map(functorArray);
+var slot_3 = /* @__PURE__ */ slot_()({
+  reflectSymbol: function() {
+    return "chart";
+  }
+})(ordUnit);
+var initialState2 = function(v) {
+  return {
+    refPosData: v.refPosData,
+    projectedSamples: v.projectedSamples,
+    xPc: 1,
+    yPc: 2
+  };
+};
+var _chart2 = /* @__PURE__ */ function() {
+  return $$Proxy.value;
+}();
+var render3 = function(dictMonadAff) {
+  var component1 = component(dictMonadAff);
+  return function(st) {
+    var toXY = function(sample2) {
+      return apply3(map22(XY.create)(index(sample2.pcValues)(st.xPc - 1 | 0)))(index(sample2.pcValues)(st.yPc - 1 | 0));
+    };
+    var projLabels = map111(function(sample2) {
+      return sample2.sampleID + (" (" + (sample2.popGroup + ")"));
+    })(st.projectedSamples);
+    var projDataset = {
+      barPercentage: defaultDataset.barPercentage,
+      barThickness: defaultDataset.barThickness,
+      base: defaultDataset.base,
+      borderAlign: defaultDataset.borderAlign,
+      borderCapStyle: defaultDataset.borderCapStyle,
+      borderColor: defaultDataset.borderColor,
+      borderDash: defaultDataset.borderDash,
+      borderDashOffset: defaultDataset.borderDashOffset,
+      borderJoinStyle: defaultDataset.borderJoinStyle,
+      borderRadius: defaultDataset.borderRadius,
+      borderSkipped: defaultDataset.borderSkipped,
+      borderWidth: defaultDataset.borderWidth,
+      categoryPercentage: defaultDataset.categoryPercentage,
+      circular: defaultDataset.circular,
+      circumference: defaultDataset.circumference,
+      clip: defaultDataset.clip,
+      cubicInterpolationMode: defaultDataset.cubicInterpolationMode,
+      drawActiveElementsOnTop: defaultDataset.drawActiveElementsOnTop,
+      fill: defaultDataset.fill,
+      grouped: defaultDataset.grouped,
+      hidden: defaultDataset.hidden,
+      hitRadius: defaultDataset.hitRadius,
+      hoverBackgroundColor: defaultDataset.hoverBackgroundColor,
+      hoverBorderCapStyle: defaultDataset.hoverBorderCapStyle,
+      hoverBorderColor: defaultDataset.hoverBorderColor,
+      hoverBorderDash: defaultDataset.hoverBorderDash,
+      hoverBorderDashOffset: defaultDataset.hoverBorderDashOffset,
+      hoverBorderJoinStyle: defaultDataset.hoverBorderJoinStyle,
+      hoverBorderRadius: defaultDataset.hoverBorderRadius,
+      hoverBorderWidth: defaultDataset.hoverBorderWidth,
+      hoverOffset: defaultDataset.hoverOffset,
+      hoverRadius: defaultDataset.hoverRadius,
+      indexAxis: defaultDataset.indexAxis,
+      inflateAmount: defaultDataset.inflateAmount,
+      maxBarThickness: defaultDataset.maxBarThickness,
+      minBarLength: defaultDataset.minBarLength,
+      offset: defaultDataset.offset,
+      parsing: defaultDataset.parsing,
+      pointBackgroundColor: defaultDataset.pointBackgroundColor,
+      pointBorderColor: defaultDataset.pointBorderColor,
+      pointBorderWidth: defaultDataset.pointBorderWidth,
+      pointHitRadius: defaultDataset.pointHitRadius,
+      pointHoverBackgroundColor: defaultDataset.pointHoverBackgroundColor,
+      pointHoverBorderColor: defaultDataset.pointHoverBorderColor,
+      pointHoverBorderWidth: defaultDataset.pointHoverBorderWidth,
+      pointRotation: defaultDataset.pointRotation,
+      pointStyle: defaultDataset.pointStyle,
+      radius: defaultDataset.radius,
+      rotation: defaultDataset.rotation,
+      showLine: defaultDataset.showLine,
+      skipNull: defaultDataset.skipNull,
+      spacing: defaultDataset.spacing,
+      spanGaps: defaultDataset.spanGaps,
+      stack: defaultDataset.stack,
+      stepped: defaultDataset.stepped,
+      tension: defaultDataset.tension,
+      weight: defaultDataset.weight,
+      xAxisID: defaultDataset.xAxisID,
+      yAxisID: defaultDataset.yAxisID,
+      label: "Projected samples",
+      data: mapMaybe(toXY)(st.projectedSamples),
+      backgroundColor: single(css("black")),
+      pointRadius: single(4),
+      pointHoverRadius: single(5),
+      order: new Just(0)
+    };
+    var backgroundLabels = map111($$const(""))(st.refPosData.samples);
+    var backgroundDataset = {
+      barPercentage: defaultDataset.barPercentage,
+      barThickness: defaultDataset.barThickness,
+      base: defaultDataset.base,
+      borderAlign: defaultDataset.borderAlign,
+      borderCapStyle: defaultDataset.borderCapStyle,
+      borderColor: defaultDataset.borderColor,
+      borderDash: defaultDataset.borderDash,
+      borderDashOffset: defaultDataset.borderDashOffset,
+      borderJoinStyle: defaultDataset.borderJoinStyle,
+      borderRadius: defaultDataset.borderRadius,
+      borderSkipped: defaultDataset.borderSkipped,
+      borderWidth: defaultDataset.borderWidth,
+      categoryPercentage: defaultDataset.categoryPercentage,
+      circular: defaultDataset.circular,
+      circumference: defaultDataset.circumference,
+      clip: defaultDataset.clip,
+      cubicInterpolationMode: defaultDataset.cubicInterpolationMode,
+      drawActiveElementsOnTop: defaultDataset.drawActiveElementsOnTop,
+      fill: defaultDataset.fill,
+      grouped: defaultDataset.grouped,
+      hidden: defaultDataset.hidden,
+      hitRadius: defaultDataset.hitRadius,
+      hoverBackgroundColor: defaultDataset.hoverBackgroundColor,
+      hoverBorderCapStyle: defaultDataset.hoverBorderCapStyle,
+      hoverBorderColor: defaultDataset.hoverBorderColor,
+      hoverBorderDash: defaultDataset.hoverBorderDash,
+      hoverBorderDashOffset: defaultDataset.hoverBorderDashOffset,
+      hoverBorderJoinStyle: defaultDataset.hoverBorderJoinStyle,
+      hoverBorderRadius: defaultDataset.hoverBorderRadius,
+      hoverBorderWidth: defaultDataset.hoverBorderWidth,
+      hoverOffset: defaultDataset.hoverOffset,
+      hoverRadius: defaultDataset.hoverRadius,
+      indexAxis: defaultDataset.indexAxis,
+      inflateAmount: defaultDataset.inflateAmount,
+      maxBarThickness: defaultDataset.maxBarThickness,
+      minBarLength: defaultDataset.minBarLength,
+      offset: defaultDataset.offset,
+      parsing: defaultDataset.parsing,
+      pointBackgroundColor: defaultDataset.pointBackgroundColor,
+      pointBorderColor: defaultDataset.pointBorderColor,
+      pointBorderWidth: defaultDataset.pointBorderWidth,
+      pointHitRadius: defaultDataset.pointHitRadius,
+      pointHoverBackgroundColor: defaultDataset.pointHoverBackgroundColor,
+      pointHoverBorderColor: defaultDataset.pointHoverBorderColor,
+      pointHoverBorderWidth: defaultDataset.pointHoverBorderWidth,
+      pointRotation: defaultDataset.pointRotation,
+      pointStyle: defaultDataset.pointStyle,
+      radius: defaultDataset.radius,
+      rotation: defaultDataset.rotation,
+      showLine: defaultDataset.showLine,
+      skipNull: defaultDataset.skipNull,
+      spacing: defaultDataset.spacing,
+      spanGaps: defaultDataset.spanGaps,
+      stack: defaultDataset.stack,
+      stepped: defaultDataset.stepped,
+      tension: defaultDataset.tension,
+      weight: defaultDataset.weight,
+      xAxisID: defaultDataset.xAxisID,
+      yAxisID: defaultDataset.yAxisID,
+      label: "Reference samples",
+      data: mapMaybe(toXY)(st.refPosData.samples),
+      backgroundColor: single(css("rgba(170, 170, 170, 0.5)")),
+      pointRadius: single(2),
+      pointHoverRadius: single(3),
+      order: new Just(1)
+    };
+    var chartInput = {
+      config: {
+        labels: defaultConfig.labels,
+        chartType: Scatter.value,
+        datasets: [backgroundDataset, projDataset],
+        options: {
+          animation: defaultOptions.animation,
+          circumference: defaultOptions.circumference,
+          cutout: defaultOptions.cutout,
+          devicePixelRatio: defaultOptions.devicePixelRatio,
+          elements: defaultOptions.elements,
+          indexAxis: defaultOptions.indexAxis,
+          layout: defaultOptions.layout,
+          locale: defaultOptions.locale,
+          maintainAspectRatio: defaultOptions.maintainAspectRatio,
+          resizeDelay: defaultOptions.resizeDelay,
+          responsive: defaultOptions.responsive,
+          rotation: defaultOptions.rotation,
+          scales: defaultOptions.scales,
+          interaction: new Just({
+            axis: defaultInteractionConfig.axis,
+            includeInvisible: defaultInteractionConfig.includeInvisible,
+            intersect: defaultInteractionConfig.intersect,
+            mode: new Just(IMNearest.value)
+          }),
+          aspectRatio: new Just(1.2),
+          plugins: new Just({
+            decimation: defaultPluginsConfig.decimation,
+            filler: defaultPluginsConfig.filler,
+            subtitle: defaultPluginsConfig.subtitle,
+            title: defaultPluginsConfig.title,
+            tooltip: defaultPluginsConfig.tooltip,
+            legend: new Just({
+              align: defaultLegendConfig.align,
+              fullSize: defaultLegendConfig.fullSize,
+              labels: defaultLegendConfig.labels,
+              maxHeight: defaultLegendConfig.maxHeight,
+              maxWidth: defaultLegendConfig.maxWidth,
+              position: defaultLegendConfig.position,
+              reverse: defaultLegendConfig.reverse,
+              rtl: defaultLegendConfig.rtl,
+              textDirection: defaultLegendConfig.textDirection,
+              title: defaultLegendConfig.title,
+              display: new Just(false)
+            })
+          })
+        }
+      },
+      callbacks: {
+        legendOnClick: defaultCallbacks.legendOnClick,
+        legendOnHover: defaultCallbacks.legendOnHover,
+        legendOnLeave: defaultCallbacks.legendOnLeave,
+        onClick: defaultCallbacks.onClick,
+        onHover: defaultCallbacks.onHover,
+        onResize: defaultCallbacks.onResize,
+        tickCallbacks: defaultCallbacks.tickCallbacks,
+        tooltipCallbacks: new Just({
+          footer: defaultTooltipCallbacks.footer,
+          title: defaultTooltipCallbacks.title,
+          label: new Just(tooltipLabelImpl([backgroundLabels, projLabels]))
+        })
+      }
+    };
+    return div_([slot_3(_chart2)(unit)(component1)(chartInput)]);
+  };
+};
+var component3 = function(dictMonadAff) {
+  return mkComponent({
+    initialState: initialState2,
+    render: render3(dictMonadAff),
     "eval": mkEval(defaultEval)
   });
 };
@@ -32011,10 +32289,10 @@ var resolve3 = function() {
 var voidRight2 = /* @__PURE__ */ voidRight(functorEffect);
 var mempty2 = /* @__PURE__ */ mempty(monoidCanceler);
 var thenOrCatch3 = /* @__PURE__ */ thenOrCatch2();
-var map22 = /* @__PURE__ */ map(functorEffect);
+var map23 = /* @__PURE__ */ map(functorEffect);
 var resolve4 = /* @__PURE__ */ resolve3();
 var alt2 = /* @__PURE__ */ alt(altMaybe);
-var map111 = /* @__PURE__ */ map(functorMaybe);
+var map112 = /* @__PURE__ */ map(functorMaybe);
 var readString2 = /* @__PURE__ */ readString(monadIdentity);
 var bind6 = /* @__PURE__ */ bind(bindAff);
 var liftEffect3 = /* @__PURE__ */ liftEffect(monadEffectAff);
@@ -32022,9 +32300,9 @@ var toAff$prime = function(customCoerce) {
   return function(p2) {
     return makeAff(function(cb) {
       return voidRight2(mempty2)(thenOrCatch3(function(a2) {
-        return map22(resolve4)(cb(new Right(a2)));
+        return map23(resolve4)(cb(new Right(a2)));
       })(function(e) {
-        return map22(resolve4)(cb(new Left(customCoerce(e))));
+        return map23(resolve4)(cb(new Left(customCoerce(e))));
       })(p2));
     });
   };
@@ -32032,7 +32310,7 @@ var toAff$prime = function(customCoerce) {
 var coerce3 = function(rej) {
   return fromMaybe$prime(function(v) {
     return error("Promise failed, couldn't extract JS Error or String");
-  })(alt2(toError(rej))(map111(error)(hush(runExcept(readString2(unsafeToForeign(rej)))))));
+  })(alt2(toError(rej))(map112(error)(hush(runExcept(readString2(unsafeToForeign(rej)))))));
 };
 var toAff = /* @__PURE__ */ toAff$prime(coerce3);
 var toAffE = function(f) {
@@ -32094,7 +32372,7 @@ function signal(controller) {
 // output/Fetch/index.js
 var $$void8 = /* @__PURE__ */ $$void(functorEffect);
 var thenOrCatch4 = /* @__PURE__ */ thenOrCatch2();
-var map23 = /* @__PURE__ */ map(functorEffect);
+var map24 = /* @__PURE__ */ map(functorEffect);
 var resolve5 = /* @__PURE__ */ resolve3();
 var bind7 = /* @__PURE__ */ bind(bindAff);
 var liftEffect4 = /* @__PURE__ */ liftEffect(monadEffectAff);
@@ -32107,9 +32385,9 @@ var toAbortableAff = function(abortController) {
     return makeAff(function(cb) {
       return function __do2() {
         $$void8(thenOrCatch4(function(a2) {
-          return map23(resolve5)(cb(new Right(a2)));
+          return map24(resolve5)(cb(new Right(a2)));
         })(function(e) {
-          return map23(resolve5)(cb(new Left(coerce3(e))));
+          return map24(resolve5)(cb(new Left(coerce3(e))));
         })(p2))();
         return effectCanceler(abort(abortController));
       };
@@ -32156,7 +32434,7 @@ function _item(index5) {
 }
 
 // output/Web.File.FileList/index.js
-var map24 = /* @__PURE__ */ map(functorMaybe);
+var map25 = /* @__PURE__ */ map(functorMaybe);
 var item = function(i2) {
   var $5 = _item(i2);
   return function($6) {
@@ -32167,7 +32445,7 @@ var items = function(dictUnfoldable) {
   var unfoldr2 = unfoldr(dictUnfoldable);
   return function(fl) {
     return unfoldr2(function(i2) {
-      return map24(flip(Tuple.create)(i2 + 1 | 0))(item(i2)(fl));
+      return map25(flip(Tuple.create)(i2 + 1 | 0))(item(i2)(fl));
     })(0);
   };
 };
@@ -32193,11 +32471,11 @@ function setValue(value12) {
 }
 
 // output/Web.HTML.HTMLInputElement/index.js
-var map25 = /* @__PURE__ */ map(functorEffect);
+var map26 = /* @__PURE__ */ map(functorEffect);
 var fromHTMLElement = /* @__PURE__ */ unsafeReadProtoTagged("HTMLInputElement");
 var fromEventTarget = /* @__PURE__ */ unsafeReadProtoTagged("HTMLInputElement");
 var files = /* @__PURE__ */ function() {
-  var $6 = map25(toMaybe);
+  var $6 = map26(toMaybe);
   return function($7) {
     return $6(_files($7));
   };
@@ -32387,7 +32665,7 @@ var bind22 = /* @__PURE__ */ bind(bindMaybe);
 var whole2 = /* @__PURE__ */ whole(typedArrayUint8);
 var pure12 = /* @__PURE__ */ pure(applicativeHalogenM);
 var items2 = /* @__PURE__ */ items(unfoldableArray);
-var map26 = /* @__PURE__ */ map(functorArray);
+var map27 = /* @__PURE__ */ map(functorArray);
 var modify_4 = /* @__PURE__ */ modify_2(monadStateHalogenM);
 var discard22 = /* @__PURE__ */ discard3(bindHalogenM);
 var bind32 = /* @__PURE__ */ bind(bindAff);
@@ -32468,7 +32746,7 @@ var readFileAsArrayBufferAff = function(dictMonadAff) {
   };
 };
 var readFileAsArrayBufferAff1 = /* @__PURE__ */ readFileAsArrayBufferAff(monadAffAff);
-var initialState2 = function(v) {
+var initialState3 = function(v) {
   return NoData.value;
 };
 var fileNameText = function(v) {
@@ -32529,7 +32807,7 @@ var exampleDataControl = function(dictMonadAff) {
     })])([text("Load Example Data")])]);
   };
 };
-var render3 = function(dictMonadAff) {
+var render4 = function(dictMonadAff) {
   var uploadControl1 = uploadControl(dictMonadAff);
   var exampleDataControl1 = exampleDataControl(dictMonadAff);
   return function(st) {
@@ -32624,7 +32902,7 @@ var handleAction2 = function(dictMonadAff) {
           ;
           if (mFileList instanceof Just) {
             var files2 = items2(mFileList.value0);
-            var fileNames = map26(name3)(files2);
+            var fileNames = map27(name3)(files2);
             var v1 = filter(function(f) {
               return endsWith(".fam")(name3(f));
             })(files2);
@@ -32806,10 +33084,10 @@ var handleAction2 = function(dictMonadAff) {
     throw new Error("Failed pattern match at App.UserInputComponent (line 189, column 1 - line 189, column 100): " + [v.constructor.name]);
   };
 };
-var component3 = function(dictMonadAff) {
+var component4 = function(dictMonadAff) {
   return mkComponent({
-    initialState: initialState2,
-    render: render3(dictMonadAff),
+    initialState: initialState3,
+    render: render4(dictMonadAff),
     "eval": mkEval({
       handleQuery: defaultEval.handleQuery,
       receive: defaultEval.receive,
@@ -32950,7 +33228,7 @@ var decodeArray = function(decoder) {
 // output/Data.Argonaut.Decode.Class/index.js
 var bind8 = /* @__PURE__ */ bind(bindEither);
 var lmap3 = /* @__PURE__ */ lmap(bifunctorEither);
-var map27 = /* @__PURE__ */ map(functorMaybe);
+var map28 = /* @__PURE__ */ map(functorMaybe);
 var gDecodeJsonNil = {
   gDecodeJson: function(v) {
     return function(v1) {
@@ -33029,7 +33307,7 @@ var decodeFieldId = function(dictDecodeJson) {
   var decodeJson1 = decodeJson(dictDecodeJson);
   return {
     decodeJsonField: function(j) {
-      return map27(decodeJson1)(j);
+      return map28(decodeJson1)(j);
     }
   };
 };
@@ -35916,11 +36194,11 @@ var parse2 = function(v) {
 };
 
 // output/Web.HTML.HTMLDocument/index.js
-var map28 = /* @__PURE__ */ map(functorEffect);
+var map29 = /* @__PURE__ */ map(functorEffect);
 var toParentNode = unsafeCoerce2;
 var toDocument = unsafeCoerce2;
 var readyState = function(doc) {
-  return map28(function() {
+  return map29(function() {
     var $4 = fromMaybe(Loading2.value);
     return function($5) {
       return $4(parse2($5));
@@ -35951,7 +36229,7 @@ var toEventTarget2 = unsafeCoerce2;
 var show3 = /* @__PURE__ */ show(showInt);
 var bind13 = /* @__PURE__ */ bind(bindHalogenM);
 var fetch4 = /* @__PURE__ */ fetch2()()(/* @__PURE__ */ toCoreRequestOptionsRowRo()()(toCoreRequestOptionsHelpe));
-var map29 = /* @__PURE__ */ map(functorHalogenM);
+var map30 = /* @__PURE__ */ map(functorHalogenM);
 var gDecodeJsonCons2 = /* @__PURE__ */ gDecodeJsonCons(/* @__PURE__ */ decodeFieldId(decodeJsonNumber));
 var fromJson2 = /* @__PURE__ */ fromJson(/* @__PURE__ */ decodeRecord(/* @__PURE__ */ gDecodeJsonCons(/* @__PURE__ */ decodeFieldId(/* @__PURE__ */ decodeArray2(decodeJsonNumber)))(/* @__PURE__ */ gDecodeJsonCons2(/* @__PURE__ */ gDecodeJsonCons2(gDecodeJsonNil)({
   reflectSymbol: function() {
@@ -35973,9 +36251,15 @@ var getOverlapMasks2 = /* @__PURE__ */ getOverlapMasks(monadEffectEffect);
 var reducePcWeights2 = /* @__PURE__ */ reducePcWeights(monadEffectEffect);
 var extractAndTransposeGenotypes2 = /* @__PURE__ */ extractAndTransposeGenotypes(monadEffectEffect);
 var projectSamples2 = /* @__PURE__ */ projectSamples(monadEffectEffect);
-var slot_3 = /* @__PURE__ */ slot_()({
+var slot_4 = /* @__PURE__ */ slot_();
+var slot_1 = /* @__PURE__ */ slot_4({
   reflectSymbol: function() {
     return "refChart";
+  }
+})(ordUnit);
+var slot_22 = /* @__PURE__ */ slot_4({
+  reflectSymbol: function() {
+    return "projChart";
   }
 })(ordUnit);
 var slot2 = /* @__PURE__ */ slot()({
@@ -36007,6 +36291,19 @@ var RunProjection = /* @__PURE__ */ function() {
   RunProjection2.value = new RunProjection2();
   return RunProjection2;
 }();
+var toProjectedSamples = function(pd) {
+  return function(results) {
+    return zipWith(function(v) {
+      return function(pr) {
+        return {
+          sampleID: v.value0,
+          popGroup: v.value1,
+          pcValues: pr.pcCoordinates
+        };
+      };
+    })(zipWith(Tuple.create)(pd.famData.indNames)(pd.famData.popNames))(results);
+  };
+};
 var refDataBox = function(dictMonadAff) {
   return function(st) {
     return div2([classes(["box"])])([h22([classes(["title", "is-4"])])([text("Reference Data")]), function() {
@@ -36026,7 +36323,7 @@ var refDataBox = function(dictMonadAff) {
         return div_([text("Selected reference data with " + (show3(st.refBundle.value0.snpWeights.numSNPs) + (" SNPs for " + (show3(st.refBundle.value0.snpWeights.numPCs) + (" PCs and " + (show3(st.refBundle.value0.refPosData.numSamples) + " individuals")))))), br_]);
       }
       ;
-      throw new Error("Failed pattern match at App.Interface (line 96, column 11 - line 105, column 18): " + [st.refBundle.constructor.name]);
+      throw new Error("Failed pattern match at App.Interface (line 100, column 11 - line 109, column 18): " + [st.refBundle.constructor.name]);
     }()]);
   };
 };
@@ -36049,13 +36346,8 @@ var projectionMonitor = function(dictMonadAff) {
         return div_([text("Projection completed successfully"), text("Number of samples projected: " + show3(length(st.projectionResults.value0.projectionResults))), text("Overlap Masks: " + ("Included SNPs: " + (show3(st.projectionResults.value0.overlapReport.nrIncluded) + (", Strand Ambiguous Removed: " + (show3(st.projectionResults.value0.overlapReport.removedStrandAmbiguous) + (", Inconsistent Removed: " + (show3(st.projectionResults.value0.overlapReport.removedInconsistent) + (", To Be Flipped: " + show3(st.projectionResults.value0.overlapReport.nrToBeFlipped)))))))))]);
       }
       ;
-      throw new Error("Failed pattern match at App.Interface (line 113, column 11 - line 125, column 18): " + [st.projectionResults.constructor.name]);
+      throw new Error("Failed pattern match at App.Interface (line 117, column 11 - line 129, column 18): " + [st.projectionResults.constructor.name]);
     }()]);
-  };
-};
-var projChartBox = function(dictMonadAff) {
-  return function(v) {
-    return div2([classes(["box"])])([h22([classes(["title", "is-4"])])([text("Projection Results Chart")]), text("Projection results chart will be displayed here after running the projection.")]);
   };
 };
 var nextAnimationFrame = function(dictMonadAff) {
@@ -36067,7 +36359,7 @@ var nextAnimationFrame = function(dictMonadAff) {
     };
   }));
 };
-var initialState3 = /* @__PURE__ */ function() {
+var initialState4 = /* @__PURE__ */ function() {
   return $$const({
     refBundle: NotAsked.value,
     projectionResults: NotAsked.value,
@@ -36087,24 +36379,24 @@ var handleAction3 = function(dictMonadAff) {
             if (f1.ok) {
               if (f2.ok) {
                 if (f3.ok) {
-                  return bind13(map29(readSnpWeights)(liftAff2(f1.text)))(function(snpWeights) {
-                    return bind13(map29(readRefPosData)(liftAff2(f2.text)))(function(refPosData) {
+                  return bind13(map30(readSnpWeights)(liftAff2(f1.text)))(function(snpWeights) {
+                    return bind13(map30(readRefPosData)(liftAff2(f2.text)))(function(refPosData) {
                       return bind13(liftAff2(fromJson2(f3.json)))(function(pcaParams) {
                         return discard4(modify_5(function(v1) {
-                          var $96 = {};
-                          for (var $97 in v1) {
-                            if ({}.hasOwnProperty.call(v1, $97)) {
-                              $96[$97] = v1[$97];
+                          var $104 = {};
+                          for (var $105 in v1) {
+                            if ({}.hasOwnProperty.call(v1, $105)) {
+                              $104[$105] = v1[$105];
                             }
                             ;
                           }
                           ;
-                          $96.refBundle = new Success({
+                          $104.refBundle = new Success({
                             snpWeights,
                             refPosData,
                             pcaParams
                           });
-                          return $96;
+                          return $104;
                         }))(function() {
                           return handleAction3(dictMonadAff)(RunProjection.value);
                         });
@@ -36114,44 +36406,44 @@ var handleAction3 = function(dictMonadAff) {
                 }
                 ;
                 return modify_5(function(v1) {
-                  var $99 = {};
-                  for (var $100 in v1) {
-                    if ({}.hasOwnProperty.call(v1, $100)) {
-                      $99[$100] = v1[$100];
+                  var $107 = {};
+                  for (var $108 in v1) {
+                    if ({}.hasOwnProperty.call(v1, $108)) {
+                      $107[$108] = v1[$108];
                     }
                     ;
                   }
                   ;
-                  $99.refBundle = new Failure("Failed to load PCA parameters file");
-                  return $99;
+                  $107.refBundle = new Failure("Failed to load PCA parameters file");
+                  return $107;
                 });
               }
               ;
               return modify_5(function(v1) {
-                var $102 = {};
-                for (var $103 in v1) {
-                  if ({}.hasOwnProperty.call(v1, $103)) {
-                    $102[$103] = v1[$103];
+                var $110 = {};
+                for (var $111 in v1) {
+                  if ({}.hasOwnProperty.call(v1, $111)) {
+                    $110[$111] = v1[$111];
                   }
                   ;
                 }
                 ;
-                $102.refBundle = new Failure("Failed to load reference position data file");
-                return $102;
+                $110.refBundle = new Failure("Failed to load reference position data file");
+                return $110;
               });
             }
             ;
             return modify_5(function(v1) {
-              var $105 = {};
-              for (var $106 in v1) {
-                if ({}.hasOwnProperty.call(v1, $106)) {
-                  $105[$106] = v1[$106];
+              var $113 = {};
+              for (var $114 in v1) {
+                if ({}.hasOwnProperty.call(v1, $114)) {
+                  $113[$114] = v1[$114];
                 }
                 ;
               }
               ;
-              $105.refBundle = new Failure("Failed to load weight data file");
-              return $105;
+              $113.refBundle = new Failure("Failed to load weight data file");
+              return $113;
             });
           });
         });
@@ -36160,16 +36452,16 @@ var handleAction3 = function(dictMonadAff) {
     ;
     if (v instanceof GotUserData) {
       return discard4(modify_5(function(v1) {
-        var $108 = {};
-        for (var $109 in v1) {
-          if ({}.hasOwnProperty.call(v1, $109)) {
-            $108[$109] = v1[$109];
+        var $116 = {};
+        for (var $117 in v1) {
+          if ({}.hasOwnProperty.call(v1, $117)) {
+            $116[$117] = v1[$117];
           }
           ;
         }
         ;
-        $108.userData = new Just(v.value0);
-        return $108;
+        $116.userData = new Just(v.value0);
+        return $116;
       }))(function() {
         return handleAction3(dictMonadAff)(RunProjection.value);
       });
@@ -36180,16 +36472,16 @@ var handleAction3 = function(dictMonadAff) {
         var v1 = new Tuple(st.refBundle, st.userData);
         if (v1.value0 instanceof Success && v1.value1 instanceof Just) {
           return discard4(modify_5(function(v2) {
-            var $113 = {};
-            for (var $114 in v2) {
-              if ({}.hasOwnProperty.call(v2, $114)) {
-                $113[$114] = v2[$114];
+            var $121 = {};
+            for (var $122 in v2) {
+              if ({}.hasOwnProperty.call(v2, $122)) {
+                $121[$122] = v2[$122];
               }
               ;
             }
             ;
-            $113.projectionResults = Loading.value;
-            return $113;
+            $121.projectionResults = Loading.value;
+            return $121;
           }))(function() {
             return discard4(nextAnimationFrame1)(function() {
               return discard4(nextAnimationFrame1)(function() {
@@ -36198,19 +36490,19 @@ var handleAction3 = function(dictMonadAff) {
                     return bind13(liftEffect9(extractAndTransposeGenotypes2(v1.value1.value0.bedData)(v1.value1.value0.numSNPs)(v1.value1.value0.numIndividuals)(overlap)))(function(genotypes) {
                       return bind13(liftEffect9(projectSamples2(genotypes)(reducedSnpWeights.pcWeights)(reducedSnpWeights.frequencies)(v1.value1.value0.numIndividuals)(reducedSnpWeights.numPCs)(v1.value0.value0.pcaParams)))(function(pResults) {
                         return modify_5(function(v2) {
-                          var $116 = {};
-                          for (var $117 in v2) {
-                            if ({}.hasOwnProperty.call(v2, $117)) {
-                              $116[$117] = v2[$117];
+                          var $124 = {};
+                          for (var $125 in v2) {
+                            if ({}.hasOwnProperty.call(v2, $125)) {
+                              $124[$125] = v2[$125];
                             }
                             ;
                           }
                           ;
-                          $116.projectionResults = new Success({
+                          $124.projectionResults = new Success({
                             projectionResults: pResults,
                             overlapReport: overlap
                           });
-                          return $116;
+                          return $124;
                         });
                       });
                     });
@@ -36222,21 +36514,21 @@ var handleAction3 = function(dictMonadAff) {
         }
         ;
         return modify_5(function(v2) {
-          var $123 = {};
-          for (var $124 in v2) {
-            if ({}.hasOwnProperty.call(v2, $124)) {
-              $123[$124] = v2[$124];
+          var $131 = {};
+          for (var $132 in v2) {
+            if ({}.hasOwnProperty.call(v2, $132)) {
+              $131[$132] = v2[$132];
             }
             ;
           }
           ;
-          $123.projectionResults = NotAsked.value;
-          return $123;
+          $131.projectionResults = NotAsked.value;
+          return $131;
         });
       });
     }
     ;
-    throw new Error("Failed pattern match at App.Interface (line 154, column 1 - line 154, column 107): " + [v.constructor.name]);
+    throw new Error("Failed pattern match at App.Interface (line 171, column 1 - line 171, column 107): " + [v.constructor.name]);
   };
 };
 var _userInputComponent = /* @__PURE__ */ function() {
@@ -36250,7 +36542,7 @@ var refChartBox = function(dictMonadAff) {
   return function(st) {
     return div2([classes(["box"])])([h22([classes(["title", "is-4"])])([text("Reference Data Chart")]), function() {
       if (st.refBundle instanceof Success) {
-        return div_([slot_3(_refChart)(unit)(component1)({
+        return div_([slot_1(_refChart)(unit)(component1)({
           refPosData: st.refBundle.value0.refPosData
         })]);
       }
@@ -36259,20 +36551,39 @@ var refChartBox = function(dictMonadAff) {
     }()]);
   };
 };
-var render4 = function(dictMonadAff) {
+var _projChart = /* @__PURE__ */ function() {
+  return $$Proxy.value;
+}();
+var projChartBox = function(dictMonadAff) {
+  var component1 = component3(dictMonadAff);
+  return function(st) {
+    return div2([classes(["box"])])([h22([classes(["title", "is-4"])])([text("Projection Results Chart")]), function() {
+      var v = new Tuple(st.refBundle, new Tuple(st.userData, st.projectionResults));
+      if (v.value0 instanceof Success && (v.value1.value0 instanceof Just && v.value1.value1 instanceof Success)) {
+        return div_([slot_22(_projChart)(unit)(component1)({
+          refPosData: v.value0.value0.refPosData,
+          projectedSamples: toProjectedSamples(v.value1.value0.value0)(v.value1.value1.value0.projectionResults)
+        })]);
+      }
+      ;
+      return text("Projection results chart will be displayed here after running the projection.");
+    }()]);
+  };
+};
+var render5 = function(dictMonadAff) {
   var refDataBox1 = refDataBox(dictMonadAff);
   var projectionMonitor1 = projectionMonitor(dictMonadAff);
-  var component1 = component3(dictMonadAff);
+  var component1 = component4(dictMonadAff);
   var refChartBox1 = refChartBox(dictMonadAff);
   var projChartBox1 = projChartBox(dictMonadAff);
   return function(st) {
     return section([classes(["section"])])([h12([classes(["title", "is-1"])])([text("PC Projection Tool")]), div2([classes(["columns"])])([div2([classes(["column"])])([refDataBox1(st)]), div2([classes(["column"])])([projectionMonitor1(st)]), div2([classes(["column"])])([slot2(_userInputComponent)(unit)(component1)(unit)(GotUserData.create)])]), div2([classes(["columns"])])([div2([classes(["column"])])([refChartBox1(st)]), div2([classes(["column"])])([projChartBox1(st)])])]);
   };
 };
-var component4 = function(dictMonadAff) {
+var component5 = function(dictMonadAff) {
   return mkComponent({
-    initialState: initialState3,
-    render: render4(dictMonadAff),
+    initialState: initialState4,
+    render: render5(dictMonadAff),
     "eval": mkEval({
       handleQuery: defaultEval.handleQuery,
       receive: defaultEval.receive,
@@ -36291,7 +36602,7 @@ var composeKleisliFlipped3 = /* @__PURE__ */ composeKleisliFlipped(bindEffect);
 var pure9 = /* @__PURE__ */ pure(applicativeAff);
 var bindFlipped1 = /* @__PURE__ */ bindFlipped(bindMaybe);
 var pure13 = /* @__PURE__ */ pure(applicativeEffect);
-var map30 = /* @__PURE__ */ map(functorEffect);
+var map31 = /* @__PURE__ */ map(functorEffect);
 var discard5 = /* @__PURE__ */ discard(discardUnit);
 var throwError3 = /* @__PURE__ */ throwError(monadThrowAff);
 var selectElement = function(query2) {
@@ -36309,7 +36620,7 @@ var awaitLoad = /* @__PURE__ */ makeAff(function(callback2) {
   return function __do2() {
     var rs = bindFlipped6(readyState)(bindFlipped6(document2)(windowImpl))();
     if (rs instanceof Loading2) {
-      var et = map30(toEventTarget2)(windowImpl)();
+      var et = map31(toEventTarget2)(windowImpl)();
       var listener = eventListener(function(v) {
         return callback2(new Right(unit));
       })();
@@ -36375,7 +36686,7 @@ var mapDriverState = function(f) {
     return f(v);
   };
 };
-var initDriverState = function(component6) {
+var initDriverState = function(component7) {
   return function(input3) {
     return function(handler3) {
       return function(lchs) {
@@ -36391,8 +36702,8 @@ var initDriverState = function(component6) {
           var subscriptions = $$new(new Just(empty3))();
           var forks = $$new(empty3)();
           var ds = {
-            component: component6,
-            state: component6.initialState(input3),
+            component: component7,
+            state: component7.initialState(input3),
             refs: empty3,
             children: empty4,
             childrenIn,
@@ -36429,9 +36740,9 @@ var traverse_22 = /* @__PURE__ */ traverse_12(foldableList);
 var fork3 = /* @__PURE__ */ fork2(monadForkAff);
 var parSequence_3 = /* @__PURE__ */ parSequence_(parallelAff)(applicativeParAff)(foldableList);
 var pure10 = /* @__PURE__ */ pure(applicativeAff);
-var map31 = /* @__PURE__ */ map(functorCoyoneda);
+var map32 = /* @__PURE__ */ map(functorCoyoneda);
 var parallel3 = /* @__PURE__ */ parallel(parallelAff);
-var map112 = /* @__PURE__ */ map(functorAff);
+var map113 = /* @__PURE__ */ map(functorAff);
 var sequential2 = /* @__PURE__ */ sequential(parallelAff);
 var map210 = /* @__PURE__ */ map(functorMaybe);
 var insert6 = /* @__PURE__ */ insert(ordSubscriptionId);
@@ -36499,16 +36810,16 @@ var fresh = function(f) {
     });
   };
 };
-var evalQ = function(render5) {
+var evalQ = function(render6) {
   return function(ref3) {
     return function(q2) {
       return bind14(liftEffect6(read(ref3)))(function(v) {
-        return evalM(render5)(ref3)(v["component"]["eval"](new Query(map31(Just.create)(liftCoyoneda(q2)), $$const(Nothing.value))));
+        return evalM(render6)(ref3)(v["component"]["eval"](new Query(map32(Just.create)(liftCoyoneda(q2)), $$const(Nothing.value))));
       });
     };
   };
 };
-var evalM = function(render5) {
+var evalM = function(render6) {
   return function(initRef) {
     return function(v) {
       var evalChildQuery = function(ref3) {
@@ -36518,11 +36829,11 @@ var evalM = function(render5) {
               var evalChild = function(v3) {
                 return parallel3(bind14(liftEffect6(read(v3)))(function(dsx) {
                   return unDriverStateX(function(ds) {
-                    return evalQ(render5)(ds.selfRef)(v2.value1);
+                    return evalQ(render6)(ds.selfRef)(v2.value1);
                   })(dsx);
                 }));
               };
-              return map112(v2.value2)(sequential2(v2.value0(applicativeParAff)(evalChild)(v1.children)));
+              return map113(v2.value2)(sequential2(v2.value0(applicativeParAff)(evalChild)(v1.children)));
             })(cqb);
           });
         };
@@ -36555,7 +36866,7 @@ var evalM = function(render5) {
                   lifecycleHandlers: v2.lifecycleHandlers,
                   state: v3.value1
                 })(ref3)))(function() {
-                  return discard1(handleLifecycle(v2.lifecycleHandlers)(render5(v2.lifecycleHandlers)(ref3)))(function() {
+                  return discard1(handleLifecycle(v2.lifecycleHandlers)(render6(v2.lifecycleHandlers)(ref3)))(function() {
                     return pure10(v3.value0);
                   });
                 });
@@ -36568,7 +36879,7 @@ var evalM = function(render5) {
           if (v1 instanceof Subscribe) {
             return bind14(fresh(SubscriptionId)(ref3))(function(sid) {
               return bind14(liftEffect6(subscribe(v1.value0(sid))(function(act) {
-                return handleAff(evalF(render5)(ref3)(new Action(act)));
+                return handleAff(evalF(render6)(ref3)(new Action(act)));
               })))(function(finalize) {
                 return bind14(liftEffect6(read(ref3)))(function(v2) {
                   return discard1(liftEffect6(modify_(map210(insert6(sid)(finalize)))(v2.subscriptions)))(function() {
@@ -36605,7 +36916,7 @@ var evalM = function(render5) {
           ;
           if (v1 instanceof Par) {
             return sequential2(retractFreeAp2(hoistFreeAp(function() {
-              var $119 = evalM(render5)(ref3);
+              var $119 = evalM(render6)(ref3);
               return function($120) {
                 return parallel3($119($120));
               };
@@ -36619,7 +36930,7 @@ var evalM = function(render5) {
                   return bind14(fork3($$finally(liftEffect6(function __do2() {
                     modify_($$delete4(fid))(v2.forks)();
                     return write(true)(doneRef)();
-                  }))(evalM(render5)(ref3)(v1.value0))))(function(fiber) {
+                  }))(evalM(render6)(ref3)(v1.value0))))(function(fiber) {
                     return discard1(liftEffect6(unlessM2(read(doneRef))(modify_(insert12(fid)(fiber))(v2.forks))))(function() {
                       return pure10(v1.value1(fid));
                     });
@@ -36662,7 +36973,7 @@ var evalM = function(render5) {
     };
   };
 };
-var evalF = function(render5) {
+var evalF = function(render6) {
   return function(ref3) {
     return function(v) {
       if (v instanceof RefUpdate) {
@@ -36690,7 +37001,7 @@ var evalF = function(render5) {
       ;
       if (v instanceof Action) {
         return bind14(liftEffect6(read(ref3)))(function(v1) {
-          return evalM(render5)(ref3)(v1["component"]["eval"](new Action2(v.value0, unit)));
+          return evalM(render6)(ref3)(v1["component"]["eval"](new Action2(v.value0, unit)));
         });
       }
       ;
@@ -36713,7 +37024,7 @@ var discard23 = /* @__PURE__ */ discard7(bindAff);
 var parSequence_4 = /* @__PURE__ */ parSequence_(parallelAff)(applicativeParAff)(foldableList);
 var liftEffect7 = /* @__PURE__ */ liftEffect(monadEffectAff);
 var pure11 = /* @__PURE__ */ pure(applicativeEffect);
-var map32 = /* @__PURE__ */ map(functorEffect);
+var map33 = /* @__PURE__ */ map(functorEffect);
 var pure14 = /* @__PURE__ */ pure(applicativeAff);
 var when2 = /* @__PURE__ */ when(applicativeEffect);
 var renderStateX2 = /* @__PURE__ */ renderStateX(functorEffect);
@@ -36756,12 +37067,12 @@ var cleanupSubscriptionsAndForks = function(v) {
   };
 };
 var runUI = function(renderSpec2) {
-  return function(component6) {
+  return function(component7) {
     return function(i2) {
       var squashChildInitializers = function(lchs) {
         return function(preInits) {
           return unDriverStateX(function(st) {
-            var parentInitializer = evalM(render5)(st.selfRef)(st["component"]["eval"](new Initialize(unit)));
+            var parentInitializer = evalM(render6)(st.selfRef)(st["component"]["eval"](new Initialize(unit)));
             return modify_(function(handlers) {
               return {
                 initializers: new Cons(discard23(parSequence_4(reverse2(handlers.initializers)))(function() {
@@ -36791,7 +37102,7 @@ var runUI = function(renderSpec2) {
                   finalizers: pre2.finalizers
                 })(lchs)();
                 bindFlipped8(unDriverStateX(function() {
-                  var $63 = render5(lchs);
+                  var $63 = render6(lchs);
                   return function($64) {
                     return $63(function(v) {
                       return v.selfRef;
@@ -36811,7 +37122,7 @@ var runUI = function(renderSpec2) {
             return function(childrenOutRef) {
               return unComponentSlot(function(slot3) {
                 return function __do2() {
-                  var childrenIn = map32(slot3.pop)(read(childrenInRef))();
+                  var childrenIn = map33(slot3.pop)(read(childrenInRef))();
                   var $$var2 = function() {
                     if (childrenIn instanceof Just) {
                       write(childrenIn.value0.value1)(childrenInRef)();
@@ -36824,7 +37135,7 @@ var runUI = function(renderSpec2) {
                               return $65(slot3.output($66));
                             };
                           }())();
-                          return handleAff(evalM(render5)(st.selfRef)(st["component"]["eval"](new Receive(slot3.input, unit))))();
+                          return handleAff(evalM(render6)(st.selfRef)(st["component"]["eval"](new Receive(slot3.input, unit))))();
                         };
                       })(dsx)();
                       return childrenIn.value0.value0;
@@ -36841,7 +37152,7 @@ var runUI = function(renderSpec2) {
                     ;
                     throw new Error("Failed pattern match at Halogen.Aff.Driver (line 213, column 14 - line 222, column 98): " + [childrenIn.constructor.name]);
                   }();
-                  var isDuplicate = map32(function($69) {
+                  var isDuplicate = map33(function($69) {
                     return isJust(slot3.get($69));
                   })(read(childrenOutRef))();
                   when2(isDuplicate)(warn("Halogen: Duplicate slot address was detected during rendering, unexpected results may occur"))();
@@ -36863,17 +37174,17 @@ var runUI = function(renderSpec2) {
           };
         };
       };
-      var render5 = function(lchs) {
+      var render6 = function(lchs) {
         return function($$var2) {
           return function __do2() {
             var v = read($$var2)();
-            var shouldProcessHandlers = map32(isNothing)(read(v.pendingHandlers))();
+            var shouldProcessHandlers = map33(isNothing)(read(v.pendingHandlers))();
             when2(shouldProcessHandlers)(write(new Just(Nil.value))(v.pendingHandlers))();
             write(empty4)(v.childrenOut)();
             write(v.children)(v.childrenIn)();
             var handler3 = function() {
               var $70 = queueOrRun(v.pendingHandlers);
-              var $71 = evalF(render5)(v.selfRef);
+              var $71 = evalF(render6)(v.selfRef);
               return function($72) {
                 return $70($$void9($71($72)));
               };
@@ -36942,7 +37253,7 @@ var runUI = function(renderSpec2) {
         return unDriverStateX(function(st) {
           return function __do2() {
             cleanupSubscriptionsAndForks(st)();
-            var f = evalM(render5)(st.selfRef)(st["component"]["eval"](new Finalize(unit)));
+            var f = evalM(render6)(st.selfRef)(st["component"]["eval"](new Finalize(unit)));
             modify_(function(handlers) {
               return {
                 initializers: handlers.initializers,
@@ -36966,7 +37277,7 @@ var runUI = function(renderSpec2) {
                 return pure14(Nothing.value);
               }
               ;
-              return evalQ(render5)(ref3)(q2);
+              return evalQ(render6)(ref3)(q2);
             });
           };
         };
@@ -37001,7 +37312,7 @@ var runUI = function(renderSpec2) {
               return function($79) {
                 return liftEffect7($78($79));
               };
-            }())(i2)(component6))();
+            }())(i2)(component7))();
             return unDriverStateX(function(st) {
               return pure11({
                 query: evalDriver(disposed)(st.selfRef),
@@ -37060,15 +37371,15 @@ function removeChild2(node) {
 }
 
 // output/Web.DOM.Node/index.js
-var map33 = /* @__PURE__ */ map(functorEffect);
+var map34 = /* @__PURE__ */ map(functorEffect);
 var parentNode2 = /* @__PURE__ */ function() {
-  var $6 = map33(toMaybe);
+  var $6 = map34(toMaybe);
   return function($7) {
     return $6(_parentNode($7));
   };
 }();
 var nextSibling = /* @__PURE__ */ function() {
-  var $15 = map33(toMaybe);
+  var $15 = map34(toMaybe);
   return function($16) {
     return $15(_nextSibling($16));
   };
@@ -37096,7 +37407,7 @@ var not3 = /* @__PURE__ */ not(/* @__PURE__ */ heytingAlgebraFunction(/* @__PURE
 var identity9 = /* @__PURE__ */ identity(categoryFn);
 var bind16 = /* @__PURE__ */ bind(bindAff);
 var liftEffect8 = /* @__PURE__ */ liftEffect(monadEffectAff);
-var map34 = /* @__PURE__ */ map(functorEffect);
+var map35 = /* @__PURE__ */ map(functorEffect);
 var bindFlipped9 = /* @__PURE__ */ bindFlipped(bindEffect);
 var substInParent = function(v) {
   return function(v1) {
@@ -37178,9 +37489,9 @@ var mkSpec = function(handler3) {
           };
         });
         var patch = $lazy_patch(91);
-        var render5 = $lazy_render(82);
+        var render6 = $lazy_render(82);
         var renderComponentSlot = $lazy_renderComponentSlot(109);
-        return render5;
+        return render6;
       };
       var buildAttributes = buildProp(handler3);
       return {
@@ -37193,7 +37504,7 @@ var mkSpec = function(handler3) {
 };
 var renderSpec = function(document3) {
   return function(container) {
-    var render5 = function(handler3) {
+    var render6 = function(handler3) {
       return function(child) {
         return function(v) {
           return function(v1) {
@@ -37234,27 +37545,27 @@ var renderSpec = function(document3) {
       };
     };
     return {
-      render: render5,
+      render: render6,
       renderChild: identity9,
       removeChild: removeChild3,
       dispose: removeChild3
     };
   };
 };
-var runUI2 = function(component6) {
+var runUI2 = function(component7) {
   return function(i2) {
     return function(element3) {
-      return bind16(liftEffect8(map34(toDocument)(bindFlipped9(document2)(windowImpl))))(function(document3) {
-        return runUI(renderSpec(document3)(element3))(component6)(i2);
+      return bind16(liftEffect8(map35(toDocument)(bindFlipped9(document2)(windowImpl))))(function(document3) {
+        return runUI(renderSpec(document3)(element3))(component7)(i2);
       });
     };
   };
 };
 
 // output/Main/index.js
-var component5 = /* @__PURE__ */ component4(monadAffAff);
+var component6 = /* @__PURE__ */ component5(monadAffAff);
 var main2 = /* @__PURE__ */ runHalogenAff(/* @__PURE__ */ bind(bindAff)(awaitBody)(function(body4) {
-  return runUI2(component5)(unit)(body4);
+  return runUI2(component6)(unit)(body4);
 }));
 export {
   main2 as main

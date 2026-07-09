@@ -2,9 +2,10 @@ module App.Interface where
 
 import Prelude
 
-import Data.Array (length)
+import Data.Array (length, zipWith)
 import Data.Either (Either(..))
 import Data.Maybe (Maybe(..))
+import Data.Tuple (Tuple(..))
 import Data.Tuple.Nested ((/\))
 import Effect.Aff (makeAff, nonCanceler)
 import Effect.Aff.Class (class MonadAff, liftAff)
@@ -20,6 +21,7 @@ import Type.Proxy (Proxy(..))
 import Web.HTML (window)
 import Web.HTML.Window (requestAnimationFrame)
 
+import App.ProjChart as ProjChart
 import App.RefChart as RefChart
 import App.UserInputComponent as UserInputComponent
 import App.Utils (RemoteData(..))
@@ -54,10 +56,12 @@ data Action
   | RunProjection
 
 type Slots = ( refChart :: forall q o . H.Slot q o Unit
+             , projChart :: forall q o . H.Slot q o Unit
              , userInputComponent :: forall q . H.Slot q UserInputComponent.Output Unit
              )
 
 _refChart = Proxy :: Proxy "refChart"
+_projChart = Proxy :: Proxy "projChart"
 _userInputComponent = Proxy :: Proxy "userInputComponent"
 
 component :: forall query input output m. MonadAff m => H.Component query input output m
@@ -136,13 +140,26 @@ refChartBox st =
             _ -> HH.text ""
         ]
 
-projChartBox :: forall action slots m . (MonadAff m) => State -> H.ComponentHTML action slots m
-projChartBox _ =
+projChartBox :: forall action m . (MonadAff m) => State -> H.ComponentHTML action Slots m
+projChartBox st =
     HH.div [ HP.classes [ HH.ClassName "box" ] ]
         [ HH.h2 [ HP.classes [ HH.ClassName "title", HH.ClassName "is-4" ] ]
             [ HH.text "Projection Results Chart" ]
-        , HH.text "Projection results chart will be displayed here after running the projection."
+        , case st.refBundle /\ st.userData /\ st.projectionResults of
+            Success rb /\ Just pd /\ Success pr -> HH.div_
+                [ HH.slot_ _projChart unit ProjChart.component
+                    { refPosData: rb.refPosData
+                    , projectedSamples: toProjectedSamples pd pr.projectionResults
+                    }
+                ]
+            _ -> HH.text "Projection results chart will be displayed here after running the projection."
         ]
+
+toProjectedSamples :: PlinkData -> Array ProjectionResult -> Array ProjChart.ProjectedSample
+toProjectedSamples pd results =
+    zipWith (\(Tuple sampleID popGroup) pr -> { sampleID, popGroup, pcValues: pr.pcCoordinates })
+        (zipWith Tuple pd.famData.indNames pd.famData.popNames)
+        results
 
 initialState :: forall input. input -> State
 initialState = const
