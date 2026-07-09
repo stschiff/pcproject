@@ -9945,6 +9945,19 @@ var _deleteAt = function(just, nothing, i2, l) {
   l1.splice(i2, 1);
   return just(l1);
 };
+var concat = function(xss) {
+  if (xss.length <= 1e4) {
+    return Array.prototype.concat.apply([], xss);
+  }
+  var result2 = [];
+  for (var i2 = 0, l = xss.length; i2 < l; i2++) {
+    var xs = xss[i2];
+    for (var j = 0, m = xs.length; j < m; j++) {
+      result2.push(xs[j]);
+    }
+  }
+  return result2;
+};
 var filterImpl = function(f, xs) {
   return xs.filter(f);
 };
@@ -13569,16 +13582,16 @@ function throttled(fn, thisArg) {
     }
   };
 }
-function debounce(fn, delay) {
+function debounce(fn, delay2) {
   let timeout;
   return function(...args) {
-    if (delay) {
+    if (delay2) {
       clearTimeout(timeout);
-      timeout = setTimeout(fn, delay, args);
+      timeout = setTimeout(fn, delay2, args);
     } else {
       fn.apply(this, args);
     }
-    return delay;
+    return delay2;
   };
 }
 var _toLeftRightCenter = (align) => align === "start" ? "left" : align === "end" ? "right" : "center";
@@ -30531,6 +30544,34 @@ function _makeFiber(util, aff) {
     return Aff.Fiber(util, null, aff);
   };
 }
+var _delay = /* @__PURE__ */ function() {
+  function setDelay(n, k) {
+    if (n === 0 && typeof setImmediate !== "undefined") {
+      return setImmediate(k);
+    } else {
+      return setTimeout(k, n);
+    }
+  }
+  function clearDelay(n, t) {
+    if (n === 0 && typeof clearImmediate !== "undefined") {
+      return clearImmediate(t);
+    } else {
+      return clearTimeout(t);
+    }
+  }
+  return function(right, ms) {
+    return Aff.Async(function(cb) {
+      return function() {
+        var timer = setDelay(ms, cb(right()));
+        return function() {
+          return Aff.Sync(function() {
+            return right(clearDelay(ms, timer));
+          });
+        };
+      };
+    });
+  };
+}();
 var _sequential = Aff.Seq;
 
 // output/Control.Parallel.Class/index.js
@@ -30655,6 +30696,9 @@ var launchAff = function(aff) {
     fiber.run();
     return fiber;
   };
+};
+var delay = function(v) {
+  return _delay(Right.create, v);
 };
 var bracket = function(acquire) {
   return function(completed) {
@@ -32454,6 +32498,16 @@ var RequestSampleData = /* @__PURE__ */ function() {
 var render3 = function(dictMonadAff) {
   return function(st) {
     return div2([classes(["box"])])([h22([classes(["title", "is-4"])])([text("User Data")]), div2([classes(["field"])])([label_([text("Select Plink genotype data files: ")]), div2([classes(["control"])])([input([type_5(InputFile.value), multiple(true), onChange(GotGenoDataFileEvent.create)])])]), function() {
+      if (st.filesLoading) {
+        return div_([text("Loading plink files..."), br_]);
+      }
+      ;
+      if (!st.filesLoading) {
+        return text("");
+      }
+      ;
+      throw new Error("Failed pattern match at App.UserInputComponent (line 111, column 11 - line 113, column 32): " + [st.filesLoading.constructor.name]);
+    }(), function() {
       if (st.selectedPlinkFiles instanceof Nothing) {
         return div_([text("No plink files selected"), br_]);
       }
@@ -32466,10 +32520,19 @@ var render3 = function(dictMonadAff) {
         return div_([text("Using example data"), br_]);
       }
       ;
-      throw new Error("Failed pattern match at App.UserInputComponent (line 111, column 11 - line 120, column 81): " + [st.selectedPlinkFiles.constructor.name]);
-    }(), div2([classes(["control"])])([button([classes(["button", "is-primary"]), onClick(function(v) {
-      return RequestSampleData.value;
-    })])([text("Load Example Data")])]), function() {
+      throw new Error("Failed pattern match at App.UserInputComponent (line 114, column 11 - line 123, column 81): " + [st.selectedPlinkFiles.constructor.name]);
+    }(), function() {
+      var classes2 = concat([["button", "is-primary"], function() {
+        if (st.filesLoading) {
+          return ["is-loading"];
+        }
+        ;
+        return [];
+      }()]);
+      return div2([classes(["control"])])([button([classes(classes2), onClick(function(v) {
+        return RequestSampleData.value;
+      })])([text("Load Example Data")])]);
+    }(), function() {
       var v = new Tuple(st.plinkData, st.selectedPlinkFiles);
       if (v.value1 instanceof Nothing) {
         return text("");
@@ -32483,7 +32546,7 @@ var render3 = function(dictMonadAff) {
         return div_([text("Nr of samples to project: " + show2(v.value0.value0.numIndividuals)), br_, text("Nr of SNPs: " + show2(v.value0.value0.numSNPs)), br_]);
       }
       ;
-      throw new Error("Failed pattern match at App.UserInputComponent (line 128, column 11 - line 135, column 18): " + [v.constructor.name]);
+      throw new Error("Failed pattern match at App.UserInputComponent (line 132, column 11 - line 139, column 18): " + [v.constructor.name]);
     }()]);
   };
 };
@@ -32516,7 +32579,8 @@ var initialState2 = function(v) {
   return {
     selectedPlinkFiles: Nothing.value,
     errorNote: Nothing.value,
-    plinkData: Nothing.value
+    plinkData: Nothing.value,
+    filesLoading: false
   };
 };
 var arrayBufferToString = function(dictMonadEffect) {
@@ -32553,17 +32617,17 @@ var handleAction2 = function(dictMonadAff) {
             })(files2);
             if (v1.length === 0) {
               return modify_4(function(v22) {
-                var $88 = {};
-                for (var $89 in v22) {
-                  if ({}.hasOwnProperty.call(v22, $89)) {
-                    $88[$89] = v22[$89];
+                var $93 = {};
+                for (var $94 in v22) {
+                  if ({}.hasOwnProperty.call(v22, $94)) {
+                    $93[$94] = v22[$94];
                   }
                   ;
                 }
                 ;
-                $88.errorNote = new Just("No .fam file selected");
-                $88.selectedPlinkFiles = Nothing.value;
-                return $88;
+                $93.errorNote = new Just("No .fam file selected");
+                $93.selectedPlinkFiles = Nothing.value;
+                return $93;
               });
             }
             ;
@@ -32573,17 +32637,17 @@ var handleAction2 = function(dictMonadAff) {
               })(files2);
               if (v2.length === 0) {
                 return modify_4(function(v32) {
-                  var $92 = {};
-                  for (var $93 in v32) {
-                    if ({}.hasOwnProperty.call(v32, $93)) {
-                      $92[$93] = v32[$93];
+                  var $97 = {};
+                  for (var $98 in v32) {
+                    if ({}.hasOwnProperty.call(v32, $98)) {
+                      $97[$98] = v32[$98];
                     }
                     ;
                   }
                   ;
-                  $92.errorNote = new Just("No .bim file selected");
-                  $92.selectedPlinkFiles = Nothing.value;
-                  return $92;
+                  $97.errorNote = new Just("No .bim file selected");
+                  $97.selectedPlinkFiles = Nothing.value;
+                  return $97;
                 });
               }
               ;
@@ -32593,287 +32657,334 @@ var handleAction2 = function(dictMonadAff) {
                 })(files2);
                 if (v3.length === 0) {
                   return modify_4(function(v4) {
-                    var $96 = {};
-                    for (var $97 in v4) {
-                      if ({}.hasOwnProperty.call(v4, $97)) {
-                        $96[$97] = v4[$97];
+                    var $101 = {};
+                    for (var $102 in v4) {
+                      if ({}.hasOwnProperty.call(v4, $102)) {
+                        $101[$102] = v4[$102];
                       }
                       ;
                     }
                     ;
-                    $96.errorNote = new Just("No .bed file selected");
-                    $96.selectedPlinkFiles = Nothing.value;
-                    return $96;
+                    $101.errorNote = new Just("No .bed file selected");
+                    $101.selectedPlinkFiles = Nothing.value;
+                    return $101;
                   });
                 }
                 ;
                 if (v3.length === 1) {
                   return discard22(modify_4(function(v4) {
-                    var $99 = {};
-                    for (var $100 in v4) {
-                      if ({}.hasOwnProperty.call(v4, $100)) {
-                        $99[$100] = v4[$100];
+                    var $104 = {};
+                    for (var $105 in v4) {
+                      if ({}.hasOwnProperty.call(v4, $105)) {
+                        $104[$105] = v4[$105];
                       }
                       ;
                     }
                     ;
-                    $99.selectedPlinkFiles = new Just(new PlinkFileSpec(v1[0], v2[0], v3[0]));
-                    $99.errorNote = Nothing.value;
-                    return $99;
+                    $104.selectedPlinkFiles = new Just(new PlinkFileSpec(v1[0], v2[0], v3[0]));
+                    $104.errorNote = Nothing.value;
+                    return $104;
                   }))(function() {
-                    return bind22(liftAff2(attempt(bind32(bind32(readFileAsArrayBufferAff1(v1[0]))(arrayBufferToString1))(readFamData2))))(function(famResult) {
-                      return bind22(liftAff2(attempt(bind32(bind32(readFileAsArrayBufferAff1(v2[0]))(arrayBufferToString1))(readBimData2))))(function(bimResult) {
-                        var v4 = new Tuple(famResult, bimResult);
-                        if (v4.value0 instanceof Right && v4.value1 instanceof Right) {
-                          var numInds = length(v4.value0.value0.indNames);
-                          var numSNPs = length(v4.value1.value0.snpIDs);
-                          return bind22(liftAff2(attempt(bind32(readFileAsArrayBufferAff1(v3[0]))(function(bedContent) {
-                            return readBedData2(bedContent)(numSNPs)(numInds);
-                          }))))(function(bedResult) {
-                            if (bedResult instanceof Left) {
+                    return discard22(modify_4(function(v4) {
+                      var $107 = {};
+                      for (var $108 in v4) {
+                        if ({}.hasOwnProperty.call(v4, $108)) {
+                          $107[$108] = v4[$108];
+                        }
+                        ;
+                      }
+                      ;
+                      $107.filesLoading = true;
+                      return $107;
+                    }))(function() {
+                      return bind22(liftAff2(attempt(bind32(bind32(readFileAsArrayBufferAff1(v1[0]))(arrayBufferToString1))(readFamData2))))(function(famResult) {
+                        return bind22(liftAff2(attempt(bind32(bind32(readFileAsArrayBufferAff1(v2[0]))(arrayBufferToString1))(readBimData2))))(function(bimResult) {
+                          return discard22(modify_4(function(v4) {
+                            var $110 = {};
+                            for (var $111 in v4) {
+                              if ({}.hasOwnProperty.call(v4, $111)) {
+                                $110[$111] = v4[$111];
+                              }
+                              ;
+                            }
+                            ;
+                            $110.filesLoading = false;
+                            return $110;
+                          }))(function() {
+                            var v4 = new Tuple(famResult, bimResult);
+                            if (v4.value0 instanceof Right && v4.value1 instanceof Right) {
+                              var numInds = length(v4.value0.value0.indNames);
+                              var numSNPs = length(v4.value1.value0.snpIDs);
+                              return bind22(liftAff2(attempt(bind32(readFileAsArrayBufferAff1(v3[0]))(function(bedContent) {
+                                return readBedData2(bedContent)(numSNPs)(numInds);
+                              }))))(function(bedResult) {
+                                if (bedResult instanceof Left) {
+                                  return modify_4(function(v5) {
+                                    var $115 = {};
+                                    for (var $116 in v5) {
+                                      if ({}.hasOwnProperty.call(v5, $116)) {
+                                        $115[$116] = v5[$116];
+                                      }
+                                      ;
+                                    }
+                                    ;
+                                    $115.errorNote = new Just("Error reading .bed file: " + show1(bedResult.value0));
+                                    $115.filesLoading = false;
+                                    return $115;
+                                  });
+                                }
+                                ;
+                                if (bedResult instanceof Right) {
+                                  var plinkData = {
+                                    famData: v4.value0.value0,
+                                    bimData: v4.value1.value0,
+                                    bedData: bedResult.value0,
+                                    numIndividuals: numInds,
+                                    numSNPs
+                                  };
+                                  return discard22(modify_4(function(v5) {
+                                    var $119 = {};
+                                    for (var $120 in v5) {
+                                      if ({}.hasOwnProperty.call(v5, $120)) {
+                                        $119[$120] = v5[$120];
+                                      }
+                                      ;
+                                    }
+                                    ;
+                                    $119.plinkData = new Just(plinkData);
+                                    return $119;
+                                  }))(function() {
+                                    return raise(plinkData);
+                                  });
+                                }
+                                ;
+                                throw new Error("Failed pattern match at App.UserInputComponent (line 171, column 23 - line 177, column 44): " + [bedResult.constructor.name]);
+                              });
+                            }
+                            ;
+                            if (v4.value0 instanceof Left) {
                               return modify_4(function(v5) {
-                                var $104 = {};
-                                for (var $105 in v5) {
-                                  if ({}.hasOwnProperty.call(v5, $105)) {
-                                    $104[$105] = v5[$105];
+                                var $127 = {};
+                                for (var $128 in v5) {
+                                  if ({}.hasOwnProperty.call(v5, $128)) {
+                                    $127[$128] = v5[$128];
                                   }
                                   ;
                                 }
                                 ;
-                                $104.errorNote = new Just("Error reading .bed file: " + show1(bedResult.value0));
-                                return $104;
+                                $127.errorNote = new Just("Error: " + show1(v4.value0.value0));
+                                $127.filesLoading = false;
+                                return $127;
                               });
                             }
                             ;
-                            if (bedResult instanceof Right) {
-                              var plinkData = {
-                                famData: v4.value0.value0,
-                                bimData: v4.value1.value0,
-                                bedData: bedResult.value0,
-                                numIndividuals: numInds,
-                                numSNPs
-                              };
-                              return discard22(modify_4(function(v5) {
-                                var $108 = {};
-                                for (var $109 in v5) {
-                                  if ({}.hasOwnProperty.call(v5, $109)) {
-                                    $108[$109] = v5[$109];
+                            if (v4.value1 instanceof Left) {
+                              return modify_4(function(v5) {
+                                var $133 = {};
+                                for (var $134 in v5) {
+                                  if ({}.hasOwnProperty.call(v5, $134)) {
+                                    $133[$134] = v5[$134];
                                   }
                                   ;
                                 }
                                 ;
-                                $108.plinkData = new Just(plinkData);
-                                return $108;
-                              }))(function() {
-                                return raise(plinkData);
+                                $133.errorNote = new Just("Error: " + show1(v4.value1.value0));
+                                $133.filesLoading = false;
+                                return $133;
                               });
                             }
                             ;
-                            throw new Error("Failed pattern match at App.UserInputComponent (line 165, column 23 - line 170, column 44): " + [bedResult.constructor.name]);
+                            throw new Error("Failed pattern match at App.UserInputComponent (line 166, column 19 - line 179, column 121): " + [v4.constructor.name]);
                           });
-                        }
-                        ;
-                        if (v4.value0 instanceof Left) {
-                          return modify_4(function(v5) {
-                            var $116 = {};
-                            for (var $117 in v5) {
-                              if ({}.hasOwnProperty.call(v5, $117)) {
-                                $116[$117] = v5[$117];
-                              }
-                              ;
-                            }
-                            ;
-                            $116.errorNote = new Just("Error: " + show1(v4.value0.value0));
-                            return $116;
-                          });
-                        }
-                        ;
-                        if (v4.value1 instanceof Left) {
-                          return modify_4(function(v5) {
-                            var $122 = {};
-                            for (var $123 in v5) {
-                              if ({}.hasOwnProperty.call(v5, $123)) {
-                                $122[$123] = v5[$123];
-                              }
-                              ;
-                            }
-                            ;
-                            $122.errorNote = new Just("Error: " + show1(v4.value1.value0));
-                            return $122;
-                          });
-                        }
-                        ;
-                        throw new Error("Failed pattern match at App.UserInputComponent (line 160, column 19 - line 172, column 99): " + [v4.constructor.name]);
+                        });
                       });
                     });
                   });
                 }
                 ;
                 return modify_4(function(v4) {
-                  var $129 = {};
-                  for (var $130 in v4) {
-                    if ({}.hasOwnProperty.call(v4, $130)) {
-                      $129[$130] = v4[$130];
+                  var $140 = {};
+                  for (var $141 in v4) {
+                    if ({}.hasOwnProperty.call(v4, $141)) {
+                      $140[$141] = v4[$141];
                     }
                     ;
                   }
                   ;
-                  $129.errorNote = new Just("Multiple .bed files selected");
-                  $129.selectedPlinkFiles = Nothing.value;
-                  return $129;
+                  $140.errorNote = new Just("Multiple .bed files selected");
+                  $140.selectedPlinkFiles = Nothing.value;
+                  return $140;
                 });
               }
               ;
               return modify_4(function(v32) {
-                var $133 = {};
-                for (var $134 in v32) {
-                  if ({}.hasOwnProperty.call(v32, $134)) {
-                    $133[$134] = v32[$134];
+                var $144 = {};
+                for (var $145 in v32) {
+                  if ({}.hasOwnProperty.call(v32, $145)) {
+                    $144[$145] = v32[$145];
                   }
                   ;
                 }
                 ;
-                $133.errorNote = new Just("Multiple .bim files selected");
-                $133.selectedPlinkFiles = Nothing.value;
-                return $133;
+                $144.errorNote = new Just("Multiple .bim files selected");
+                $144.selectedPlinkFiles = Nothing.value;
+                return $144;
               });
             }
             ;
             return modify_4(function(v22) {
-              var $137 = {};
-              for (var $138 in v22) {
-                if ({}.hasOwnProperty.call(v22, $138)) {
-                  $137[$138] = v22[$138];
+              var $148 = {};
+              for (var $149 in v22) {
+                if ({}.hasOwnProperty.call(v22, $149)) {
+                  $148[$149] = v22[$149];
                 }
                 ;
               }
               ;
-              $137.errorNote = new Just("Multiple .fam files selected");
-              $137.selectedPlinkFiles = Nothing.value;
-              return $137;
+              $148.errorNote = new Just("Multiple .fam files selected");
+              $148.selectedPlinkFiles = Nothing.value;
+              return $148;
             });
           }
           ;
-          throw new Error("Failed pattern match at App.UserInputComponent (line 145, column 7 - line 175, column 111): " + [mFileList.constructor.name]);
+          throw new Error("Failed pattern match at App.UserInputComponent (line 149, column 7 - line 182, column 111): " + [mFileList.constructor.name]);
         });
       }
       ;
-      throw new Error("Failed pattern match at App.UserInputComponent (line 141, column 3 - line 175, column 111): " + [mInputElem.constructor.name]);
+      throw new Error("Failed pattern match at App.UserInputComponent (line 145, column 3 - line 182, column 111): " + [mInputElem.constructor.name]);
     }
     ;
     if (v instanceof RequestSampleData) {
       return bind22(liftAff2(fetch3("./assets/2024_Gretzinger_EarlyCelts.fam")({})))(function(famFetch) {
         return bind22(liftAff2(fetch3("./assets/2024_Gretzinger_EarlyCelts.bim")({})))(function(bimFetch) {
           return bind22(liftAff2(fetch3("./assets/2024_Gretzinger_EarlyCelts.bed")({})))(function(bedFetch) {
-            var $143 = famFetch.ok && (bimFetch.ok && bedFetch.ok);
-            if ($143) {
-              return bind22(liftAff2(attempt(bind32(famFetch.text)(readFamData2))))(function(famResult) {
-                return bind22(liftAff2(attempt(bind32(bimFetch.text)(readBimData2))))(function(bimResult) {
-                  var v1 = new Tuple(famResult, bimResult);
-                  if (v1.value0 instanceof Right && v1.value1 instanceof Right) {
-                    var numInds = length(v1.value0.value0.indNames);
-                    var numSNPs = length(v1.value1.value0.snpIDs);
-                    return bind22(liftAff2(attempt(bind32(bedFetch.arrayBuffer)(function(bedContent) {
-                      return readBedData2(bedContent)(numSNPs)(numInds);
-                    }))))(function(bedResult) {
-                      if (bedResult instanceof Left) {
-                        return modify_4(function(v2) {
-                          var $146 = {};
-                          for (var $147 in v2) {
-                            if ({}.hasOwnProperty.call(v2, $147)) {
-                              $146[$147] = v2[$147];
+            var $154 = famFetch.ok && (bimFetch.ok && bedFetch.ok);
+            if ($154) {
+              return discard22(modify_4(function(v1) {
+                var $155 = {};
+                for (var $156 in v1) {
+                  if ({}.hasOwnProperty.call(v1, $156)) {
+                    $155[$156] = v1[$156];
+                  }
+                  ;
+                }
+                ;
+                $155.filesLoading = true;
+                return $155;
+              }))(function() {
+                return bind22(liftAff2(attempt(bind32(famFetch.text)(readFamData2))))(function(famResult) {
+                  return bind22(liftAff2(attempt(bind32(bimFetch.text)(readBimData2))))(function(bimResult) {
+                    var v1 = new Tuple(famResult, bimResult);
+                    if (v1.value0 instanceof Right && v1.value1 instanceof Right) {
+                      var numInds = length(v1.value0.value0.indNames);
+                      var numSNPs = length(v1.value1.value0.snpIDs);
+                      return bind22(liftAff2(attempt(bind32(bedFetch.arrayBuffer)(function(bedContent) {
+                        return readBedData2(bedContent)(numSNPs)(numInds);
+                      }))))(function(bedResult) {
+                        if (bedResult instanceof Left) {
+                          return modify_4(function(v2) {
+                            var $160 = {};
+                            for (var $161 in v2) {
+                              if ({}.hasOwnProperty.call(v2, $161)) {
+                                $160[$161] = v2[$161];
+                              }
+                              ;
                             }
                             ;
-                          }
-                          ;
-                          $146.errorNote = new Just("Error reading .bed file: " + show1(bedResult.value0));
-                          return $146;
-                        });
-                      }
-                      ;
-                      if (bedResult instanceof Right) {
-                        var plinkData = {
-                          famData: v1.value0.value0,
-                          bimData: v1.value1.value0,
-                          bedData: bedResult.value0,
-                          numIndividuals: numInds,
-                          numSNPs
-                        };
-                        return discard22(modify_4(function(v2) {
-                          var $150 = {};
-                          for (var $151 in v2) {
-                            if ({}.hasOwnProperty.call(v2, $151)) {
-                              $150[$151] = v2[$151];
+                            $160.errorNote = new Just("Error reading .bed file: " + show1(bedResult.value0));
+                            $160.filesLoading = false;
+                            return $160;
+                          });
+                        }
+                        ;
+                        if (bedResult instanceof Right) {
+                          var plinkData = {
+                            famData: v1.value0.value0,
+                            bimData: v1.value1.value0,
+                            bedData: bedResult.value0,
+                            numIndividuals: numInds,
+                            numSNPs
+                          };
+                          return discard22(modify_4(function(v2) {
+                            var $164 = {};
+                            for (var $165 in v2) {
+                              if ({}.hasOwnProperty.call(v2, $165)) {
+                                $164[$165] = v2[$165];
+                              }
+                              ;
                             }
                             ;
+                            $164.plinkData = new Just(plinkData);
+                            $164.selectedPlinkFiles = new Just(ExampleData.value);
+                            $164.errorNote = Nothing.value;
+                            $164.filesLoading = false;
+                            return $164;
+                          }))(function() {
+                            return raise(plinkData);
+                          });
+                        }
+                        ;
+                        throw new Error("Failed pattern match at App.UserInputComponent (line 198, column 21 - line 205, column 46): " + [bedResult.constructor.name]);
+                      });
+                    }
+                    ;
+                    if (v1.value0 instanceof Left) {
+                      return modify_4(function(v2) {
+                        var $172 = {};
+                        for (var $173 in v2) {
+                          if ({}.hasOwnProperty.call(v2, $173)) {
+                            $172[$173] = v2[$173];
                           }
                           ;
-                          $150.plinkData = new Just(plinkData);
-                          $150.selectedPlinkFiles = new Just(ExampleData.value);
-                          $150.errorNote = Nothing.value;
-                          return $150;
-                        }))(function() {
-                          return raise(plinkData);
-                        });
-                      }
-                      ;
-                      throw new Error("Failed pattern match at App.UserInputComponent (line 190, column 21 - line 195, column 46): " + [bedResult.constructor.name]);
-                    });
-                  }
-                  ;
-                  if (v1.value0 instanceof Left) {
-                    return modify_4(function(v2) {
-                      var $158 = {};
-                      for (var $159 in v2) {
-                        if ({}.hasOwnProperty.call(v2, $159)) {
-                          $158[$159] = v2[$159];
                         }
                         ;
-                      }
-                      ;
-                      $158.errorNote = new Just("Error: " + show1(v1.value0.value0));
-                      return $158;
-                    });
-                  }
-                  ;
-                  if (v1.value1 instanceof Left) {
-                    return modify_4(function(v2) {
-                      var $164 = {};
-                      for (var $165 in v2) {
-                        if ({}.hasOwnProperty.call(v2, $165)) {
-                          $164[$165] = v2[$165];
+                        $172.errorNote = new Just("Error: " + show1(v1.value0.value0));
+                        $172.filesLoading = false;
+                        return $172;
+                      });
+                    }
+                    ;
+                    if (v1.value1 instanceof Left) {
+                      return modify_4(function(v2) {
+                        var $178 = {};
+                        for (var $179 in v2) {
+                          if ({}.hasOwnProperty.call(v2, $179)) {
+                            $178[$179] = v2[$179];
+                          }
+                          ;
                         }
                         ;
-                      }
-                      ;
-                      $164.errorNote = new Just("Error: " + show1(v1.value1.value0));
-                      return $164;
-                    });
-                  }
-                  ;
-                  throw new Error("Failed pattern match at App.UserInputComponent (line 185, column 13 - line 197, column 95): " + [v1.constructor.name]);
+                        $178.errorNote = new Just("Error: " + show1(v1.value1.value0));
+                        $178.filesLoading = false;
+                        return $178;
+                      });
+                    }
+                    ;
+                    throw new Error("Failed pattern match at App.UserInputComponent (line 193, column 13 - line 207, column 117): " + [v1.constructor.name]);
+                  });
                 });
               });
             }
             ;
             return modify_4(function(v1) {
-              var $170 = {};
-              for (var $171 in v1) {
-                if ({}.hasOwnProperty.call(v1, $171)) {
-                  $170[$171] = v1[$171];
+              var $184 = {};
+              for (var $185 in v1) {
+                if ({}.hasOwnProperty.call(v1, $185)) {
+                  $184[$185] = v1[$185];
                 }
                 ;
               }
               ;
-              $170.errorNote = new Just("Failed to load example data");
-              return $170;
+              $184.errorNote = new Just("Failed to load example data");
+              $184.filesLoading = false;
+              return $184;
             });
           });
         });
       });
     }
     ;
-    throw new Error("Failed pattern match at App.UserInputComponent (line 138, column 1 - line 138, column 100): " + [v.constructor.name]);
+    throw new Error("Failed pattern match at App.UserInputComponent (line 142, column 1 - line 142, column 100): " + [v.constructor.name]);
   };
 };
 var component3 = function(dictMonadAff) {
@@ -36032,7 +36143,7 @@ var refDataBox = function(dictMonadAff) {
         return div_([text("Selected weight file with SNPs: " + (show3(st.snpWeights.value0.numSNPs) + (", PCs: " + show3(st.snpWeights.value0.numPCs)))), br_]);
       }
       ;
-      throw new Error("Failed pattern match at App.Interface (line 86, column 11 - line 91, column 18): " + [st.snpWeights.constructor.name]);
+      throw new Error("Failed pattern match at App.Interface (line 88, column 11 - line 93, column 18): " + [st.snpWeights.constructor.name]);
     }(), function() {
       if (st.refData instanceof Nothing) {
         return div_([text("Loading reference position file..."), br_]);
@@ -36042,7 +36153,7 @@ var refDataBox = function(dictMonadAff) {
         return div_([text("Reference Position Data loaded. Samples: " + (show3(st.refData.value0.numSamples) + (", PCs: " + show3(st.refData.value0.numPCs)))), br_]);
       }
       ;
-      throw new Error("Failed pattern match at App.Interface (line 92, column 11 - line 97, column 18): " + [st.refData.constructor.name]);
+      throw new Error("Failed pattern match at App.Interface (line 94, column 11 - line 99, column 18): " + [st.refData.constructor.name]);
     }(), function() {
       if (st.errorNote instanceof Nothing) {
         return text("");
@@ -36052,7 +36163,7 @@ var refDataBox = function(dictMonadAff) {
         return div_([text("Error: " + st.errorNote.value0), br_]);
       }
       ;
-      throw new Error("Failed pattern match at App.Interface (line 98, column 11 - line 100, column 77): " + [st.errorNote.constructor.name]);
+      throw new Error("Failed pattern match at App.Interface (line 100, column 11 - line 102, column 77): " + [st.errorNote.constructor.name]);
     }()]);
   };
 };
@@ -36086,7 +36197,7 @@ var projectionMonitor = function(dictMonadAff) {
         return div_([text("Overlap Masks: " + ("Included SNPs: " + (show3(st.overlap.value0.nrIncluded) + (", Strand Ambiguous Removed: " + (show3(st.overlap.value0.removedStrandAmbiguous) + (", Inconsistent Removed: " + (show3(st.overlap.value0.removedInconsistent) + (", To Be Flipped: " + show3(st.overlap.value0.nrToBeFlipped)))))))))]);
       }
       ;
-      throw new Error("Failed pattern match at App.Interface (line 130, column 11 - line 139, column 22): " + [st.overlap.constructor.name]);
+      throw new Error("Failed pattern match at App.Interface (line 132, column 11 - line 141, column 22): " + [st.overlap.constructor.name]);
     }(), function() {
       if (st.projectionResults instanceof Nothing) {
         return text("");
@@ -36096,7 +36207,7 @@ var projectionMonitor = function(dictMonadAff) {
         return div_([text("Projection done")]);
       }
       ;
-      throw new Error("Failed pattern match at App.Interface (line 140, column 11 - line 143, column 48): " + [st.projectionResults.constructor.name]);
+      throw new Error("Failed pattern match at App.Interface (line 142, column 11 - line 145, column 48): " + [st.projectionResults.constructor.name]);
     }()]);
   };
 };
@@ -36260,36 +36371,38 @@ var handleAction3 = function(dictMonadAff) {
         $143.projectionResults = Nothing.value;
         return $143;
       }))(function() {
-        return bind10(liftEffect9(getOverlapMasks2(v.value0.bimData)(v.value1)))(function(overlap) {
-          return discard4(modify_5(function(v1) {
-            var $146 = {};
-            for (var $147 in v1) {
-              if ({}.hasOwnProperty.call(v1, $147)) {
-                $146[$147] = v1[$147];
+        return discard4(liftAff2(delay(0)))(function() {
+          return bind10(liftEffect9(getOverlapMasks2(v.value0.bimData)(v.value1)))(function(overlap) {
+            return discard4(modify_5(function(v1) {
+              var $146 = {};
+              for (var $147 in v1) {
+                if ({}.hasOwnProperty.call(v1, $147)) {
+                  $146[$147] = v1[$147];
+                }
+                ;
               }
               ;
-            }
-            ;
-            $146.overlap = new Just(overlap);
-            return $146;
-          }))(function() {
-            return bind10(liftEffect9(reducePcWeights2(v.value1)(overlap)))(function(reducedSnpWeights) {
-              return bind10(liftEffect9(extractAndTransposeGenotypes2(v.value0.bedData)(v.value0.numSNPs)(v.value0.numIndividuals)(overlap)))(function(genotypes) {
-                return bind10(liftEffect9(projectSamples2(genotypes)(reducedSnpWeights.pcWeights)(reducedSnpWeights.frequencies)(v.value0.numIndividuals)(reducedSnpWeights.numPCs)(v.value2)))(function(pResults) {
-                  return discard4(modify_5(function(v1) {
-                    var $149 = {};
-                    for (var $150 in v1) {
-                      if ({}.hasOwnProperty.call(v1, $150)) {
-                        $149[$150] = v1[$150];
+              $146.overlap = new Just(overlap);
+              return $146;
+            }))(function() {
+              return bind10(liftEffect9(reducePcWeights2(v.value1)(overlap)))(function(reducedSnpWeights) {
+                return bind10(liftEffect9(extractAndTransposeGenotypes2(v.value0.bedData)(v.value0.numSNPs)(v.value0.numIndividuals)(overlap)))(function(genotypes) {
+                  return bind10(liftEffect9(projectSamples2(genotypes)(reducedSnpWeights.pcWeights)(reducedSnpWeights.frequencies)(v.value0.numIndividuals)(reducedSnpWeights.numPCs)(v.value2)))(function(pResults) {
+                    return discard4(modify_5(function(v1) {
+                      var $149 = {};
+                      for (var $150 in v1) {
+                        if ({}.hasOwnProperty.call(v1, $150)) {
+                          $149[$150] = v1[$150];
+                        }
+                        ;
                       }
                       ;
-                    }
-                    ;
-                    $149.projectionRunning = false;
-                    $149.projectionResults = new Just(pResults);
-                    return $149;
-                  }))(function() {
-                    return pure9(unit);
+                      $149.projectionRunning = false;
+                      $149.projectionResults = new Just(pResults);
+                      return $149;
+                    }))(function() {
+                      return pure9(unit);
+                    });
                   });
                 });
               });
@@ -36299,7 +36412,7 @@ var handleAction3 = function(dictMonadAff) {
       });
     }
     ;
-    throw new Error("Failed pattern match at App.Interface (line 177, column 1 - line 177, column 107): " + [v.constructor.name]);
+    throw new Error("Failed pattern match at App.Interface (line 179, column 1 - line 179, column 107): " + [v.constructor.name]);
   };
 };
 var _userInputComponent = /* @__PURE__ */ function() {
@@ -36322,7 +36435,7 @@ var refChartBox = function(dictMonadAff) {
         })]);
       }
       ;
-      throw new Error("Failed pattern match at App.Interface (line 151, column 11 - line 154, column 83): " + [st.refData.constructor.name]);
+      throw new Error("Failed pattern match at App.Interface (line 153, column 11 - line 156, column 83): " + [st.refData.constructor.name]);
     }()]);
   };
 };

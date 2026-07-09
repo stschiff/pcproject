@@ -5,7 +5,9 @@ import Prelude
 import App.RefChart as RefChart
 import App.UserInputComponent as UserInputComponent
 import Data.Maybe (Maybe(..))
+import Data.Time.Duration (Milliseconds(..))
 import Data.Tuple.Nested ((/\))
+import Effect.Aff (delay)
 import Effect.Aff.Class (class MonadAff)
 import Effect.Class (liftEffect)
 import Effect.Console (log)
@@ -20,7 +22,7 @@ import Web.File.File (File)
 
 import PCproject.PCproject (ProjectionResult, projectSamples, PCAparams,
         getOverlapMasks, reducePcWeights, extractAndTransposeGenotypes,
-        OverlapMasks(..))
+        OverlapMasks)
 import PCproject.PlinkData (PlinkData)
 import PCproject.RefPosData (RefPosData, readRefPosData)
 import PCproject.SnpWeights (SnpWeights, readSnpWeights)
@@ -139,7 +141,7 @@ projectionMonitor st =
                     ]
         , case st.projectionResults of
             Nothing -> HH.text ""
-            Just pr -> HH.div_
+            Just _ -> HH.div_
                 [ HH.text $ "Projection done" ]
         ]
 
@@ -207,6 +209,7 @@ handleAction (GotUserData pd) = do
 
 handleAction (RunProjection pd sw pp) = do
     H.modify_ _ { projectionRunning = true, projectionResults = Nothing }
+    H.liftAff $ delay (Milliseconds 0.0)   -- yields to the event loop, lets the spinner paint
     overlap <- liftEffect $ getOverlapMasks pd.bimData sw
     H.modify_ _ { overlap = Just overlap }
     reducedSnpWeights <- liftEffect $ reducePcWeights sw overlap

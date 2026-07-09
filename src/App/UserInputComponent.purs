@@ -2,25 +2,25 @@ module App.UserInputComponent where
 
 import Prelude
 
-import Data.Array (filter, length)
+import Data.Array (filter, length, concat)
 import Data.ArrayBuffer.Typed (whole)
 import Data.ArrayBuffer.Types (ArrayBuffer, Uint8Array)
 import Data.Either (Either(..))
 import Data.Maybe (Maybe(..))
 import Data.String.Utils (endsWith)
-import Data.Traversable (sequence)
 import Data.Tuple (Tuple(..))
 import Effect (Effect)
 import Effect.Aff (makeAff, nonCanceler, attempt)
 import Effect.Aff.Class (class MonadAff, liftAff)
 import Effect.Class (liftEffect, class MonadEffect)
-import Effect.Exception (error, try)
+import Effect.Exception (error)
 import Fetch (fetch)
 import Foreign (unsafeFromForeign)
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
+import PCproject.PlinkData (PlinkData, readBimData, readFamData, readBedData)
 import Web.Encoding.TextDecoder as TextDecoder
 import Web.Encoding.UtfLabel as UtfLabel
 import Web.Event.Event as WE
@@ -31,14 +31,13 @@ import Web.File.FileReader (fileReader, readAsArrayBuffer, result, toEventTarget
 import Web.HTML.Event.EventTypes as ET
 import Web.HTML.HTMLInputElement (fromEventTarget, files)
 
-import PCproject.PlinkData (PlinkData, readBimData, readFamData, readBedData)
-
 data PlinkFileSpec = PlinkFileSpec File File File | ExampleData
 
 type State =
   { selectedPlinkFiles :: Maybe PlinkFileSpec
   , errorNote :: Maybe String
   , plinkData :: Maybe PlinkData
+  , filesLoading :: Boolean
   }
 
 type Output = PlinkData
@@ -94,6 +93,7 @@ initialState _ =
     { selectedPlinkFiles: Nothing
     , errorNote: Nothing
     , plinkData: Nothing
+    , filesLoading: false
     }
 
 render :: forall slots m . (MonadAff m) => State -> H.ComponentHTML Action slots m
@@ -108,6 +108,9 @@ render st =
                     [ HP.type_ HP.InputFile, HP.multiple true, HE.onChange GotGenoDataFileEvent ]
                 ]
             ]
+        , case st.filesLoading of
+            true -> HH.div_ [ HH.text "Loading plink files...", HH.br_ ]
+            false -> HH.text ""
         , case st.selectedPlinkFiles of
             Nothing -> HH.div_ [ HH.text "No plink files selected", HH.br_ ]
             Just (PlinkFileSpec famFile bimFile bedFile) -> HH.div_
@@ -118,13 +121,14 @@ render st =
                 , HH.text $ "Selected bed file: " <> name bedFile
                 ]
             Just ExampleData -> HH.div_ [ HH.text "Using example data", HH.br_ ]
-        , HH.div [ HP.classes [ HH.ClassName "control" ] ]
-            [ HH.button
-                [ HP.classes [ HH.ClassName "button", HH.ClassName "is-primary" ]
-                , HE.onClick (\_ -> RequestSampleData)
-                ]
+        , let classes = concat [ [ HH.ClassName "button", HH.ClassName "is-primary" ], 
+                if st.filesLoading then [ HH.ClassName "is-loading" ] else [] ]
+          in 
+            HH.div [ HP.classes [ HH.ClassName "control" ] ]
+              [ HH.button
+                [ HP.classes classes, HE.onClick (\_ -> RequestSampleData) ]
                 [ HH.text "Load Example Data" ]
-            ]
+              ]
         , case Tuple st.plinkData st.selectedPlinkFiles of
             Tuple _ Nothing -> HH.text ""
             Tuple Nothing _ -> HH.div_ [ HH.text "Loading plink files...", HH.br_ ]
@@ -155,21 +159,24 @@ handleAction (GotGenoDataFileEvent ev) = do
                 [bedFile] -> do
                   H.modify_ _ { selectedPlinkFiles = Just (PlinkFileSpec famFile bimFile bedFile), errorNote = Nothing }
                   -- Read the files asynchronously using makeAff
+                  H.modify_ _ { filesLoading = true }
                   famResult <- liftAff $ attempt (readFileAsArrayBufferAff famFile >>= arrayBufferToString >>= readFamData)
                   bimResult <- liftAff $ attempt (readFileAsArrayBufferAff bimFile >>= arrayBufferToString >>= readBimData)
+                  H.modify_ _ { filesLoading = false }
                   case Tuple famResult bimResult of
                     Tuple (Right fam) (Right bim) -> do
                       let numInds = length fam.indNames
                       let numSNPs = length bim.snpIDs
                       bedResult <- liftAff $ attempt (readFileAsArrayBufferAff bedFile >>= \bedContent -> readBedData bedContent numSNPs numInds)
                       case bedResult of
-                        Left err -> H.modify_ _ { errorNote = Just $ "Error reading .bed file: " <> show err }
+                        Left err -> H.modify_ _ { errorNote = Just $ "Error reading .bed file: " <> show err,
+                                                  filesLoading = false }
                         Right bed -> do
                           let plinkData = { famData : fam, bimData : bim, bedData : bed, numIndividuals : numInds, numSNPs : numSNPs }
                           H.modify_ _ { plinkData = Just plinkData }
                           H.raise plinkData
-                    Tuple (Left err) _ -> H.modify_ _ { errorNote = Just $ "Error: " <> show err }
-                    Tuple _ (Left err) -> H.modify_ _ { errorNote = Just $ "Error: " <> show err }
+                    Tuple (Left err) _ -> H.modify_ _ { errorNote = Just $ "Error: " <> show err, filesLoading = false }
+                    Tuple _ (Left err) -> H.modify_ _ { errorNote = Just $ "Error: " <> show err, filesLoading = false }
                 _ -> H.modify_ _ { errorNote = Just "Multiple .bed files selected", selectedPlinkFiles = Nothing }
               _ -> H.modify_ _ { errorNote = Just "Multiple .bim files selected", selectedPlinkFiles = Nothing }
             _ -> H.modify_ _ { errorNote = Just "Multiple .fam files selected", selectedPlinkFiles = Nothing }
@@ -180,6 +187,7 @@ handleAction RequestSampleData = do
     bedFetch <- H.liftAff $ fetch "./assets/2024_Gretzinger_EarlyCelts.bed" {}
     if famFetch.ok && bimFetch.ok && bedFetch.ok
         then do
+            H.modify_ _ { filesLoading = true }
             famResult <- H.liftAff $ attempt (famFetch.text >>= readFamData)
             bimResult <- H.liftAff $ attempt (bimFetch.text >>= readBimData)
             case Tuple famResult bimResult of
@@ -188,12 +196,14 @@ handleAction RequestSampleData = do
                     let numSNPs = length bim.snpIDs
                     bedResult <- H.liftAff $ attempt (bedFetch.arrayBuffer >>= \bedContent -> readBedData bedContent numSNPs numInds)
                     case bedResult of
-                        Left err -> H.modify_ _ { errorNote = Just $ "Error reading .bed file: " <> show err }
+                        Left err -> H.modify_ _ { errorNote = Just $ "Error reading .bed file: " <> show err,
+                                                  filesLoading = false }
                         Right bed -> do
                             let plinkData = { famData : fam, bimData : bim, bedData : bed, numIndividuals : numInds, numSNPs : numSNPs }
-                            H.modify_ _ { plinkData = Just plinkData, selectedPlinkFiles = Just ExampleData, errorNote = Nothing }
+                            H.modify_ _ { plinkData = Just plinkData, selectedPlinkFiles = Just ExampleData, errorNote = Nothing,
+                                          filesLoading = false }
                             H.raise plinkData
-                Tuple (Left err) _ -> H.modify_ _ { errorNote = Just $ "Error: " <> show err }
-                Tuple _ (Left err) -> H.modify_ _ { errorNote = Just $ "Error: " <> show err }
+                Tuple (Left err) _ -> H.modify_ _ { errorNote = Just $ "Error: " <> show err, filesLoading = false }
+                Tuple _ (Left err) -> H.modify_ _ { errorNote = Just $ "Error: " <> show err, filesLoading = false }
         else
-            H.modify_ _ { errorNote = Just "Failed to load example data" }
+            H.modify_ _ { errorNote = Just "Failed to load example data", filesLoading = false }
