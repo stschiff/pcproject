@@ -4264,7 +4264,7 @@ var require_main75 = __commonJS({
     setReadOnlyAccessor(Complex64Array.prototype, "length", function get5() {
       return this._length;
     });
-    setReadOnly4(Complex64Array.prototype, "map", function map34(fcn, thisArg) {
+    setReadOnly4(Complex64Array.prototype, "map", function map35(fcn, thisArg) {
       var outbuf;
       var buf;
       var out;
@@ -5696,7 +5696,7 @@ var require_main78 = __commonJS({
       }
       return -1;
     });
-    setReadOnly4(Complex128Array.prototype, "map", function map34(fcn, thisArg) {
+    setReadOnly4(Complex128Array.prototype, "map", function map35(fcn, thisArg) {
       var outbuf;
       var buf;
       var out;
@@ -6928,7 +6928,7 @@ var require_main79 = __commonJS({
     setReadOnlyAccessor(BooleanArray.prototype, "length", function get5() {
       return this._length;
     });
-    setReadOnly4(BooleanArray.prototype, "map", function map34(fcn, thisArg) {
+    setReadOnly4(BooleanArray.prototype, "map", function map35(fcn, thisArg) {
       var outbuf;
       var out;
       var buf;
@@ -7964,10 +7964,10 @@ var apply = function(dict) {
 };
 var applySecond = function(dictApply) {
   var apply1 = apply(dictApply);
-  var map34 = map(dictApply.Functor0());
+  var map35 = map(dictApply.Functor0());
   return function(a2) {
     return function(b2) {
-      return apply1(map34($$const(identity2))(a2))(b2);
+      return apply1(map35($$const(identity2))(a2))(b2);
     };
   };
 };
@@ -10932,7 +10932,7 @@ var traverseArrayImpl = /* @__PURE__ */ function() {
     };
   }
   return function(apply3) {
-    return function(map34) {
+    return function(map35) {
       return function(pure16) {
         return function(f) {
           return function(array) {
@@ -10941,14 +10941,14 @@ var traverseArrayImpl = /* @__PURE__ */ function() {
                 case 0:
                   return pure16([]);
                 case 1:
-                  return map34(array1)(f(array[bot]));
+                  return map35(array1)(f(array[bot]));
                 case 2:
-                  return apply3(map34(array2)(f(array[bot])))(f(array[bot + 1]));
+                  return apply3(map35(array2)(f(array[bot])))(f(array[bot + 1]));
                 case 3:
-                  return apply3(apply3(map34(array3)(f(array[bot])))(f(array[bot + 1])))(f(array[bot + 2]));
+                  return apply3(apply3(map35(array3)(f(array[bot])))(f(array[bot + 1])))(f(array[bot + 2]));
                 default:
                   var pivot = bot + Math.floor((top2 - bot) / 4) * 2;
-                  return apply3(map34(concat2)(go2(bot, pivot)))(go2(pivot, top2));
+                  return apply3(map35(concat2)(go2(bot, pivot)))(go2(pivot, top2));
               }
             }
             return go2(0, array.length);
@@ -11254,10 +11254,10 @@ var catchError = function(dict) {
 var $$try2 = function(dictMonadError) {
   var catchError1 = catchError(dictMonadError);
   var Monad0 = dictMonadError.MonadThrow0().Monad0();
-  var map34 = map(Monad0.Bind1().Apply0().Functor0());
+  var map35 = map(Monad0.Bind1().Apply0().Functor0());
   var pure16 = pure(Monad0.Applicative0());
   return function(a2) {
-    return catchError1(map34(Right.create)(a2))(function($52) {
+    return catchError1(map35(Right.create)(a2))(function($52) {
       return pure16(Left.create($52));
     });
   };
@@ -26538,13 +26538,13 @@ function addTick(ticks, time3, timestamps) {
     ticks[timestamp] = true;
   }
 }
-function setMajorTicks(scale, ticks, map34, majorUnit) {
+function setMajorTicks(scale, ticks, map35, majorUnit) {
   const adapter = scale._adapter;
   const first = +adapter.startOf(ticks[0].value, majorUnit);
   const last3 = ticks[ticks.length - 1].value;
   let major, index5;
   for (major = first; major <= last3; major = +adapter.add(major, 1, majorUnit)) {
-    index5 = map34[major];
+    index5 = map35[major];
     if (index5 >= 0) {
       ticks[index5].major = true;
     }
@@ -26553,18 +26553,18 @@ function setMajorTicks(scale, ticks, map34, majorUnit) {
 }
 function ticksFromTimestamps(scale, values, majorUnit) {
   const ticks = [];
-  const map34 = {};
+  const map35 = {};
   const ilen = values.length;
   let i2, value12;
   for (i2 = 0; i2 < ilen; ++i2) {
     value12 = values[i2];
-    map34[value12] = i2;
+    map35[value12] = i2;
     ticks.push({
       value: value12,
       major: false
     });
   }
-  return ilen === 0 || !majorUnit ? ticks : setMajorTicks(scale, ticks, map34, majorUnit);
+  return ilen === 0 || !majorUnit ? ticks : setMajorTicks(scale, ticks, map35, majorUnit);
 }
 var TimeScale2 = class extends Scale {
   static id = "time";
@@ -31242,8 +31242,9 @@ var input = function(props) {
   return element2("input")(props)([]);
 };
 var label = /* @__PURE__ */ element2("label");
-var label_ = /* @__PURE__ */ label([]);
+var p = /* @__PURE__ */ element2("p");
 var section = /* @__PURE__ */ element2("section");
+var span2 = /* @__PURE__ */ element2("span");
 var div2 = /* @__PURE__ */ element2("div");
 var div_ = /* @__PURE__ */ div2([]);
 var canvas = function(props) {
@@ -32183,9 +32184,17 @@ function _files(input3) {
     return input3.files;
   };
 }
+function setValue(value12) {
+  return function(input3) {
+    return function() {
+      input3.value = value12;
+    };
+  };
+}
 
 // output/Web.HTML.HTMLInputElement/index.js
 var map25 = /* @__PURE__ */ map(functorEffect);
+var fromHTMLElement = /* @__PURE__ */ unsafeReadProtoTagged("HTMLInputElement");
 var fromEventTarget = /* @__PURE__ */ unsafeReadProtoTagged("HTMLInputElement");
 var files = /* @__PURE__ */ function() {
   var $6 = map25(toMaybe);
@@ -32369,14 +32378,16 @@ function readAsArrayBuffer(blob3) {
 var toEventTarget = unsafeCoerce2;
 
 // output/App.UserInputComponent/index.js
+var discard3 = /* @__PURE__ */ discard(discardUnit);
 var type_5 = /* @__PURE__ */ type_(isPropInputType);
 var show2 = /* @__PURE__ */ show(showInt);
-var discard3 = /* @__PURE__ */ discard(discardUnit);
+var bind12 = /* @__PURE__ */ bind(bindHalogenM);
+var for_2 = /* @__PURE__ */ for_(applicativeHalogenM)(foldableMaybe);
+var bind22 = /* @__PURE__ */ bind(bindMaybe);
 var whole2 = /* @__PURE__ */ whole(typedArrayUint8);
-var bind12 = /* @__PURE__ */ bind(bindMaybe);
 var pure12 = /* @__PURE__ */ pure(applicativeHalogenM);
-var bind22 = /* @__PURE__ */ bind(bindHalogenM);
 var items2 = /* @__PURE__ */ items(unfoldableArray);
+var map26 = /* @__PURE__ */ map(functorArray);
 var modify_4 = /* @__PURE__ */ modify_2(monadStateHalogenM);
 var discard22 = /* @__PURE__ */ discard3(bindHalogenM);
 var bind32 = /* @__PURE__ */ bind(bindAff);
@@ -32393,12 +32404,15 @@ var NoData = /* @__PURE__ */ function() {
   return NoData2;
 }();
 var FromUserUpload = /* @__PURE__ */ function() {
-  function FromUserUpload2(value0) {
+  function FromUserUpload2(value0, value1) {
     this.value0 = value0;
+    this.value1 = value1;
   }
   ;
   FromUserUpload2.create = function(value0) {
-    return new FromUserUpload2(value0);
+    return function(value1) {
+      return new FromUserUpload2(value0, value1);
+    };
   };
   return FromUserUpload2;
 }();
@@ -32429,72 +32443,6 @@ var RequestSampleData = /* @__PURE__ */ function() {
   RequestSampleData2.value = new RequestSampleData2();
   return RequestSampleData2;
 }();
-var render3 = function(dictMonadAff) {
-  return function(st) {
-    return div2([classes(["box"])])([h22([classes(["title", "is-4"])])([text("User Data")]), div2([classes(["field"])])([label_([text("Select Plink genotype data files: ")]), div2([classes(["control"])])([input([type_5(InputFile.value), multiple(true), onChange(GotGenoDataFileEvent.create)])])]), function() {
-      var classes2 = concat([["button", "is-primary"], function() {
-        if (st instanceof FromExampleData && st.value0 instanceof Loading) {
-          return ["is-loading"];
-        }
-        ;
-        return [];
-      }()]);
-      return div2([classes(["control"])])([button([classes(classes2), onClick(function(v) {
-        return RequestSampleData.value;
-      })])([text("Load Example Data")])]);
-    }(), function() {
-      if (st instanceof NoData) {
-        return div_([text("No data selected"), br_]);
-      }
-      ;
-      if (st instanceof FromUserUpload) {
-        return div_([text("Using user-uploaded data"), function() {
-          if (st.value0 instanceof NotAsked) {
-            return text("No data loaded yet");
-          }
-          ;
-          if (st.value0 instanceof Loading) {
-            return text("Loading data from files...");
-          }
-          ;
-          if (st.value0 instanceof Failure) {
-            return text("Error loading data from files: " + st.value0.value0);
-          }
-          ;
-          if (st.value0 instanceof Success) {
-            return text("Loaded data with " + (show2(st.value0.value0.numIndividuals) + (" individuals and " + (show2(st.value0.value0.numSNPs) + " SNPs"))));
-          }
-          ;
-          throw new Error("Failed pattern match at App.UserInputComponent (line 117, column 17 - line 123, column 54): " + [st.value0.constructor.name]);
-        }(), br_]);
-      }
-      ;
-      if (st instanceof FromExampleData) {
-        return div_([text("Using example data"), function() {
-          if (st.value0 instanceof NotAsked) {
-            return text("No data loaded yet");
-          }
-          ;
-          if (st.value0 instanceof Loading) {
-            return text("Loading example data...");
-          }
-          ;
-          if (st.value0 instanceof Failure) {
-            return text("Error loading example data: " + st.value0.value0);
-          }
-          ;
-          if (st.value0 instanceof Success) {
-            return text("Loaded example data with " + (show2(st.value0.value0.numIndividuals) + (" individuals and " + (show2(st.value0.value0.numSNPs) + " SNPs"))));
-          }
-          ;
-          throw new Error("Failed pattern match at App.UserInputComponent (line 128, column 19 - line 133, column 112): " + [st.value0.constructor.name]);
-        }(), br_]);
-      }
-      ;
-      throw new Error("Failed pattern match at App.UserInputComponent (line 113, column 11 - line 135, column 18): " + [st.constructor.name]);
-    }()]);
-  };
-};
 var readFileAsArrayBufferAff = function(dictMonadAff) {
   var liftAff2 = liftAff(dictMonadAff);
   return function(file) {
@@ -32523,6 +32471,129 @@ var readFileAsArrayBufferAff1 = /* @__PURE__ */ readFileAsArrayBufferAff(monadAf
 var initialState2 = function(v) {
   return NoData.value;
 };
+var fileNameText = function(v) {
+  if (v instanceof FromUserUpload) {
+    if (v.value0.length === 0) {
+      return "No file selected";
+    }
+    ;
+    return joinWith(", ")(v.value0);
+  }
+  ;
+  return "No file selected";
+};
+var fileInputRef = "plinkFileInput";
+var uploadControl = function(dictMonadAff) {
+  return function(st) {
+    var isActive = function() {
+      if (st instanceof FromUserUpload) {
+        return true;
+      }
+      ;
+      return false;
+    }();
+    var fileClasses = concat([["file", "has-name"], function() {
+      if (isActive) {
+        return ["is-primary"];
+      }
+      ;
+      return [];
+    }()]);
+    return div2([classes(fileClasses)])([label([classes(["file-label"])])([input([classes(["file-input"]), type_5(InputFile.value), multiple(true), onChange(GotGenoDataFileEvent.create), ref2(fileInputRef)]), span2([classes(["file-cta"])])([span2([classes(["file-label"])])([text("Choose PLINK files\u2026")])]), span2([classes(["file-name"])])([text(fileNameText(st))])])]);
+  };
+};
+var exampleDataControl = function(dictMonadAff) {
+  return function(st) {
+    var isActive = function() {
+      if (st instanceof FromExampleData) {
+        return true;
+      }
+      ;
+      return false;
+    }();
+    var classes2 = concat([["button"], function() {
+      if (isActive) {
+        return ["is-primary"];
+      }
+      ;
+      return [];
+    }(), function() {
+      if (st instanceof FromExampleData && st.value0 instanceof Loading) {
+        return ["is-loading"];
+      }
+      ;
+      return [];
+    }()]);
+    return div2([classes(["control"])])([button([classes(classes2), onClick(function(v) {
+      return RequestSampleData.value;
+    })])([text("Load Example Data")])]);
+  };
+};
+var render3 = function(dictMonadAff) {
+  var uploadControl1 = uploadControl(dictMonadAff);
+  var exampleDataControl1 = exampleDataControl(dictMonadAff);
+  return function(st) {
+    return div2([classes(["box"])])([h22([classes(["title", "is-4"])])([text("User Data")]), div2([classes(["field"])])([uploadControl1(st)]), p([classes(["has-text-weight-bold", "has-text-centered"])])([text("OR")]), div2([classes(["field"])])([exampleDataControl1(st)]), function() {
+      if (st instanceof NoData) {
+        return div_([text("No data selected"), br_]);
+      }
+      ;
+      if (st instanceof FromUserUpload) {
+        return div_([text("Using user-uploaded data"), function() {
+          if (st.value1 instanceof NotAsked) {
+            return text("No data loaded yet");
+          }
+          ;
+          if (st.value1 instanceof Loading) {
+            return text("Loading data from files...");
+          }
+          ;
+          if (st.value1 instanceof Failure) {
+            return text("Error loading data from files: " + st.value1.value0);
+          }
+          ;
+          if (st.value1 instanceof Success) {
+            return text("Loaded data with " + (show2(st.value1.value0.numIndividuals) + (" individuals and " + (show2(st.value1.value0.numSNPs) + " SNPs"))));
+          }
+          ;
+          throw new Error("Failed pattern match at App.UserInputComponent (line 116, column 17 - line 122, column 54): " + [st.value1.constructor.name]);
+        }(), br_]);
+      }
+      ;
+      if (st instanceof FromExampleData) {
+        return div_([text("Using example data"), function() {
+          if (st.value0 instanceof NotAsked) {
+            return text("No data loaded yet");
+          }
+          ;
+          if (st.value0 instanceof Loading) {
+            return text("Loading example data...");
+          }
+          ;
+          if (st.value0 instanceof Failure) {
+            return text("Error loading example data: " + st.value0.value0);
+          }
+          ;
+          if (st.value0 instanceof Success) {
+            return text("Loaded example data with " + (show2(st.value0.value0.numIndividuals) + (" individuals and " + (show2(st.value0.value0.numSNPs) + " SNPs"))));
+          }
+          ;
+          throw new Error("Failed pattern match at App.UserInputComponent (line 127, column 19 - line 132, column 112): " + [st.value0.constructor.name]);
+        }(), br_]);
+      }
+      ;
+      throw new Error("Failed pattern match at App.UserInputComponent (line 112, column 11 - line 134, column 18): " + [st.constructor.name]);
+    }()]);
+  };
+};
+var clearFileInput = function(dictMonadAff) {
+  var liftEffect9 = liftEffect(monadEffectHalogenM(dictMonadAff.MonadEffect0()));
+  return bind12(getHTMLElementRef(fileInputRef))(function(mEl) {
+    return for_2(bind22(mEl)(fromHTMLElement))(function(inputEl) {
+      return liftEffect9(setValue("")(inputEl));
+    });
+  });
+};
 var arrayBufferToString = function(dictMonadEffect) {
   var liftEffect9 = liftEffect(dictMonadEffect);
   return function(buffer2) {
@@ -32537,27 +32608,29 @@ var arrayBufferToString1 = /* @__PURE__ */ arrayBufferToString(monadEffectAff);
 var handleAction2 = function(dictMonadAff) {
   var liftEffect9 = liftEffect(monadEffectHalogenM(dictMonadAff.MonadEffect0()));
   var liftAff2 = liftAff(monadAffHalogenM(dictMonadAff));
+  var clearFileInput1 = clearFileInput(dictMonadAff);
   return function(v) {
     if (v instanceof GotGenoDataFileEvent) {
-      var mInputElem = bind12(target(v.value0))(fromEventTarget);
+      var mInputElem = bind22(target(v.value0))(fromEventTarget);
       if (mInputElem instanceof Nothing) {
         return pure12(unit);
       }
       ;
       if (mInputElem instanceof Just) {
-        return bind22(liftEffect9(files(mInputElem.value0)))(function(mFileList) {
+        return bind12(liftEffect9(files(mInputElem.value0)))(function(mFileList) {
           if (mFileList instanceof Nothing) {
             return pure12(unit);
           }
           ;
           if (mFileList instanceof Just) {
             var files2 = items2(mFileList.value0);
+            var fileNames = map26(name3)(files2);
             var v1 = filter(function(f) {
               return endsWith(".fam")(name3(f));
             })(files2);
             if (v1.length === 0) {
               return modify_4(function(v22) {
-                return new FromUserUpload(new Failure("No .fam file given"));
+                return new FromUserUpload(fileNames, new Failure("No .fam file given"));
               });
             }
             ;
@@ -32567,7 +32640,7 @@ var handleAction2 = function(dictMonadAff) {
               })(files2);
               if (v2.length === 0) {
                 return modify_4(function(v32) {
-                  return new FromUserUpload(new Failure("No .bim file selected"));
+                  return new FromUserUpload(fileNames, new Failure("No .bim file selected"));
                 });
               }
               ;
@@ -32577,26 +32650,26 @@ var handleAction2 = function(dictMonadAff) {
                 })(files2);
                 if (v3.length === 0) {
                   return modify_4(function(v4) {
-                    return new FromUserUpload(new Failure("No .bed file selected"));
+                    return new FromUserUpload(fileNames, new Failure("No .bed file selected"));
                   });
                 }
                 ;
                 if (v3.length === 1) {
                   return discard22(modify_4(function(v4) {
-                    return new FromUserUpload(Loading.value);
+                    return new FromUserUpload(fileNames, Loading.value);
                   }))(function() {
-                    return bind22(liftAff2(attempt(bind32(bind32(readFileAsArrayBufferAff1(v1[0]))(arrayBufferToString1))(readFamData2))))(function(famResult) {
-                      return bind22(liftAff2(attempt(bind32(bind32(readFileAsArrayBufferAff1(v2[0]))(arrayBufferToString1))(readBimData2))))(function(bimResult) {
+                    return bind12(liftAff2(attempt(bind32(bind32(readFileAsArrayBufferAff1(v1[0]))(arrayBufferToString1))(readFamData2))))(function(famResult) {
+                      return bind12(liftAff2(attempt(bind32(bind32(readFileAsArrayBufferAff1(v2[0]))(arrayBufferToString1))(readBimData2))))(function(bimResult) {
                         var v4 = new Tuple(famResult, bimResult);
                         if (v4.value0 instanceof Right && v4.value1 instanceof Right) {
                           var numInds = length(v4.value0.value0.indNames);
                           var numSNPs = length(v4.value1.value0.snpIDs);
-                          return bind22(liftAff2(attempt(bind32(readFileAsArrayBufferAff1(v3[0]))(function(bedContent) {
+                          return bind12(liftAff2(attempt(bind32(readFileAsArrayBufferAff1(v3[0]))(function(bedContent) {
                             return readBedData2(bedContent)(numSNPs)(numInds);
                           }))))(function(bedResult) {
                             if (bedResult instanceof Left) {
                               return modify_4(function(v5) {
-                                return new FromUserUpload(new Failure("Error reading .bed file: " + show1(bedResult.value0)));
+                                return new FromUserUpload(fileNames, new Failure("Error reading .bed file: " + show1(bedResult.value0)));
                               });
                             }
                             ;
@@ -32609,118 +32682,120 @@ var handleAction2 = function(dictMonadAff) {
                                 numSNPs
                               };
                               return discard22(modify_4(function(v5) {
-                                return new FromUserUpload(new Success(plinkData));
+                                return new FromUserUpload(fileNames, new Success(plinkData));
                               }))(function() {
                                 return raise(plinkData);
                               });
                             }
                             ;
-                            throw new Error("Failed pattern match at App.UserInputComponent (line 165, column 23 - line 170, column 44): " + [bedResult.constructor.name]);
+                            throw new Error("Failed pattern match at App.UserInputComponent (line 217, column 23 - line 222, column 44): " + [bedResult.constructor.name]);
                           });
                         }
                         ;
                         if (v4.value0 instanceof Left) {
                           return modify_4(function(v5) {
-                            return new FromUserUpload(new Failure("Error: " + show1(v4.value0.value0)));
+                            return new FromUserUpload(fileNames, new Failure("Error: " + show1(v4.value0.value0)));
                           });
                         }
                         ;
                         if (v4.value1 instanceof Left) {
                           return modify_4(function(v5) {
-                            return new FromUserUpload(new Failure("Error: " + show1(v4.value1.value0)));
+                            return new FromUserUpload(fileNames, new Failure("Error: " + show1(v4.value1.value0)));
                           });
                         }
                         ;
-                        throw new Error("Failed pattern match at App.UserInputComponent (line 160, column 19 - line 172, column 109): " + [v4.constructor.name]);
+                        throw new Error("Failed pattern match at App.UserInputComponent (line 212, column 19 - line 224, column 119): " + [v4.constructor.name]);
                       });
                     });
                   });
                 }
                 ;
                 return modify_4(function(v4) {
-                  return new FromUserUpload(new Failure("Multiple .bed files selected"));
+                  return new FromUserUpload(fileNames, new Failure("Multiple .bed files selected"));
                 });
               }
               ;
               return modify_4(function(v32) {
-                return new FromUserUpload(new Failure("Multiple .bim files selected"));
+                return new FromUserUpload(fileNames, new Failure("Multiple .bim files selected"));
               });
             }
             ;
             return modify_4(function(v22) {
-              return new FromUserUpload(new Failure("Multiple .fam files selected"));
+              return new FromUserUpload(fileNames, new Failure("Multiple .fam files selected"));
             });
           }
           ;
-          throw new Error("Failed pattern match at App.UserInputComponent (line 145, column 7 - line 175, column 91): " + [mFileList.constructor.name]);
+          throw new Error("Failed pattern match at App.UserInputComponent (line 196, column 7 - line 227, column 101): " + [mFileList.constructor.name]);
         });
       }
       ;
-      throw new Error("Failed pattern match at App.UserInputComponent (line 141, column 3 - line 175, column 91): " + [mInputElem.constructor.name]);
+      throw new Error("Failed pattern match at App.UserInputComponent (line 192, column 3 - line 227, column 101): " + [mInputElem.constructor.name]);
     }
     ;
     if (v instanceof RequestSampleData) {
       return discard22(modify_4(function(v1) {
         return new FromExampleData(Loading.value);
       }))(function() {
-        return bind22(liftAff2(fetch3("./assets/2024_Gretzinger_EarlyCelts.fam")({})))(function(famFetch) {
-          return bind22(liftAff2(fetch3("./assets/2024_Gretzinger_EarlyCelts.bim")({})))(function(bimFetch) {
-            return bind22(liftAff2(fetch3("./assets/2024_Gretzinger_EarlyCelts.bed")({})))(function(bedFetch) {
-              var $107 = famFetch.ok && (bimFetch.ok && bedFetch.ok);
-              if ($107) {
-                return bind22(liftAff2(attempt(bind32(famFetch.text)(readFamData2))))(function(famResult) {
-                  return bind22(liftAff2(attempt(bind32(bimFetch.text)(readBimData2))))(function(bimResult) {
-                    var v1 = new Tuple(famResult, bimResult);
-                    if (v1.value0 instanceof Right && v1.value1 instanceof Right) {
-                      var numInds = length(v1.value0.value0.indNames);
-                      var numSNPs = length(v1.value1.value0.snpIDs);
-                      return bind22(liftAff2(attempt(bind32(bedFetch.arrayBuffer)(function(bedContent) {
-                        return readBedData2(bedContent)(numSNPs)(numInds);
-                      }))))(function(bedResult) {
-                        if (bedResult instanceof Left) {
-                          return modify_4(function(v2) {
-                            return new FromExampleData(new Failure("Error reading .bed file: " + show1(bedResult.value0)));
-                          });
-                        }
-                        ;
-                        if (bedResult instanceof Right) {
-                          var plinkData = {
-                            famData: v1.value0.value0,
-                            bimData: v1.value1.value0,
-                            bedData: bedResult.value0,
-                            numIndividuals: numInds,
-                            numSNPs
-                          };
-                          return discard22(modify_4(function(v2) {
-                            return new FromExampleData(new Success(plinkData));
-                          }))(function() {
-                            return raise(plinkData);
-                          });
-                        }
-                        ;
-                        throw new Error("Failed pattern match at App.UserInputComponent (line 191, column 21 - line 196, column 46): " + [bedResult.constructor.name]);
-                      });
-                    }
-                    ;
-                    if (v1.value0 instanceof Left) {
-                      return modify_4(function(v2) {
-                        return new FromExampleData(new Failure("Error: " + show1(v1.value0.value0)));
-                      });
-                    }
-                    ;
-                    if (v1.value1 instanceof Left) {
-                      return modify_4(function(v2) {
-                        return new FromExampleData(new Failure("Error: " + show1(v1.value1.value0)));
-                      });
-                    }
-                    ;
-                    throw new Error("Failed pattern match at App.UserInputComponent (line 186, column 13 - line 198, column 106): " + [v1.constructor.name]);
+        return discard22(clearFileInput1)(function() {
+          return bind12(liftAff2(fetch3("./assets/2024_Gretzinger_EarlyCelts.fam")({})))(function(famFetch) {
+            return bind12(liftAff2(fetch3("./assets/2024_Gretzinger_EarlyCelts.bim")({})))(function(bimFetch) {
+              return bind12(liftAff2(fetch3("./assets/2024_Gretzinger_EarlyCelts.bed")({})))(function(bedFetch) {
+                var $132 = famFetch.ok && (bimFetch.ok && bedFetch.ok);
+                if ($132) {
+                  return bind12(liftAff2(attempt(bind32(famFetch.text)(readFamData2))))(function(famResult) {
+                    return bind12(liftAff2(attempt(bind32(bimFetch.text)(readBimData2))))(function(bimResult) {
+                      var v1 = new Tuple(famResult, bimResult);
+                      if (v1.value0 instanceof Right && v1.value1 instanceof Right) {
+                        var numInds = length(v1.value0.value0.indNames);
+                        var numSNPs = length(v1.value1.value0.snpIDs);
+                        return bind12(liftAff2(attempt(bind32(bedFetch.arrayBuffer)(function(bedContent) {
+                          return readBedData2(bedContent)(numSNPs)(numInds);
+                        }))))(function(bedResult) {
+                          if (bedResult instanceof Left) {
+                            return modify_4(function(v2) {
+                              return new FromExampleData(new Failure("Error reading .bed file: " + show1(bedResult.value0)));
+                            });
+                          }
+                          ;
+                          if (bedResult instanceof Right) {
+                            var plinkData = {
+                              famData: v1.value0.value0,
+                              bimData: v1.value1.value0,
+                              bedData: bedResult.value0,
+                              numIndividuals: numInds,
+                              numSNPs
+                            };
+                            return discard22(modify_4(function(v2) {
+                              return new FromExampleData(new Success(plinkData));
+                            }))(function() {
+                              return raise(plinkData);
+                            });
+                          }
+                          ;
+                          throw new Error("Failed pattern match at App.UserInputComponent (line 244, column 21 - line 249, column 46): " + [bedResult.constructor.name]);
+                        });
+                      }
+                      ;
+                      if (v1.value0 instanceof Left) {
+                        return modify_4(function(v2) {
+                          return new FromExampleData(new Failure("Error: " + show1(v1.value0.value0)));
+                        });
+                      }
+                      ;
+                      if (v1.value1 instanceof Left) {
+                        return modify_4(function(v2) {
+                          return new FromExampleData(new Failure("Error: " + show1(v1.value1.value0)));
+                        });
+                      }
+                      ;
+                      throw new Error("Failed pattern match at App.UserInputComponent (line 239, column 13 - line 251, column 106): " + [v1.constructor.name]);
+                    });
                   });
+                }
+                ;
+                return modify_4(function(v1) {
+                  return new FromExampleData(new Failure("Failed to load example data"));
                 });
-              }
-              ;
-              return modify_4(function(v1) {
-                return new FromExampleData(new Failure("Failed to load example data"));
               });
             });
           });
@@ -32728,7 +32803,7 @@ var handleAction2 = function(dictMonadAff) {
       });
     }
     ;
-    throw new Error("Failed pattern match at App.UserInputComponent (line 138, column 1 - line 138, column 100): " + [v.constructor.name]);
+    throw new Error("Failed pattern match at App.UserInputComponent (line 189, column 1 - line 189, column 100): " + [v.constructor.name]);
   };
 };
 var component3 = function(dictMonadAff) {
@@ -32875,7 +32950,7 @@ var decodeArray = function(decoder) {
 // output/Data.Argonaut.Decode.Class/index.js
 var bind8 = /* @__PURE__ */ bind(bindEither);
 var lmap3 = /* @__PURE__ */ lmap(bifunctorEither);
-var map26 = /* @__PURE__ */ map(functorMaybe);
+var map27 = /* @__PURE__ */ map(functorMaybe);
 var gDecodeJsonNil = {
   gDecodeJson: function(v) {
     return function(v1) {
@@ -32954,7 +33029,7 @@ var decodeFieldId = function(dictDecodeJson) {
   var decodeJson1 = decodeJson(dictDecodeJson);
   return {
     decodeJsonField: function(j) {
-      return map26(decodeJson1)(j);
+      return map27(decodeJson1)(j);
     }
   };
 };
@@ -35841,11 +35916,11 @@ var parse2 = function(v) {
 };
 
 // output/Web.HTML.HTMLDocument/index.js
-var map27 = /* @__PURE__ */ map(functorEffect);
+var map28 = /* @__PURE__ */ map(functorEffect);
 var toParentNode = unsafeCoerce2;
 var toDocument = unsafeCoerce2;
 var readyState = function(doc) {
-  return map27(function() {
+  return map28(function() {
     var $4 = fromMaybe(Loading2.value);
     return function($5) {
       return $4(parse2($5));
@@ -35876,7 +35951,7 @@ var toEventTarget2 = unsafeCoerce2;
 var show3 = /* @__PURE__ */ show(showInt);
 var bind13 = /* @__PURE__ */ bind(bindHalogenM);
 var fetch4 = /* @__PURE__ */ fetch2()()(/* @__PURE__ */ toCoreRequestOptionsRowRo()()(toCoreRequestOptionsHelpe));
-var map28 = /* @__PURE__ */ map(functorHalogenM);
+var map29 = /* @__PURE__ */ map(functorHalogenM);
 var gDecodeJsonCons2 = /* @__PURE__ */ gDecodeJsonCons(/* @__PURE__ */ decodeFieldId(decodeJsonNumber));
 var fromJson2 = /* @__PURE__ */ fromJson(/* @__PURE__ */ decodeRecord(/* @__PURE__ */ gDecodeJsonCons(/* @__PURE__ */ decodeFieldId(/* @__PURE__ */ decodeArray2(decodeJsonNumber)))(/* @__PURE__ */ gDecodeJsonCons2(/* @__PURE__ */ gDecodeJsonCons2(gDecodeJsonNil)({
   reflectSymbol: function() {
@@ -36012,8 +36087,8 @@ var handleAction3 = function(dictMonadAff) {
             if (f1.ok) {
               if (f2.ok) {
                 if (f3.ok) {
-                  return bind13(map28(readSnpWeights)(liftAff2(f1.text)))(function(snpWeights) {
-                    return bind13(map28(readRefPosData)(liftAff2(f2.text)))(function(refPosData) {
+                  return bind13(map29(readSnpWeights)(liftAff2(f1.text)))(function(snpWeights) {
+                    return bind13(map29(readRefPosData)(liftAff2(f2.text)))(function(refPosData) {
                       return bind13(liftAff2(fromJson2(f3.json)))(function(pcaParams) {
                         return discard4(modify_5(function(v1) {
                           var $96 = {};
@@ -36216,7 +36291,7 @@ var composeKleisliFlipped3 = /* @__PURE__ */ composeKleisliFlipped(bindEffect);
 var pure9 = /* @__PURE__ */ pure(applicativeAff);
 var bindFlipped1 = /* @__PURE__ */ bindFlipped(bindMaybe);
 var pure13 = /* @__PURE__ */ pure(applicativeEffect);
-var map29 = /* @__PURE__ */ map(functorEffect);
+var map30 = /* @__PURE__ */ map(functorEffect);
 var discard5 = /* @__PURE__ */ discard(discardUnit);
 var throwError3 = /* @__PURE__ */ throwError(monadThrowAff);
 var selectElement = function(query2) {
@@ -36234,7 +36309,7 @@ var awaitLoad = /* @__PURE__ */ makeAff(function(callback2) {
   return function __do2() {
     var rs = bindFlipped6(readyState)(bindFlipped6(document2)(windowImpl))();
     if (rs instanceof Loading2) {
-      var et = map29(toEventTarget2)(windowImpl)();
+      var et = map30(toEventTarget2)(windowImpl)();
       var listener = eventListener(function(v) {
         return callback2(new Right(unit));
       })();
@@ -36354,7 +36429,7 @@ var traverse_22 = /* @__PURE__ */ traverse_12(foldableList);
 var fork3 = /* @__PURE__ */ fork2(monadForkAff);
 var parSequence_3 = /* @__PURE__ */ parSequence_(parallelAff)(applicativeParAff)(foldableList);
 var pure10 = /* @__PURE__ */ pure(applicativeAff);
-var map30 = /* @__PURE__ */ map(functorCoyoneda);
+var map31 = /* @__PURE__ */ map(functorCoyoneda);
 var parallel3 = /* @__PURE__ */ parallel(parallelAff);
 var map112 = /* @__PURE__ */ map(functorAff);
 var sequential2 = /* @__PURE__ */ sequential(parallelAff);
@@ -36428,7 +36503,7 @@ var evalQ = function(render5) {
   return function(ref3) {
     return function(q2) {
       return bind14(liftEffect6(read(ref3)))(function(v) {
-        return evalM(render5)(ref3)(v["component"]["eval"](new Query(map30(Just.create)(liftCoyoneda(q2)), $$const(Nothing.value))));
+        return evalM(render5)(ref3)(v["component"]["eval"](new Query(map31(Just.create)(liftCoyoneda(q2)), $$const(Nothing.value))));
       });
     };
   };
@@ -36627,7 +36702,7 @@ var evalF = function(render5) {
 // output/Halogen.Aff.Driver/index.js
 var bind11 = /* @__PURE__ */ bind(bindEffect);
 var discard7 = /* @__PURE__ */ discard(discardUnit);
-var for_2 = /* @__PURE__ */ for_(applicativeEffect)(foldableMaybe);
+var for_3 = /* @__PURE__ */ for_(applicativeEffect)(foldableMaybe);
 var traverse_5 = /* @__PURE__ */ traverse_(applicativeAff)(foldableList);
 var fork4 = /* @__PURE__ */ fork2(monadForkAff);
 var bindFlipped8 = /* @__PURE__ */ bindFlipped(bindEffect);
@@ -36638,7 +36713,7 @@ var discard23 = /* @__PURE__ */ discard7(bindAff);
 var parSequence_4 = /* @__PURE__ */ parSequence_(parallelAff)(applicativeParAff)(foldableList);
 var liftEffect7 = /* @__PURE__ */ liftEffect(monadEffectAff);
 var pure11 = /* @__PURE__ */ pure(applicativeEffect);
-var map31 = /* @__PURE__ */ map(functorEffect);
+var map32 = /* @__PURE__ */ map(functorEffect);
 var pure14 = /* @__PURE__ */ pure(applicativeAff);
 var when2 = /* @__PURE__ */ when(applicativeEffect);
 var renderStateX2 = /* @__PURE__ */ renderStateX(functorEffect);
@@ -36659,7 +36734,7 @@ var handlePending = function(ref3) {
   return function __do2() {
     var queue = read(ref3)();
     write(Nothing.value)(ref3)();
-    return for_2(queue)(function() {
+    return for_3(queue)(function() {
       var $59 = traverse_5(fork4);
       return function($60) {
         return handleAff($59(reverse2($60)));
@@ -36736,7 +36811,7 @@ var runUI = function(renderSpec2) {
             return function(childrenOutRef) {
               return unComponentSlot(function(slot3) {
                 return function __do2() {
-                  var childrenIn = map31(slot3.pop)(read(childrenInRef))();
+                  var childrenIn = map32(slot3.pop)(read(childrenInRef))();
                   var $$var2 = function() {
                     if (childrenIn instanceof Just) {
                       write(childrenIn.value0.value1)(childrenInRef)();
@@ -36766,7 +36841,7 @@ var runUI = function(renderSpec2) {
                     ;
                     throw new Error("Failed pattern match at Halogen.Aff.Driver (line 213, column 14 - line 222, column 98): " + [childrenIn.constructor.name]);
                   }();
-                  var isDuplicate = map31(function($69) {
+                  var isDuplicate = map32(function($69) {
                     return isJust(slot3.get($69));
                   })(read(childrenOutRef))();
                   when2(isDuplicate)(warn("Halogen: Duplicate slot address was detected during rendering, unexpected results may occur"))();
@@ -36792,7 +36867,7 @@ var runUI = function(renderSpec2) {
         return function($$var2) {
           return function __do2() {
             var v = read($$var2)();
-            var shouldProcessHandlers = map31(isNothing)(read(v.pendingHandlers))();
+            var shouldProcessHandlers = map32(isNothing)(read(v.pendingHandlers))();
             when2(shouldProcessHandlers)(write(new Just(Nil.value))(v.pendingHandlers))();
             write(empty4)(v.childrenOut)();
             write(v.children)(v.childrenIn)();
@@ -36910,7 +36985,7 @@ var runUI = function(renderSpec2) {
               return unDriverStateX(function(v1) {
                 return function __do3() {
                   var v2 = liftEffect1(read(v1.selfRef))();
-                  return for_2(v2.rendering)(renderSpec2.dispose)();
+                  return for_3(v2.rendering)(renderSpec2.dispose)();
                 };
               })(dsx)();
             });
@@ -36985,15 +37060,15 @@ function removeChild2(node) {
 }
 
 // output/Web.DOM.Node/index.js
-var map32 = /* @__PURE__ */ map(functorEffect);
+var map33 = /* @__PURE__ */ map(functorEffect);
 var parentNode2 = /* @__PURE__ */ function() {
-  var $6 = map32(toMaybe);
+  var $6 = map33(toMaybe);
   return function($7) {
     return $6(_parentNode($7));
   };
 }();
 var nextSibling = /* @__PURE__ */ function() {
-  var $15 = map32(toMaybe);
+  var $15 = map33(toMaybe);
   return function($16) {
     return $15(_nextSibling($16));
   };
@@ -37021,7 +37096,7 @@ var not3 = /* @__PURE__ */ not(/* @__PURE__ */ heytingAlgebraFunction(/* @__PURE
 var identity9 = /* @__PURE__ */ identity(categoryFn);
 var bind16 = /* @__PURE__ */ bind(bindAff);
 var liftEffect8 = /* @__PURE__ */ liftEffect(monadEffectAff);
-var map33 = /* @__PURE__ */ map(functorEffect);
+var map34 = /* @__PURE__ */ map(functorEffect);
 var bindFlipped9 = /* @__PURE__ */ bindFlipped(bindEffect);
 var substInParent = function(v) {
   return function(v1) {
@@ -37169,7 +37244,7 @@ var renderSpec = function(document3) {
 var runUI2 = function(component6) {
   return function(i2) {
     return function(element3) {
-      return bind16(liftEffect8(map33(toDocument)(bindFlipped9(document2)(windowImpl))))(function(document3) {
+      return bind16(liftEffect8(map34(toDocument)(bindFlipped9(document2)(windowImpl))))(function(document3) {
         return runUI(renderSpec(document3)(element3))(component6)(i2);
       });
     };

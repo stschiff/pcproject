@@ -7,7 +7,9 @@ import Data.Array (filter, length, concat)
 import Data.ArrayBuffer.Typed (whole)
 import Data.ArrayBuffer.Types (ArrayBuffer, Uint8Array)
 import Data.Either (Either(..))
+import Data.Foldable (for_)
 import Data.Maybe (Maybe(..))
+import Data.String.Common (joinWith)
 import Data.String.Utils (endsWith)
 import Data.Tuple (Tuple(..))
 import Effect (Effect)
@@ -30,12 +32,22 @@ import Web.File.File (File, name, toBlob)
 import Web.File.FileList (items)
 import Web.File.FileReader (fileReader, readAsArrayBuffer, result, toEventTarget)
 import Web.HTML.Event.EventTypes as ET
-import Web.HTML.HTMLInputElement (fromEventTarget, files)
+import Web.HTML.HTMLInputElement (fromEventTarget, fromHTMLElement, setValue, files)
 
 data State =
   NoData
-  | FromUserUpload (RemoteData String PlinkData)
+  | FromUserUpload (Array String) (RemoteData String PlinkData)
   | FromExampleData (RemoteData String PlinkData)
+
+fileInputRef :: H.RefLabel
+fileInputRef = H.RefLabel "plinkFileInput"
+
+-- Clears the native file input's own "chosen files" display, which Halogen's
+-- vdom diffing does not touch since it isn't a tracked property.
+clearFileInput :: forall slots m. MonadAff m => H.HalogenM State Action slots Output m Unit
+clearFileInput = do
+  mEl <- H.getHTMLElementRef fileInputRef
+  for_ (mEl >>= fromHTMLElement) \inputEl -> liftEffect $ setValue "" inputEl
 
 type Output = PlinkData
 
@@ -93,26 +105,13 @@ render st =
     HH.div [ HP.classes [ HH.ClassName "box" ] ]
         [ HH.h2 [ HP.classes [ HH.ClassName "title", HH.ClassName "is-4" ] ]
             [ HH.text "User Data" ]
-        , HH.div [ HP.classes [ HH.ClassName "field" ] ]
-            [ HH.label_ [ HH.text "Select Plink genotype data files: " ]
-            , HH.div [ HP.classes [ HH.ClassName "control" ] ]
-                [ HH.input
-                    [ HP.type_ HP.InputFile, HP.multiple true, HE.onChange GotGenoDataFileEvent ]
-                ]
-            ]
-        , let classes = concat [ [ HH.ClassName "button", HH.ClassName "is-primary" ], 
-                case st of
-                  FromExampleData (Loading) -> [ HH.ClassName "is-loading" ]
-                  _ -> [] ]
-          in 
-            HH.div [ HP.classes [ HH.ClassName "control" ] ]
-              [ HH.button
-                [ HP.classes classes, HE.onClick (\_ -> RequestSampleData) ]
-                [ HH.text "Load Example Data" ]
-              ]
+        , HH.div [ HP.classes [ HH.ClassName "field" ] ] [ uploadControl st ]
+        , HH.p [ HP.classes [ HH.ClassName "has-text-weight-bold", HH.ClassName "has-text-centered" ] ]
+            [ HH.text "OR" ]
+        , HH.div [ HP.classes [ HH.ClassName "field" ] ] [ exampleDataControl st ]
         , case st of
             NoData -> HH.div_ [ HH.text "No data selected", HH.br_ ]
-            FromUserUpload pd -> HH.div_
+            FromUserUpload _ pd -> HH.div_
               [ HH.text "Using user-uploaded data"
               , case pd of
                   NotAsked -> HH.text "No data loaded yet"
@@ -133,7 +132,59 @@ render st =
                       show plinkData.numIndividuals <> " individuals and " <> show plinkData.numSNPs <> " SNPs"
                 , HH.br_
                 ]
-        ] 
+        ]
+
+fileNameText :: State -> String
+fileNameText (FromUserUpload names _) = case names of
+    [] -> "No file selected"
+    _ -> joinWith ", " names
+fileNameText _ = "No file selected"
+
+uploadControl :: forall slots m . (MonadAff m) => State -> H.ComponentHTML Action slots m
+uploadControl st =
+    let isActive = case st of
+          FromUserUpload _ _ -> true
+          _ -> false
+        fileClasses = concat
+            [ [ HH.ClassName "file", HH.ClassName "has-name" ]
+            , if isActive then [ HH.ClassName "is-primary" ] else []
+            ]
+    in
+    HH.div [ HP.classes fileClasses ]
+        [ HH.label [ HP.classes [ HH.ClassName "file-label" ] ]
+            [ HH.input
+                [ HP.classes [ HH.ClassName "file-input" ]
+                , HP.type_ HP.InputFile, HP.multiple true
+                , HE.onChange GotGenoDataFileEvent
+                , HP.ref fileInputRef
+                ]
+            , HH.span [ HP.classes [ HH.ClassName "file-cta" ] ]
+                [ HH.span [ HP.classes [ HH.ClassName "file-label" ] ]
+                    [ HH.text "Choose PLINK files\x2026" ]
+                ]
+            , HH.span [ HP.classes [ HH.ClassName "file-name" ] ]
+                [ HH.text (fileNameText st) ]
+            ]
+        ]
+
+exampleDataControl :: forall slots m . (MonadAff m) => State -> H.ComponentHTML Action slots m
+exampleDataControl st =
+    let isActive = case st of
+          FromExampleData _ -> true
+          _ -> false
+        classes = concat
+            [ [ HH.ClassName "button" ]
+            , if isActive then [ HH.ClassName "is-primary" ] else []
+            , case st of
+                FromExampleData Loading -> [ HH.ClassName "is-loading" ]
+                _ -> []
+            ]
+    in
+    HH.div [ HP.classes [ HH.ClassName "control" ] ]
+        [ HH.button
+            [ HP.classes classes, HE.onClick (\_ -> RequestSampleData) ]
+            [ HH.text "Load Example Data" ]
+        ]
 
 handleAction :: forall slots m. MonadAff m => Action -> H.HalogenM State Action slots Output m Unit
 handleAction (GotGenoDataFileEvent ev) = do
@@ -146,14 +197,15 @@ handleAction (GotGenoDataFileEvent ev) = do
         Nothing -> pure unit
         Just fileList -> do
           let files = items fileList
+          let fileNames = map name files
           case filter (\f -> endsWith ".fam" (name f)) files of
-            [] -> H.modify_ (\_ -> FromUserUpload (Failure "No .fam file given"))
+            [] -> H.modify_ (\_ -> FromUserUpload fileNames (Failure "No .fam file given"))
             [famFile] -> case filter (\f -> endsWith ".bim" (name f)) files of
-              [] -> H.modify_ (\_ -> FromUserUpload (Failure "No .bim file selected"))
+              [] -> H.modify_ (\_ -> FromUserUpload fileNames (Failure "No .bim file selected"))
               [bimFile] -> case filter (\f -> endsWith ".bed" (name f)) files of
-                [] -> H.modify_ (\_ -> FromUserUpload (Failure "No .bed file selected"))
+                [] -> H.modify_ (\_ -> FromUserUpload fileNames (Failure "No .bed file selected"))
                 [bedFile] -> do
-                  H.modify_ (\_ -> FromUserUpload Loading)
+                  H.modify_ (\_ -> FromUserUpload fileNames Loading)
                   -- Read the files asynchronously using makeAff
                   famResult <- liftAff $ attempt (readFileAsArrayBufferAff famFile >>= arrayBufferToString >>= readFamData)
                   bimResult <- liftAff $ attempt (readFileAsArrayBufferAff bimFile >>= arrayBufferToString >>= readBimData)
@@ -163,19 +215,20 @@ handleAction (GotGenoDataFileEvent ev) = do
                       let numSNPs = length bim.snpIDs
                       bedResult <- liftAff $ attempt (readFileAsArrayBufferAff bedFile >>= \bedContent -> readBedData bedContent numSNPs numInds)
                       case bedResult of
-                        Left err -> H.modify_ (\_ -> FromUserUpload (Failure $ "Error reading .bed file: " <> show err))
+                        Left err -> H.modify_ (\_ -> FromUserUpload fileNames (Failure $ "Error reading .bed file: " <> show err))
                         Right bed -> do
                           let plinkData = { famData : fam, bimData : bim, bedData : bed, numIndividuals : numInds, numSNPs : numSNPs }
-                          H.modify_ (\_ -> FromUserUpload (Success plinkData))
+                          H.modify_ (\_ -> FromUserUpload fileNames (Success plinkData))
                           H.raise plinkData
-                    Tuple (Left err) _ -> H.modify_ (\_ -> FromUserUpload (Failure $ "Error: " <> show err))
-                    Tuple _ (Left err) -> H.modify_ (\_ -> FromUserUpload (Failure $ "Error: " <> show err))
-                _ -> H.modify_ (\_ -> FromUserUpload (Failure "Multiple .bed files selected"))
-              _ -> H.modify_ (\_ -> FromUserUpload (Failure "Multiple .bim files selected"))
-            _ -> H.modify_ (\_ -> FromUserUpload (Failure "Multiple .fam files selected"))
+                    Tuple (Left err) _ -> H.modify_ (\_ -> FromUserUpload fileNames (Failure $ "Error: " <> show err))
+                    Tuple _ (Left err) -> H.modify_ (\_ -> FromUserUpload fileNames (Failure $ "Error: " <> show err))
+                _ -> H.modify_ (\_ -> FromUserUpload fileNames (Failure "Multiple .bed files selected"))
+              _ -> H.modify_ (\_ -> FromUserUpload fileNames (Failure "Multiple .bim files selected"))
+            _ -> H.modify_ (\_ -> FromUserUpload fileNames (Failure "Multiple .fam files selected"))
 
 handleAction RequestSampleData = do
     H.modify_ (\_ -> FromExampleData Loading)
+    clearFileInput
     famFetch <- H.liftAff $ fetch "./assets/2024_Gretzinger_EarlyCelts.fam" {}
     bimFetch <- H.liftAff $ fetch "./assets/2024_Gretzinger_EarlyCelts.bim" {}
     bedFetch <- H.liftAff $ fetch "./assets/2024_Gretzinger_EarlyCelts.bed" {}
