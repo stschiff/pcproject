@@ -29046,6 +29046,11 @@ var element = function(ns) {
     };
   };
 };
+var attr = function(ns) {
+  return function(v) {
+    return Attribute.create(ns)(v);
+  };
+};
 
 // output/Control.Applicative.Free/index.js
 var identity6 = /* @__PURE__ */ identity(categoryFn);
@@ -31325,6 +31330,9 @@ var classes = /* @__PURE__ */ function() {
     return $32($33($34($35)));
   };
 }();
+var attr2 = /* @__PURE__ */ function() {
+  return attr(Nothing.value);
+}();
 
 // output/Web.HTML.HTMLElement/foreign.js
 function _read(nothing, just, value12) {
@@ -31855,7 +31863,9 @@ var render3 = function(dictMonadAff) {
       pointHoverRadius: single(5),
       order: new Just(0)
     };
-    var backgroundLabels = map111($$const(""))(st.refPosData.samples);
+    var backgroundLabels = map111(function(sample2) {
+      return sample2.popName;
+    })(st.refPosData.samples);
     var backgroundDataset = {
       barPercentage: defaultDataset.barPercentage,
       barThickness: defaultDataset.barThickness,
@@ -31898,10 +31908,10 @@ var render3 = function(dictMonadAff) {
       pointBackgroundColor: defaultDataset.pointBackgroundColor,
       pointBorderColor: defaultDataset.pointBorderColor,
       pointBorderWidth: defaultDataset.pointBorderWidth,
-      pointHitRadius: defaultDataset.pointHitRadius,
       pointHoverBackgroundColor: defaultDataset.pointHoverBackgroundColor,
       pointHoverBorderColor: defaultDataset.pointHoverBorderColor,
       pointHoverBorderWidth: defaultDataset.pointHoverBorderWidth,
+      pointHoverRadius: defaultDataset.pointHoverRadius,
       pointRotation: defaultDataset.pointRotation,
       pointStyle: defaultDataset.pointStyle,
       radius: defaultDataset.radius,
@@ -31920,8 +31930,8 @@ var render3 = function(dictMonadAff) {
       data: mapMaybe(toXY)(st.refPosData.samples),
       backgroundColor: single(css("rgba(170, 170, 170, 0.5)")),
       pointRadius: single(2),
-      pointHoverRadius: single(3),
-      order: new Just(1)
+      order: new Just(1),
+      pointHitRadius: single(-2)
     };
     var chartInput = {
       config: {
@@ -32763,6 +32773,13 @@ var fileNameText = function(v) {
 var fileInputRef = "plinkFileInput";
 var uploadControl = function(dictMonadAff) {
   return function(st) {
+    var isLoading = function() {
+      if (st instanceof FromUserUpload && st.value1 instanceof Loading) {
+        return true;
+      }
+      ;
+      return false;
+    }();
     var isActive = function() {
       if (st instanceof FromUserUpload) {
         return true;
@@ -32777,7 +32794,14 @@ var uploadControl = function(dictMonadAff) {
       ;
       return [];
     }()]);
-    return div2([classes(fileClasses)])([label([classes(["file-label"])])([input([classes(["file-input"]), type_5(InputFile.value), multiple(true), onChange(GotGenoDataFileEvent.create), ref2(fileInputRef)]), span2([classes(["file-cta"])])([span2([classes(["file-label"])])([text("Choose PLINK files\u2026")])]), span2([classes(["file-name"])])([text(fileNameText(st))])])]);
+    var controlClasses = concat([["control"], function() {
+      if (isLoading) {
+        return ["is-loading"];
+      }
+      ;
+      return [];
+    }()]);
+    return div2([classes(controlClasses)])([div2([classes(fileClasses)])([label([classes(["file-label"])])([input([classes(["file-input"]), type_5(InputFile.value), multiple(true), onChange(GotGenoDataFileEvent.create), ref2(fileInputRef)]), span2([classes(["file-cta"])])([span2([classes(["file-label"])])([text("Choose PLINK files\u2026")])]), span2([classes(["file-name"])])([text(fileNameText(st))])])])]);
   };
 };
 var exampleDataControl = function(dictMonadAff) {
@@ -32966,7 +32990,7 @@ var handleAction2 = function(dictMonadAff) {
                               });
                             }
                             ;
-                            throw new Error("Failed pattern match at App.UserInputComponent (line 217, column 23 - line 222, column 44): " + [bedResult.constructor.name]);
+                            throw new Error("Failed pattern match at App.UserInputComponent (line 226, column 23 - line 231, column 44): " + [bedResult.constructor.name]);
                           });
                         }
                         ;
@@ -32982,7 +33006,7 @@ var handleAction2 = function(dictMonadAff) {
                           });
                         }
                         ;
-                        throw new Error("Failed pattern match at App.UserInputComponent (line 212, column 19 - line 224, column 119): " + [v4.constructor.name]);
+                        throw new Error("Failed pattern match at App.UserInputComponent (line 221, column 19 - line 233, column 119): " + [v4.constructor.name]);
                       });
                     });
                   });
@@ -33003,11 +33027,11 @@ var handleAction2 = function(dictMonadAff) {
             });
           }
           ;
-          throw new Error("Failed pattern match at App.UserInputComponent (line 196, column 7 - line 227, column 101): " + [mFileList.constructor.name]);
+          throw new Error("Failed pattern match at App.UserInputComponent (line 205, column 7 - line 236, column 101): " + [mFileList.constructor.name]);
         });
       }
       ;
-      throw new Error("Failed pattern match at App.UserInputComponent (line 192, column 3 - line 227, column 101): " + [mInputElem.constructor.name]);
+      throw new Error("Failed pattern match at App.UserInputComponent (line 201, column 3 - line 236, column 101): " + [mInputElem.constructor.name]);
     }
     ;
     if (v instanceof RequestSampleData) {
@@ -33018,8 +33042,8 @@ var handleAction2 = function(dictMonadAff) {
           return bind12(liftAff2(fetch3("./assets/2024_Gretzinger_EarlyCelts.fam")({})))(function(famFetch) {
             return bind12(liftAff2(fetch3("./assets/2024_Gretzinger_EarlyCelts.bim")({})))(function(bimFetch) {
               return bind12(liftAff2(fetch3("./assets/2024_Gretzinger_EarlyCelts.bed")({})))(function(bedFetch) {
-                var $132 = famFetch.ok && (bimFetch.ok && bedFetch.ok);
-                if ($132) {
+                var $136 = famFetch.ok && (bimFetch.ok && bedFetch.ok);
+                if ($136) {
                   return bind12(liftAff2(attempt(bind32(famFetch.text)(readFamData2))))(function(famResult) {
                     return bind12(liftAff2(attempt(bind32(bimFetch.text)(readBimData2))))(function(bimResult) {
                       var v1 = new Tuple(famResult, bimResult);
@@ -33050,7 +33074,7 @@ var handleAction2 = function(dictMonadAff) {
                             });
                           }
                           ;
-                          throw new Error("Failed pattern match at App.UserInputComponent (line 244, column 21 - line 249, column 46): " + [bedResult.constructor.name]);
+                          throw new Error("Failed pattern match at App.UserInputComponent (line 253, column 21 - line 258, column 46): " + [bedResult.constructor.name]);
                         });
                       }
                       ;
@@ -33066,7 +33090,7 @@ var handleAction2 = function(dictMonadAff) {
                         });
                       }
                       ;
-                      throw new Error("Failed pattern match at App.UserInputComponent (line 239, column 13 - line 251, column 106): " + [v1.constructor.name]);
+                      throw new Error("Failed pattern match at App.UserInputComponent (line 248, column 13 - line 260, column 106): " + [v1.constructor.name]);
                     });
                   });
                 }
@@ -33081,7 +33105,7 @@ var handleAction2 = function(dictMonadAff) {
       });
     }
     ;
-    throw new Error("Failed pattern match at App.UserInputComponent (line 189, column 1 - line 189, column 100): " + [v.constructor.name]);
+    throw new Error("Failed pattern match at App.UserInputComponent (line 198, column 1 - line 198, column 100): " + [v.constructor.name]);
   };
 };
 var component4 = function(dictMonadAff) {
@@ -36335,7 +36359,7 @@ var projectionMonitor = function(dictMonadAff) {
       }
       ;
       if (st.projectionResults instanceof Loading) {
-        return text("Projection running...");
+        return div2([classes(["is-flex", "is-align-items-center"])])([span2([classes(["loader"]), attr2("style")("width: 1.2em; height: 1.2em; margin-right: 0.5em;")])([]), text("Projecting\u2026")]);
       }
       ;
       if (st.projectionResults instanceof Failure) {
@@ -36346,7 +36370,7 @@ var projectionMonitor = function(dictMonadAff) {
         return div_([text("Projection completed successfully"), text("Number of samples projected: " + show3(length(st.projectionResults.value0.projectionResults))), text("Overlap Masks: " + ("Included SNPs: " + (show3(st.projectionResults.value0.overlapReport.nrIncluded) + (", Strand Ambiguous Removed: " + (show3(st.projectionResults.value0.overlapReport.removedStrandAmbiguous) + (", Inconsistent Removed: " + (show3(st.projectionResults.value0.overlapReport.removedInconsistent) + (", To Be Flipped: " + show3(st.projectionResults.value0.overlapReport.nrToBeFlipped)))))))))]);
       }
       ;
-      throw new Error("Failed pattern match at App.Interface (line 117, column 11 - line 129, column 18): " + [st.projectionResults.constructor.name]);
+      throw new Error("Failed pattern match at App.Interface (line 117, column 11 - line 136, column 18): " + [st.projectionResults.constructor.name]);
     }()]);
   };
 };
@@ -36528,7 +36552,7 @@ var handleAction3 = function(dictMonadAff) {
       });
     }
     ;
-    throw new Error("Failed pattern match at App.Interface (line 171, column 1 - line 171, column 107): " + [v.constructor.name]);
+    throw new Error("Failed pattern match at App.Interface (line 178, column 1 - line 178, column 107): " + [v.constructor.name]);
   };
 };
 var _userInputComponent = /* @__PURE__ */ function() {

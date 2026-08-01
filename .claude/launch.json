@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "serve",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["http-server", "public", "-c-1", "-p", "8126"],
+      "port": 8126
+    }
+  ]
+}

@@ -65,12 +65,15 @@ render st =
             , data = Array.mapMaybe toXY st.refPosData.samples
             , backgroundColor = single (css "rgba(170, 170, 170, 0.5)")
             , pointRadius = single 2.0
-            , pointHoverRadius = single 3.0
             , order = Just 1
+            -- Chart.js hit-tests a point via distance² < (radius + hitRadius)². Setting
+            -- hitRadius to the exact negative of radius makes that sum 0, so distance²
+            -- (always >= 0) never satisfies it -- these points become permanently
+            -- unhoverable/excluded from "nearest" search, without affecting how they're
+            -- drawn. This keeps tooltips scoped to the projected samples only.
+            , pointHitRadius = single (-2.0)
             }
-        -- Left blank so hovering a reference point never surfaces its info -- tooltips
-        -- are meant for the projected samples only.
-        backgroundLabels = map (const "") st.refPosData.samples
+        backgroundLabels = map (\sample -> sample.popName) st.refPosData.samples
 
         -- Projected samples all in one flat, undifferentiated dataset for now (no
         -- per-population coloring yet, since PLINK fam files carry only one label

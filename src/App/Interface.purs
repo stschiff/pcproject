@@ -116,7 +116,14 @@ projectionMonitor st =
             [ HH.text "Projection Monitor" ]
         , case st.projectionResults of
             NotAsked -> HH.text "No projection performed yet"
-            Loading -> HH.text "Projection running..."
+            Loading -> HH.div [ HP.classes [ HH.ClassName "is-flex", HH.ClassName "is-align-items-center" ] ]
+                [ HH.span
+                    [ HP.classes [ HH.ClassName "loader" ]
+                    , HP.attr (HH.AttrName "style") "width: 1.2em; height: 1.2em; margin-right: 0.5em;"
+                    ]
+                    []
+                , HH.text "Projecting\x2026"
+                ]
             Failure err -> HH.text $ "Error during projection: " <> err
             Success pr -> HH.div_
                 [ HH.text "Projection completed successfully"

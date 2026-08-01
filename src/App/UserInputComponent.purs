@@ -145,25 +145,34 @@ uploadControl st =
     let isActive = case st of
           FromUserUpload _ _ -> true
           _ -> false
+        isLoading = case st of
+          FromUserUpload _ Loading -> true
+          _ -> false
         fileClasses = concat
             [ [ HH.ClassName "file", HH.ClassName "has-name" ]
             , if isActive then [ HH.ClassName "is-primary" ] else []
             ]
+        controlClasses = concat
+            [ [ HH.ClassName "control" ]
+            , if isLoading then [ HH.ClassName "is-loading" ] else []
+            ]
     in
-    HH.div [ HP.classes fileClasses ]
-        [ HH.label [ HP.classes [ HH.ClassName "file-label" ] ]
-            [ HH.input
-                [ HP.classes [ HH.ClassName "file-input" ]
-                , HP.type_ HP.InputFile, HP.multiple true
-                , HE.onChange GotGenoDataFileEvent
-                , HP.ref fileInputRef
+    HH.div [ HP.classes controlClasses ]
+        [ HH.div [ HP.classes fileClasses ]
+            [ HH.label [ HP.classes [ HH.ClassName "file-label" ] ]
+                [ HH.input
+                    [ HP.classes [ HH.ClassName "file-input" ]
+                    , HP.type_ HP.InputFile, HP.multiple true
+                    , HE.onChange GotGenoDataFileEvent
+                    , HP.ref fileInputRef
+                    ]
+                , HH.span [ HP.classes [ HH.ClassName "file-cta" ] ]
+                    [ HH.span [ HP.classes [ HH.ClassName "file-label" ] ]
+                        [ HH.text "Choose PLINK files\x2026" ]
+                    ]
+                , HH.span [ HP.classes [ HH.ClassName "file-name" ] ]
+                    [ HH.text (fileNameText st) ]
                 ]
-            , HH.span [ HP.classes [ HH.ClassName "file-cta" ] ]
-                [ HH.span [ HP.classes [ HH.ClassName "file-label" ] ]
-                    [ HH.text "Choose PLINK files\x2026" ]
-                ]
-            , HH.span [ HP.classes [ HH.ClassName "file-name" ] ]
-                [ HH.text (fileNameText st) ]
             ]
         ]
 
