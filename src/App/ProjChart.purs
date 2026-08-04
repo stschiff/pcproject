@@ -6,12 +6,15 @@ import App.RefChart (tooltipLabelImpl)
 import Chartjs (defaultConfig, defaultDataset, defaultOptions)
 import Chartjs.Callbacks (defaultTooltipCallbacks, defaultCallbacks)
 import Chartjs.Types (defaultInteractionConfig, defaultPluginsConfig, defaultLegendConfig,
-        InteractionMode(..), DataPoint(..), ChartType(..), single, css)
+        InteractionMode(..), DataPoint(..), ChartType(..), single, css, defaultScaleConfig,
+        defaultScaleTitleConfig)
 import Chartjs.Halogen as HC
 import Data.Array ((!!))
 import Data.Array as Array
 import Data.Maybe (Maybe(..))
+import Data.Tuple (Tuple(..))
 import Effect.Aff.Class (class MonadAff)
+import Foreign.Object (fromFoldable)
 import Halogen as H
 import Halogen.HTML as HH
 import PCproject.RefPosData (RefPosData)
@@ -21,19 +24,17 @@ type ProjectedSample =
     { sampleID :: String
     , popGroup :: String
     , pcValues :: Array Number
+    , nrSNPs   :: Int
     }
 
 type State =
     { refPosData :: RefPosData
     , projectedSamples :: Array ProjectedSample
-    , xPc :: Int
-    , yPc :: Int
+    , xPCindex :: Int
+    , yPCindex :: Int
     }
 
-type Input =
-    { refPosData :: RefPosData
-    , projectedSamples :: Array ProjectedSample
-    }
+type Input = State
 
 type Slots = ( chart :: forall query . H.Slot query HC.Output Unit)
 
@@ -48,13 +49,13 @@ component =
     }
 
 initialState :: Input -> State
-initialState { refPosData, projectedSamples } = { refPosData, projectedSamples, xPc: 1, yPc: 2 }
+initialState inputState = inputState
 
 render :: forall a m . (MonadAff m) => State -> H.ComponentHTML a Slots m
 render st =
     let
         toXY :: forall r. { pcValues :: Array Number | r } -> Maybe DataPoint
-        toXY sample = XY <$> (sample.pcValues !! (st.xPc - 1)) <*> (sample.pcValues !! (st.yPc - 1))
+        toXY sample = XY <$> (sample.pcValues !! (st.xPCindex - 1)) <*> (sample.pcValues !! (st.yPCindex - 1))
 
         -- All reference samples as a single grayed-out background layer. Chart.js draws
         -- datasets in ascending (order, index) order but in *reverse*, so the highest
@@ -80,7 +81,7 @@ render st =
         -- per individual, not a separate finer/coarser grouping like the reference data).
         projDataset = defaultDataset
             { label = "Projected samples"
-            , data = Array.mapMaybe toXY st.projectedSamples
+            , data = (Array.mapMaybe toXY <<< Array.filter (\sample -> sample.nrSNPs > 20000)) $ st.projectedSamples
             , backgroundColor = single (css "black")
             , pointRadius = single 4.0
             , pointHoverRadius = single 5.0
@@ -97,6 +98,12 @@ render st =
                         { interaction = Just ( defaultInteractionConfig { mode = Just IMNearest } )
                         , aspectRatio = Just 1.2
                         , plugins = Just ( defaultPluginsConfig { legend = Just ( defaultLegendConfig { display = Just false } ) } )
+                        , scales = Just $ fromFoldable
+                            [ Tuple "x" defaultScaleConfig
+                                { title = Just defaultScaleTitleConfig { display = Just true, text = Just $ "PC" <> show st.xPCindex } }
+                            , Tuple "y" defaultScaleConfig
+                                { title = Just defaultScaleTitleConfig { display = Just true, text = Just $ "PC" <> show st.yPCindex } }
+                            ]
                         }
                 }
             , callbacks : defaultCallbacks
@@ -105,4 +112,8 @@ render st =
                     })
                 }
             }
-    in  HH.div_ [ HH.slot_ _chart unit HC.component chartInput ]
+        removedSamples = Array.length st.projectedSamples - Array.length projDataset.data
+    in  HH.div_ $
+        (if removedSamples > 0
+        then [ HH.text $ "(" <> (show removedSamples) <> " samples with <20000 SNPs not shown)" ]
+        else []) <> [ HH.slot_ _chart unit HC.component chartInput ]

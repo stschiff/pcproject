@@ -9578,6 +9578,45 @@ var drawTimeToString = function(v) {
   ;
   throw new Error("Failed pattern match at Chartjs.Types (line 423, column 20 - line 426, column 45): " + [v.constructor.name]);
 };
+var defaultScaleTitleConfig = /* @__PURE__ */ function() {
+  return {
+    display: Nothing.value,
+    align: Nothing.value,
+    text: Nothing.value,
+    color: Nothing.value,
+    font: Nothing.value,
+    padding: Nothing.value
+  };
+}();
+var defaultScaleConfig = /* @__PURE__ */ function() {
+  return {
+    type: Nothing.value,
+    display: Nothing.value,
+    position: Nothing.value,
+    title: Nothing.value,
+    min: Nothing.value,
+    max: Nothing.value,
+    suggestedMin: Nothing.value,
+    suggestedMax: Nothing.value,
+    beginAtZero: Nothing.value,
+    reverse: Nothing.value,
+    stacked: Nothing.value,
+    weight: Nothing.value,
+    bounds: Nothing.value,
+    offset: Nothing.value,
+    ticks: Nothing.value,
+    grid: Nothing.value,
+    border: Nothing.value,
+    time: Nothing.value,
+    animate: Nothing.value,
+    startAngle: Nothing.value,
+    angleLines: Nothing.value,
+    pointLabels: Nothing.value,
+    grace: Nothing.value,
+    alignToPixels: Nothing.value,
+    backgroundColor: Nothing.value
+  };
+}();
 var defaultPluginsConfig = /* @__PURE__ */ function() {
   return {
     title: Nothing.value,
@@ -11428,9 +11467,21 @@ var monadThrowExceptT = function(dictMonad) {
 };
 
 // output/Data.Int/foreign.js
+var fromNumberImpl = function(just) {
+  return function(nothing) {
+    return function(n) {
+      return (n | 0) === n ? just(n) : nothing;
+    };
+  };
+};
 var toNumber = function(n) {
   return n;
 };
+
+// output/Data.Int/index.js
+var fromNumber = /* @__PURE__ */ function() {
+  return fromNumberImpl(Just.create)(Nothing.value);
+}();
 
 // output/Data.FoldableWithIndex/index.js
 var foldr8 = /* @__PURE__ */ foldr(foldableArray);
@@ -27514,7 +27565,7 @@ var foldableMap = {
   },
   foldMap: function(dictMonoid) {
     var mempty3 = mempty(dictMonoid);
-    var append12 = append(dictMonoid.Semigroup0());
+    var append13 = append(dictMonoid.Semigroup0());
     return function(f) {
       var go2 = function(v) {
         if (v instanceof Leaf) {
@@ -27522,7 +27573,7 @@ var foldableMap = {
         }
         ;
         if (v instanceof Node) {
-          return append12(go2(v.value4))(append12(f(v.value3))(go2(v.value5)));
+          return append13(go2(v.value4))(append13(f(v.value3))(go2(v.value5)));
         }
         ;
         throw new Error("Failed pattern match at Data.Map.Internal (line 181, column 10 - line 184, column 28): " + [v.constructor.name]);
@@ -31611,17 +31662,15 @@ var bind5 = /* @__PURE__ */ bind(bindArray);
 var apply2 = /* @__PURE__ */ apply(applyMaybe);
 var map110 = /* @__PURE__ */ map(functorMaybe);
 var pure7 = /* @__PURE__ */ pure(applicativeArray);
+var fromFoldable7 = /* @__PURE__ */ fromFoldable3(foldableArray);
+var show2 = /* @__PURE__ */ show(showInt);
 var slot_2 = /* @__PURE__ */ slot_()({
   reflectSymbol: function() {
     return "chart";
   }
 })(ordUnit);
-var initialState = function(v) {
-  return {
-    refPosData: v.refPosData,
-    xPc: 1,
-    yPc: 2
-  };
+var initialState = function(inputState) {
+  return inputState;
 };
 var _chart = /* @__PURE__ */ function() {
   return $$Proxy.value;
@@ -31642,7 +31691,7 @@ var render2 = function(dictMonadAff) {
     var datasets = bind5(groupedSamples)(function(group4) {
       var groupName = head2(group4).popGroup;
       var dataPoints = mapMaybe3(function(sample2) {
-        return apply2(map110(XY.create)(index(sample2.pcValues)(st.xPc - 1 | 0)))(index(sample2.pcValues)(st.yPc - 1 | 0));
+        return apply2(map110(XY.create)(index(sample2.pcValues)(st.xPCindex - 1 | 0)))(index(sample2.pcValues)(st.yPCindex - 1 | 0));
       })(group4);
       return pure7({
         backgroundColor: defaultDataset.backgroundColor,
@@ -31731,14 +31780,80 @@ var render2 = function(dictMonadAff) {
           resizeDelay: defaultOptions.resizeDelay,
           responsive: defaultOptions.responsive,
           rotation: defaultOptions.rotation,
-          scales: defaultOptions.scales,
           interaction: new Just({
             axis: defaultInteractionConfig.axis,
             includeInvisible: defaultInteractionConfig.includeInvisible,
             intersect: defaultInteractionConfig.intersect,
             mode: new Just(IMNearest.value)
           }),
-          aspectRatio: new Just(1.2)
+          aspectRatio: new Just(1.2),
+          scales: new Just(fromFoldable7([new Tuple("x", {
+            alignToPixels: defaultScaleConfig.alignToPixels,
+            angleLines: defaultScaleConfig.angleLines,
+            animate: defaultScaleConfig.animate,
+            backgroundColor: defaultScaleConfig.backgroundColor,
+            beginAtZero: defaultScaleConfig.beginAtZero,
+            border: defaultScaleConfig.border,
+            bounds: defaultScaleConfig.bounds,
+            display: defaultScaleConfig.display,
+            grace: defaultScaleConfig.grace,
+            grid: defaultScaleConfig.grid,
+            max: defaultScaleConfig.max,
+            min: defaultScaleConfig.min,
+            offset: defaultScaleConfig.offset,
+            pointLabels: defaultScaleConfig.pointLabels,
+            position: defaultScaleConfig.position,
+            reverse: defaultScaleConfig.reverse,
+            stacked: defaultScaleConfig.stacked,
+            startAngle: defaultScaleConfig.startAngle,
+            suggestedMax: defaultScaleConfig.suggestedMax,
+            suggestedMin: defaultScaleConfig.suggestedMin,
+            ticks: defaultScaleConfig.ticks,
+            time: defaultScaleConfig.time,
+            type: defaultScaleConfig.type,
+            weight: defaultScaleConfig.weight,
+            title: new Just({
+              align: defaultScaleTitleConfig.align,
+              color: defaultScaleTitleConfig.color,
+              font: defaultScaleTitleConfig.font,
+              padding: defaultScaleTitleConfig.padding,
+              display: new Just(true),
+              text: new Just("PC" + show2(st.xPCindex))
+            })
+          }), new Tuple("y", {
+            alignToPixels: defaultScaleConfig.alignToPixels,
+            angleLines: defaultScaleConfig.angleLines,
+            animate: defaultScaleConfig.animate,
+            backgroundColor: defaultScaleConfig.backgroundColor,
+            beginAtZero: defaultScaleConfig.beginAtZero,
+            border: defaultScaleConfig.border,
+            bounds: defaultScaleConfig.bounds,
+            display: defaultScaleConfig.display,
+            grace: defaultScaleConfig.grace,
+            grid: defaultScaleConfig.grid,
+            max: defaultScaleConfig.max,
+            min: defaultScaleConfig.min,
+            offset: defaultScaleConfig.offset,
+            pointLabels: defaultScaleConfig.pointLabels,
+            position: defaultScaleConfig.position,
+            reverse: defaultScaleConfig.reverse,
+            stacked: defaultScaleConfig.stacked,
+            startAngle: defaultScaleConfig.startAngle,
+            suggestedMax: defaultScaleConfig.suggestedMax,
+            suggestedMin: defaultScaleConfig.suggestedMin,
+            ticks: defaultScaleConfig.ticks,
+            time: defaultScaleConfig.time,
+            type: defaultScaleConfig.type,
+            weight: defaultScaleConfig.weight,
+            title: new Just({
+              align: defaultScaleTitleConfig.align,
+              color: defaultScaleTitleConfig.color,
+              font: defaultScaleTitleConfig.font,
+              padding: defaultScaleTitleConfig.padding,
+              display: new Just(true),
+              text: new Just("PC" + show2(st.yPCindex))
+            })
+          })]))
         }
       },
       callbacks: {
@@ -31771,18 +31886,16 @@ var component2 = function(dictMonadAff) {
 var apply3 = /* @__PURE__ */ apply(applyMaybe);
 var map22 = /* @__PURE__ */ map(functorMaybe);
 var map111 = /* @__PURE__ */ map(functorArray);
+var fromFoldable8 = /* @__PURE__ */ fromFoldable3(foldableArray);
+var show3 = /* @__PURE__ */ show(showInt);
+var append12 = /* @__PURE__ */ append(semigroupArray);
 var slot_3 = /* @__PURE__ */ slot_()({
   reflectSymbol: function() {
     return "chart";
   }
 })(ordUnit);
-var initialState2 = function(v) {
-  return {
-    refPosData: v.refPosData,
-    projectedSamples: v.projectedSamples,
-    xPc: 1,
-    yPc: 2
-  };
+var initialState2 = function(inputState) {
+  return inputState;
 };
 var _chart2 = /* @__PURE__ */ function() {
   return $$Proxy.value;
@@ -31791,7 +31904,7 @@ var render3 = function(dictMonadAff) {
   var component1 = component(dictMonadAff);
   return function(st) {
     var toXY = function(sample2) {
-      return apply3(map22(XY.create)(index(sample2.pcValues)(st.xPc - 1 | 0)))(index(sample2.pcValues)(st.yPc - 1 | 0));
+      return apply3(map22(XY.create)(index(sample2.pcValues)(st.xPCindex - 1 | 0)))(index(sample2.pcValues)(st.yPCindex - 1 | 0));
     };
     var projLabels = map111(function(sample2) {
       return sample2.sampleID + (" (" + (sample2.popGroup + ")"));
@@ -31857,12 +31970,15 @@ var render3 = function(dictMonadAff) {
       xAxisID: defaultDataset.xAxisID,
       yAxisID: defaultDataset.yAxisID,
       label: "Projected samples",
-      data: mapMaybe(toXY)(st.projectedSamples),
+      data: mapMaybe(toXY)(filter(function(sample2) {
+        return sample2.nrSNPs > 2e4;
+      })(st.projectedSamples)),
       backgroundColor: single(css("black")),
       pointRadius: single(4),
       pointHoverRadius: single(5),
       order: new Just(0)
     };
+    var removedSamples = length(st.projectedSamples) - length(projDataset.data) | 0;
     var backgroundLabels = map111(function(sample2) {
       return sample2.popName;
     })(st.refPosData.samples);
@@ -31951,7 +32067,6 @@ var render3 = function(dictMonadAff) {
           resizeDelay: defaultOptions.resizeDelay,
           responsive: defaultOptions.responsive,
           rotation: defaultOptions.rotation,
-          scales: defaultOptions.scales,
           interaction: new Just({
             axis: defaultInteractionConfig.axis,
             includeInvisible: defaultInteractionConfig.includeInvisible,
@@ -31978,7 +32093,74 @@ var render3 = function(dictMonadAff) {
               title: defaultLegendConfig.title,
               display: new Just(false)
             })
-          })
+          }),
+          scales: new Just(fromFoldable8([new Tuple("x", {
+            alignToPixels: defaultScaleConfig.alignToPixels,
+            angleLines: defaultScaleConfig.angleLines,
+            animate: defaultScaleConfig.animate,
+            backgroundColor: defaultScaleConfig.backgroundColor,
+            beginAtZero: defaultScaleConfig.beginAtZero,
+            border: defaultScaleConfig.border,
+            bounds: defaultScaleConfig.bounds,
+            display: defaultScaleConfig.display,
+            grace: defaultScaleConfig.grace,
+            grid: defaultScaleConfig.grid,
+            max: defaultScaleConfig.max,
+            min: defaultScaleConfig.min,
+            offset: defaultScaleConfig.offset,
+            pointLabels: defaultScaleConfig.pointLabels,
+            position: defaultScaleConfig.position,
+            reverse: defaultScaleConfig.reverse,
+            stacked: defaultScaleConfig.stacked,
+            startAngle: defaultScaleConfig.startAngle,
+            suggestedMax: defaultScaleConfig.suggestedMax,
+            suggestedMin: defaultScaleConfig.suggestedMin,
+            ticks: defaultScaleConfig.ticks,
+            time: defaultScaleConfig.time,
+            type: defaultScaleConfig.type,
+            weight: defaultScaleConfig.weight,
+            title: new Just({
+              align: defaultScaleTitleConfig.align,
+              color: defaultScaleTitleConfig.color,
+              font: defaultScaleTitleConfig.font,
+              padding: defaultScaleTitleConfig.padding,
+              display: new Just(true),
+              text: new Just("PC" + show3(st.xPCindex))
+            })
+          }), new Tuple("y", {
+            alignToPixels: defaultScaleConfig.alignToPixels,
+            angleLines: defaultScaleConfig.angleLines,
+            animate: defaultScaleConfig.animate,
+            backgroundColor: defaultScaleConfig.backgroundColor,
+            beginAtZero: defaultScaleConfig.beginAtZero,
+            border: defaultScaleConfig.border,
+            bounds: defaultScaleConfig.bounds,
+            display: defaultScaleConfig.display,
+            grace: defaultScaleConfig.grace,
+            grid: defaultScaleConfig.grid,
+            max: defaultScaleConfig.max,
+            min: defaultScaleConfig.min,
+            offset: defaultScaleConfig.offset,
+            pointLabels: defaultScaleConfig.pointLabels,
+            position: defaultScaleConfig.position,
+            reverse: defaultScaleConfig.reverse,
+            stacked: defaultScaleConfig.stacked,
+            startAngle: defaultScaleConfig.startAngle,
+            suggestedMax: defaultScaleConfig.suggestedMax,
+            suggestedMin: defaultScaleConfig.suggestedMin,
+            ticks: defaultScaleConfig.ticks,
+            time: defaultScaleConfig.time,
+            type: defaultScaleConfig.type,
+            weight: defaultScaleConfig.weight,
+            title: new Just({
+              align: defaultScaleTitleConfig.align,
+              color: defaultScaleTitleConfig.color,
+              font: defaultScaleTitleConfig.font,
+              padding: defaultScaleTitleConfig.padding,
+              display: new Just(true),
+              text: new Just("PC" + show3(st.yPCindex))
+            })
+          })]))
         }
       },
       callbacks: {
@@ -31996,7 +32178,14 @@ var render3 = function(dictMonadAff) {
         })
       }
     };
-    return div_([slot_3(_chart2)(unit)(component1)(chartInput)]);
+    return div_(append12(function() {
+      var $32 = removedSamples > 0;
+      if ($32) {
+        return [text("(" + (show3(removedSamples) + " samples with <20000 SNPs not shown)"))];
+      }
+      ;
+      return [];
+    }())([slot_3(_chart2)(unit)(component1)(chartInput)]));
   };
 };
 var component3 = function(dictMonadAff) {
@@ -32668,7 +32857,7 @@ var toEventTarget = unsafeCoerce2;
 // output/App.UserInputComponent/index.js
 var discard3 = /* @__PURE__ */ discard(discardUnit);
 var type_5 = /* @__PURE__ */ type_(isPropInputType);
-var show2 = /* @__PURE__ */ show(showInt);
+var show4 = /* @__PURE__ */ show(showInt);
 var bind12 = /* @__PURE__ */ bind(bindHalogenM);
 var for_2 = /* @__PURE__ */ for_(applicativeHalogenM)(foldableMaybe);
 var bind22 = /* @__PURE__ */ bind(bindMaybe);
@@ -32841,7 +33030,7 @@ var render4 = function(dictMonadAff) {
       }
       ;
       if (st instanceof FromUserUpload) {
-        return div_([text("Using user-uploaded data"), function() {
+        return div_([function() {
           if (st.value1 instanceof NotAsked) {
             return text("No data loaded yet");
           }
@@ -32855,10 +33044,10 @@ var render4 = function(dictMonadAff) {
           }
           ;
           if (st.value1 instanceof Success) {
-            return text("Loaded data with " + (show2(st.value1.value0.numIndividuals) + (" individuals and " + (show2(st.value1.value0.numSNPs) + " SNPs"))));
+            return text("Loaded data with " + (show4(st.value1.value0.numIndividuals) + (" individuals and " + (show4(st.value1.value0.numSNPs) + " SNPs"))));
           }
           ;
-          throw new Error("Failed pattern match at App.UserInputComponent (line 116, column 17 - line 122, column 54): " + [st.value1.constructor.name]);
+          throw new Error("Failed pattern match at App.UserInputComponent (line 115, column 17 - line 121, column 54): " + [st.value1.constructor.name]);
         }(), br_]);
       }
       ;
@@ -32877,14 +33066,14 @@ var render4 = function(dictMonadAff) {
           }
           ;
           if (st.value0 instanceof Success) {
-            return text("Loaded example data with " + (show2(st.value0.value0.numIndividuals) + (" individuals and " + (show2(st.value0.value0.numSNPs) + " SNPs"))));
+            return text("Loaded example data with " + (show4(st.value0.value0.numIndividuals) + (" individuals and " + (show4(st.value0.value0.numSNPs) + " SNPs"))));
           }
           ;
-          throw new Error("Failed pattern match at App.UserInputComponent (line 127, column 19 - line 132, column 112): " + [st.value0.constructor.name]);
+          throw new Error("Failed pattern match at App.UserInputComponent (line 126, column 19 - line 131, column 112): " + [st.value0.constructor.name]);
         }(), br_]);
       }
       ;
-      throw new Error("Failed pattern match at App.UserInputComponent (line 112, column 11 - line 134, column 18): " + [st.constructor.name]);
+      throw new Error("Failed pattern match at App.UserInputComponent (line 112, column 11 - line 133, column 18): " + [st.constructor.name]);
     }()]);
   };
 };
@@ -32990,7 +33179,7 @@ var handleAction2 = function(dictMonadAff) {
                               });
                             }
                             ;
-                            throw new Error("Failed pattern match at App.UserInputComponent (line 226, column 23 - line 231, column 44): " + [bedResult.constructor.name]);
+                            throw new Error("Failed pattern match at App.UserInputComponent (line 225, column 23 - line 230, column 44): " + [bedResult.constructor.name]);
                           });
                         }
                         ;
@@ -33006,7 +33195,7 @@ var handleAction2 = function(dictMonadAff) {
                           });
                         }
                         ;
-                        throw new Error("Failed pattern match at App.UserInputComponent (line 221, column 19 - line 233, column 119): " + [v4.constructor.name]);
+                        throw new Error("Failed pattern match at App.UserInputComponent (line 220, column 19 - line 232, column 119): " + [v4.constructor.name]);
                       });
                     });
                   });
@@ -33027,11 +33216,11 @@ var handleAction2 = function(dictMonadAff) {
             });
           }
           ;
-          throw new Error("Failed pattern match at App.UserInputComponent (line 205, column 7 - line 236, column 101): " + [mFileList.constructor.name]);
+          throw new Error("Failed pattern match at App.UserInputComponent (line 204, column 7 - line 235, column 101): " + [mFileList.constructor.name]);
         });
       }
       ;
-      throw new Error("Failed pattern match at App.UserInputComponent (line 201, column 3 - line 236, column 101): " + [mInputElem.constructor.name]);
+      throw new Error("Failed pattern match at App.UserInputComponent (line 200, column 3 - line 235, column 101): " + [mInputElem.constructor.name]);
     }
     ;
     if (v instanceof RequestSampleData) {
@@ -33074,7 +33263,7 @@ var handleAction2 = function(dictMonadAff) {
                             });
                           }
                           ;
-                          throw new Error("Failed pattern match at App.UserInputComponent (line 253, column 21 - line 258, column 46): " + [bedResult.constructor.name]);
+                          throw new Error("Failed pattern match at App.UserInputComponent (line 252, column 21 - line 257, column 46): " + [bedResult.constructor.name]);
                         });
                       }
                       ;
@@ -33090,7 +33279,7 @@ var handleAction2 = function(dictMonadAff) {
                         });
                       }
                       ;
-                      throw new Error("Failed pattern match at App.UserInputComponent (line 248, column 13 - line 260, column 106): " + [v1.constructor.name]);
+                      throw new Error("Failed pattern match at App.UserInputComponent (line 247, column 13 - line 259, column 106): " + [v1.constructor.name]);
                     });
                   });
                 }
@@ -33105,7 +33294,7 @@ var handleAction2 = function(dictMonadAff) {
       });
     }
     ;
-    throw new Error("Failed pattern match at App.UserInputComponent (line 198, column 1 - line 198, column 100): " + [v.constructor.name]);
+    throw new Error("Failed pattern match at App.UserInputComponent (line 197, column 1 - line 197, column 100): " + [v.constructor.name]);
   };
 };
 var component4 = function(dictMonadAff) {
@@ -33234,6 +33423,12 @@ var decodeJArray = /* @__PURE__ */ function() {
     return $52(toArray($53));
   };
 }();
+var decodeInt = /* @__PURE__ */ composeKleisliFlipped2(/* @__PURE__ */ function() {
+  var $84 = note(new TypeMismatch2("Integer"));
+  return function($85) {
+    return $84(fromNumber($85));
+  };
+}())(decodeNumber);
 var decodeArray = function(decoder) {
   return composeKleisliFlipped2(function() {
     var $89 = lmap2(Named.create("Array"));
@@ -33284,6 +33479,9 @@ var decodeRecord = function(dictGDecodeJson) {
 };
 var decodeJsonNumber = {
   decodeJson: decodeNumber
+};
+var decodeJsonInt = {
+  decodeJson: decodeInt
 };
 var decodeJsonField = function(dict) {
   return dict.decodeJsonField;
@@ -36250,12 +36448,13 @@ function requestAnimationFrame(fn) {
 var toEventTarget2 = unsafeCoerce2;
 
 // output/App.Interface/index.js
-var show3 = /* @__PURE__ */ show(showInt);
+var show5 = /* @__PURE__ */ show(showInt);
 var bind13 = /* @__PURE__ */ bind(bindHalogenM);
 var fetch4 = /* @__PURE__ */ fetch2()()(/* @__PURE__ */ toCoreRequestOptionsRowRo()()(toCoreRequestOptionsHelpe));
 var map30 = /* @__PURE__ */ map(functorHalogenM);
-var gDecodeJsonCons2 = /* @__PURE__ */ gDecodeJsonCons(/* @__PURE__ */ decodeFieldId(decodeJsonNumber));
-var fromJson2 = /* @__PURE__ */ fromJson(/* @__PURE__ */ decodeRecord(/* @__PURE__ */ gDecodeJsonCons(/* @__PURE__ */ decodeFieldId(/* @__PURE__ */ decodeArray2(decodeJsonNumber)))(/* @__PURE__ */ gDecodeJsonCons2(/* @__PURE__ */ gDecodeJsonCons2(gDecodeJsonNil)({
+var gDecodeJsonCons2 = /* @__PURE__ */ gDecodeJsonCons(/* @__PURE__ */ decodeFieldId(decodeJsonInt));
+var gDecodeJsonCons1 = /* @__PURE__ */ gDecodeJsonCons(/* @__PURE__ */ decodeFieldId(decodeJsonNumber));
+var fromJson2 = /* @__PURE__ */ fromJson(/* @__PURE__ */ decodeRecord(/* @__PURE__ */ gDecodeJsonCons2(/* @__PURE__ */ gDecodeJsonCons2(/* @__PURE__ */ gDecodeJsonCons(/* @__PURE__ */ decodeFieldId(/* @__PURE__ */ decodeArray2(decodeJsonNumber)))(/* @__PURE__ */ gDecodeJsonCons1(/* @__PURE__ */ gDecodeJsonCons1(gDecodeJsonNil)({
   reflectSymbol: function() {
     return "yScale";
   }
@@ -36266,6 +36465,14 @@ var fromJson2 = /* @__PURE__ */ fromJson(/* @__PURE__ */ decodeRecord(/* @__PURE
 })()())({
   reflectSymbol: function() {
     return "eigenValues";
+  }
+})()())({
+  reflectSymbol: function() {
+    return "defaultY";
+  }
+})()())({
+  reflectSymbol: function() {
+    return "defaultX";
   }
 })()())());
 var discard4 = /* @__PURE__ */ discard(discardUnit)(bindHalogenM);
@@ -36322,7 +36529,8 @@ var toProjectedSamples = function(pd) {
         return {
           sampleID: v.value0,
           popGroup: v.value1,
-          pcValues: pr.pcCoordinates
+          pcValues: pr.pcCoordinates,
+          nrSNPs: pr.nonMissingCount
         };
       };
     })(zipWith(Tuple.create)(pd.famData.indNames)(pd.famData.popNames))(results);
@@ -36344,7 +36552,7 @@ var refDataBox = function(dictMonadAff) {
       }
       ;
       if (st.refBundle instanceof Success) {
-        return div_([text("Selected reference data with " + (show3(st.refBundle.value0.snpWeights.numSNPs) + (" SNPs for " + (show3(st.refBundle.value0.snpWeights.numPCs) + (" PCs and " + (show3(st.refBundle.value0.refPosData.numSamples) + " individuals")))))), br_]);
+        return div_([text("Selected reference data with " + (show5(st.refBundle.value0.snpWeights.numSNPs) + (" SNPs for " + (show5(st.refBundle.value0.snpWeights.numPCs) + (" PCs and " + (show5(st.refBundle.value0.refPosData.numSamples) + " individuals")))))), br_]);
       }
       ;
       throw new Error("Failed pattern match at App.Interface (line 100, column 11 - line 109, column 18): " + [st.refBundle.constructor.name]);
@@ -36367,10 +36575,10 @@ var projectionMonitor = function(dictMonadAff) {
       }
       ;
       if (st.projectionResults instanceof Success) {
-        return div_([text("Projection completed successfully"), text("Number of samples projected: " + show3(length(st.projectionResults.value0.projectionResults))), text("Overlap Masks: " + ("Included SNPs: " + (show3(st.projectionResults.value0.overlapReport.nrIncluded) + (", Strand Ambiguous Removed: " + (show3(st.projectionResults.value0.overlapReport.removedStrandAmbiguous) + (", Inconsistent Removed: " + (show3(st.projectionResults.value0.overlapReport.removedInconsistent) + (", To Be Flipped: " + show3(st.projectionResults.value0.overlapReport.nrToBeFlipped)))))))))]);
+        return div_([text("Number of samples projected: " + show5(length(st.projectionResults.value0.projectionResults))), br_, text("Included SNPs: " + show5(st.projectionResults.value0.overlapReport.nrIncluded)), br_, text("Strand Ambiguous Removed: " + show5(st.projectionResults.value0.overlapReport.removedStrandAmbiguous)), br_, text("Inconsistent Removed: " + show5(st.projectionResults.value0.overlapReport.removedInconsistent)), br_, text("Flipped alleles: " + show5(st.projectionResults.value0.overlapReport.nrToBeFlipped))]);
       }
       ;
-      throw new Error("Failed pattern match at App.Interface (line 117, column 11 - line 136, column 18): " + [st.projectionResults.constructor.name]);
+      throw new Error("Failed pattern match at App.Interface (line 117, column 11 - line 134, column 18): " + [st.projectionResults.constructor.name]);
     }()]);
   };
 };
@@ -36407,20 +36615,20 @@ var handleAction3 = function(dictMonadAff) {
                     return bind13(map30(readRefPosData)(liftAff2(f2.text)))(function(refPosData) {
                       return bind13(liftAff2(fromJson2(f3.json)))(function(pcaParams) {
                         return discard4(modify_5(function(v1) {
-                          var $104 = {};
-                          for (var $105 in v1) {
-                            if ({}.hasOwnProperty.call(v1, $105)) {
-                              $104[$105] = v1[$105];
+                          var $116 = {};
+                          for (var $117 in v1) {
+                            if ({}.hasOwnProperty.call(v1, $117)) {
+                              $116[$117] = v1[$117];
                             }
                             ;
                           }
                           ;
-                          $104.refBundle = new Success({
+                          $116.refBundle = new Success({
                             snpWeights,
                             refPosData,
                             pcaParams
                           });
-                          return $104;
+                          return $116;
                         }))(function() {
                           return handleAction3(dictMonadAff)(RunProjection.value);
                         });
@@ -36430,44 +36638,44 @@ var handleAction3 = function(dictMonadAff) {
                 }
                 ;
                 return modify_5(function(v1) {
-                  var $107 = {};
-                  for (var $108 in v1) {
-                    if ({}.hasOwnProperty.call(v1, $108)) {
-                      $107[$108] = v1[$108];
+                  var $119 = {};
+                  for (var $120 in v1) {
+                    if ({}.hasOwnProperty.call(v1, $120)) {
+                      $119[$120] = v1[$120];
                     }
                     ;
                   }
                   ;
-                  $107.refBundle = new Failure("Failed to load PCA parameters file");
-                  return $107;
+                  $119.refBundle = new Failure("Failed to load PCA parameters file");
+                  return $119;
                 });
               }
               ;
               return modify_5(function(v1) {
-                var $110 = {};
-                for (var $111 in v1) {
-                  if ({}.hasOwnProperty.call(v1, $111)) {
-                    $110[$111] = v1[$111];
+                var $122 = {};
+                for (var $123 in v1) {
+                  if ({}.hasOwnProperty.call(v1, $123)) {
+                    $122[$123] = v1[$123];
                   }
                   ;
                 }
                 ;
-                $110.refBundle = new Failure("Failed to load reference position data file");
-                return $110;
+                $122.refBundle = new Failure("Failed to load reference position data file");
+                return $122;
               });
             }
             ;
             return modify_5(function(v1) {
-              var $113 = {};
-              for (var $114 in v1) {
-                if ({}.hasOwnProperty.call(v1, $114)) {
-                  $113[$114] = v1[$114];
+              var $125 = {};
+              for (var $126 in v1) {
+                if ({}.hasOwnProperty.call(v1, $126)) {
+                  $125[$126] = v1[$126];
                 }
                 ;
               }
               ;
-              $113.refBundle = new Failure("Failed to load weight data file");
-              return $113;
+              $125.refBundle = new Failure("Failed to load weight data file");
+              return $125;
             });
           });
         });
@@ -36476,16 +36684,16 @@ var handleAction3 = function(dictMonadAff) {
     ;
     if (v instanceof GotUserData) {
       return discard4(modify_5(function(v1) {
-        var $116 = {};
-        for (var $117 in v1) {
-          if ({}.hasOwnProperty.call(v1, $117)) {
-            $116[$117] = v1[$117];
+        var $128 = {};
+        for (var $129 in v1) {
+          if ({}.hasOwnProperty.call(v1, $129)) {
+            $128[$129] = v1[$129];
           }
           ;
         }
         ;
-        $116.userData = new Just(v.value0);
-        return $116;
+        $128.userData = new Just(v.value0);
+        return $128;
       }))(function() {
         return handleAction3(dictMonadAff)(RunProjection.value);
       });
@@ -36496,16 +36704,16 @@ var handleAction3 = function(dictMonadAff) {
         var v1 = new Tuple(st.refBundle, st.userData);
         if (v1.value0 instanceof Success && v1.value1 instanceof Just) {
           return discard4(modify_5(function(v2) {
-            var $121 = {};
-            for (var $122 in v2) {
-              if ({}.hasOwnProperty.call(v2, $122)) {
-                $121[$122] = v2[$122];
+            var $133 = {};
+            for (var $134 in v2) {
+              if ({}.hasOwnProperty.call(v2, $134)) {
+                $133[$134] = v2[$134];
               }
               ;
             }
             ;
-            $121.projectionResults = Loading.value;
-            return $121;
+            $133.projectionResults = Loading.value;
+            return $133;
           }))(function() {
             return discard4(nextAnimationFrame1)(function() {
               return discard4(nextAnimationFrame1)(function() {
@@ -36514,19 +36722,19 @@ var handleAction3 = function(dictMonadAff) {
                     return bind13(liftEffect9(extractAndTransposeGenotypes2(v1.value1.value0.bedData)(v1.value1.value0.numSNPs)(v1.value1.value0.numIndividuals)(overlap)))(function(genotypes) {
                       return bind13(liftEffect9(projectSamples2(genotypes)(reducedSnpWeights.pcWeights)(reducedSnpWeights.frequencies)(v1.value1.value0.numIndividuals)(reducedSnpWeights.numPCs)(v1.value0.value0.pcaParams)))(function(pResults) {
                         return modify_5(function(v2) {
-                          var $124 = {};
-                          for (var $125 in v2) {
-                            if ({}.hasOwnProperty.call(v2, $125)) {
-                              $124[$125] = v2[$125];
+                          var $136 = {};
+                          for (var $137 in v2) {
+                            if ({}.hasOwnProperty.call(v2, $137)) {
+                              $136[$137] = v2[$137];
                             }
                             ;
                           }
                           ;
-                          $124.projectionResults = new Success({
+                          $136.projectionResults = new Success({
                             projectionResults: pResults,
                             overlapReport: overlap
                           });
-                          return $124;
+                          return $136;
                         });
                       });
                     });
@@ -36538,21 +36746,21 @@ var handleAction3 = function(dictMonadAff) {
         }
         ;
         return modify_5(function(v2) {
-          var $131 = {};
-          for (var $132 in v2) {
-            if ({}.hasOwnProperty.call(v2, $132)) {
-              $131[$132] = v2[$132];
+          var $143 = {};
+          for (var $144 in v2) {
+            if ({}.hasOwnProperty.call(v2, $144)) {
+              $143[$144] = v2[$144];
             }
             ;
           }
           ;
-          $131.projectionResults = NotAsked.value;
-          return $131;
+          $143.projectionResults = NotAsked.value;
+          return $143;
         });
       });
     }
     ;
-    throw new Error("Failed pattern match at App.Interface (line 178, column 1 - line 178, column 107): " + [v.constructor.name]);
+    throw new Error("Failed pattern match at App.Interface (line 179, column 1 - line 179, column 107): " + [v.constructor.name]);
   };
 };
 var _userInputComponent = /* @__PURE__ */ function() {
@@ -36567,7 +36775,9 @@ var refChartBox = function(dictMonadAff) {
     return div2([classes(["box"])])([h22([classes(["title", "is-4"])])([text("Reference Data Chart")]), function() {
       if (st.refBundle instanceof Success) {
         return div_([slot_1(_refChart)(unit)(component1)({
-          refPosData: st.refBundle.value0.refPosData
+          refPosData: st.refBundle.value0.refPosData,
+          xPCindex: st.refBundle.value0.pcaParams.defaultX,
+          yPCindex: st.refBundle.value0.pcaParams.defaultY
         })]);
       }
       ;
@@ -36586,7 +36796,9 @@ var projChartBox = function(dictMonadAff) {
       if (v.value0 instanceof Success && (v.value1.value0 instanceof Just && v.value1.value1 instanceof Success)) {
         return div_([slot_22(_projChart)(unit)(component1)({
           refPosData: v.value0.value0.refPosData,
-          projectedSamples: toProjectedSamples(v.value1.value0.value0)(v.value1.value1.value0.projectionResults)
+          projectedSamples: toProjectedSamples(v.value1.value0.value0)(v.value1.value1.value0.projectionResults),
+          xPCindex: v.value0.value0.pcaParams.defaultX,
+          yPCindex: v.value0.value0.pcaParams.defaultY
         })]);
       }
       ;

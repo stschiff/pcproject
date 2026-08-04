@@ -93,7 +93,7 @@ render st =
         ]
 
 refDataBox :: forall slots m . (MonadAff m) => State -> H.ComponentHTML Action slots m
-refDataBox st = 
+refDataBox st =
     HH.div [ HP.classes [ HH.ClassName "box" ] ]
         [ HH.h2 [ HP.classes [ HH.ClassName "title", HH.ClassName "is-4" ] ]
             [ HH.text "Reference Data" ]
@@ -126,13 +126,11 @@ projectionMonitor st =
                 ]
             Failure err -> HH.text $ "Error during projection: " <> err
             Success pr -> HH.div_
-                [ HH.text "Projection completed successfully"
-                , HH.text $ "Number of samples projected: " <> show (length pr.projectionResults)
-                , HH.text $ "Overlap Masks: "
-                        <> "Included SNPs: " <> show pr.overlapReport.nrIncluded
-                        <> ", Strand Ambiguous Removed: " <> show pr.overlapReport.removedStrandAmbiguous
-                        <> ", Inconsistent Removed: " <> show pr.overlapReport.removedInconsistent
-                        <> ", To Be Flipped: " <> show pr.overlapReport.nrToBeFlipped
+                [ HH.text $ "Number of samples projected: " <> show (length pr.projectionResults), HH.br_
+                , HH.text $ "Included SNPs: " <> show pr.overlapReport.nrIncluded, HH.br_
+                , HH.text $ "Strand Ambiguous Removed: " <> show pr.overlapReport.removedStrandAmbiguous, HH.br_
+                , HH.text $ "Inconsistent Removed: " <> show pr.overlapReport.removedInconsistent, HH.br_
+                , HH.text $ "Flipped alleles: " <> show pr.overlapReport.nrToBeFlipped
                 ]
         ]
 
@@ -143,7 +141,8 @@ refChartBox st =
             [ HH.text "Reference Data Chart" ]
         , case st.refBundle of
             Success rb -> HH.div_
-                [ HH.slot_ _refChart unit RefChart.component { refPosData:  rb.refPosData } ]
+                [ HH.slot_ _refChart unit RefChart.component { refPosData: rb.refPosData, xPCindex: rb.pcaParams.defaultX,
+                                                               yPCindex: rb.pcaParams.defaultY } ]
             _ -> HH.text ""
         ]
 
@@ -157,6 +156,8 @@ projChartBox st =
                 [ HH.slot_ _projChart unit ProjChart.component
                     { refPosData: rb.refPosData
                     , projectedSamples: toProjectedSamples pd pr.projectionResults
+                    , xPCindex: rb.pcaParams.defaultX
+                    , yPCindex: rb.pcaParams.defaultY
                     }
                 ]
             _ -> HH.text "Projection results chart will be displayed here after running the projection."
@@ -164,7 +165,7 @@ projChartBox st =
 
 toProjectedSamples :: PlinkData -> Array ProjectionResult -> Array ProjChart.ProjectedSample
 toProjectedSamples pd results =
-    zipWith (\(Tuple sampleID popGroup) pr -> { sampleID, popGroup, pcValues: pr.pcCoordinates })
+    zipWith (\(Tuple sampleID popGroup) pr -> { sampleID, popGroup, pcValues: pr.pcCoordinates, nrSNPs: pr.nonMissingCount })
         (zipWith Tuple pd.famData.indNames pd.famData.popNames)
         results
 
@@ -180,7 +181,7 @@ handleAction LoadRefData = do
     f1 <- H.liftAff $ fetch "./assets/Joscha_HiRes_WestEurasia_weights_with_freqs.txt" {}
     f2 <- H.liftAff $ fetch "./assets/Joscha_HiRes_WestEurasia_evec_with_groups.tsv" {}
     f3 <- H.liftAff $ fetch "./assets/Joscha_HiRes_WestEurasia_parameters.json" {}
-    if f1.ok 
+    if f1.ok
         then if f2.ok
             then if f3.ok
                 then do

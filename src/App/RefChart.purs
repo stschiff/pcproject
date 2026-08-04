@@ -4,13 +4,17 @@ import Prelude
 
 import Chartjs (defaultConfig, defaultDataset, defaultOptions)
 import Chartjs.Callbacks (defaultTooltipCallbacks, defaultCallbacks, TooltipItem)
-import Chartjs.Types (defaultInteractionConfig, InteractionMode(..), DataPoint(..), ChartType(..))
 import Chartjs.Halogen as HC
+import Chartjs.Types (ChartType(..), DataPoint(..), InteractionMode(..),
+                      defaultInteractionConfig, defaultScaleConfig,
+                      defaultScaleTitleConfig)
 import Data.Array ((!!), groupAllBy)
 import Data.Array.NonEmpty (head, mapMaybe, toArray)
 import Data.Maybe (Maybe(..))
+import Data.Tuple (Tuple(..))
 import Effect.Aff.Class (class MonadAff)
 import Effect.Uncurried (EffectFn1)
+import Foreign.Object (fromFoldable)
 import Halogen as H
 import Halogen.HTML as HH
 import PCproject.RefPosData (RefPosData)
@@ -20,11 +24,11 @@ foreign import tooltipLabelImpl :: Array (Array String) -> EffectFn1 TooltipItem
 
 type State =
     { refPosData :: RefPosData
-    , xPc :: Int
-    , yPc :: Int
+    , xPCindex :: Int
+    , yPCindex :: Int
     }
 
-type Input = { refPosData :: RefPosData }
+type Input = State
 
 type Slots = ( chart :: forall query . H.Slot query HC.Output Unit)
 
@@ -40,7 +44,7 @@ component =
     }
 
 initialState :: Input -> State
-initialState { refPosData } = { refPosData, xPc: 1, yPc: 2 }
+initialState inputState = inputState
 
 render :: forall a m . (MonadAff m) => State -> H.ComponentHTML a Slots m
 render st =
@@ -48,7 +52,7 @@ render st =
         datasets = do -- list monad
             group <- groupedSamples
             let groupName = (head group).popGroup
-                dataPoints = mapMaybe (\sample -> XY <$> (sample.pcValues !! (st.xPc - 1)) <*> (sample.pcValues !! (st.yPc - 1))) group
+                dataPoints = mapMaybe (\sample -> XY <$> (sample.pcValues !! (st.xPCindex - 1)) <*> (sample.pcValues !! (st.yPCindex - 1))) group
             pure $ defaultDataset { label = groupName, data = dataPoints }
         labels = map (\sampleGroup -> map (\sample -> sample.popName) (toArray sampleGroup)) groupedSamples
         chartInput =
@@ -59,6 +63,12 @@ render st =
                     defaultOptions
                         { interaction = Just ( defaultInteractionConfig { mode = Just IMNearest } )
                         , aspectRatio = Just 1.2
+                        , scales = Just $ fromFoldable
+                            [ Tuple "x" defaultScaleConfig
+                                { title = Just defaultScaleTitleConfig { display = Just true, text = Just $ "PC" <> show st.xPCindex } }
+                            , Tuple "y" defaultScaleConfig
+                                { title = Just defaultScaleTitleConfig { display = Just true, text = Just $ "PC" <> show st.yPCindex } }
+                            ]
                         }
                 }
             , callbacks : defaultCallbacks

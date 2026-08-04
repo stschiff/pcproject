@@ -60,24 +60,24 @@ data Action
 readFileAsArrayBufferAff :: forall m. MonadAff m => File -> m ArrayBuffer
 readFileAsArrayBufferAff file = liftAff $ makeAff \callback -> do
   reader <- fileReader
-  
+
   -- Set up success handler
   loadListener <- eventListener \_ -> do
     foreignResult <- result reader
     callback (Right $ unsafeFromForeign foreignResult)
-  
-  -- Set up error handler  
+
+  -- Set up error handler
   errorListener <- eventListener \_ -> do
     callback (Left (error "FileReader error"))
-  
+
   -- Add event listeners to the reader (converted to EventTarget)
   let eventTarget = toEventTarget reader
   addEventListener ET.load loadListener false eventTarget
   addEventListener ET.error errorListener false eventTarget
-  
+
   -- Start reading (convert File to Blob first)
   readAsArrayBuffer (toBlob file) reader
-  
+
   pure nonCanceler
 
 arrayBufferToString :: forall m. MonadEffect m => ArrayBuffer -> m String
@@ -112,8 +112,7 @@ render st =
         , case st of
             NoData -> HH.div_ [ HH.text "No data selected", HH.br_ ]
             FromUserUpload _ pd -> HH.div_
-              [ HH.text "Using user-uploaded data"
-              , case pd of
+              [ case pd of
                   NotAsked -> HH.text "No data loaded yet"
                   Loading -> HH.text "Loading data from files..."
                   Failure err -> HH.text $ "Error loading data from files: " <> err

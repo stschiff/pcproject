@@ -16,17 +16,19 @@ type OverlapMasks = {
     removedInconsistent :: Int,
     nrIncluded :: Int,
     nrToBeFlipped :: Int
-} 
+}
 
 type ProjectionResult = {
     pcCoordinates :: Array Number,
     nonMissingCount :: Int
-} 
+}
 
 type PCAparams =
     { yScale      :: Number
     , nScale      :: Number
     , eigenValues :: Array Number
+    , defaultX    :: Int
+    , defaultY    :: Int
     }
 
 foreign import getOverlapMasksImpl :: EffectFn2 PlinkBimData SnpWeights OverlapMasks
