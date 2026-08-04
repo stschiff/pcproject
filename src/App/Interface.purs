@@ -99,7 +99,14 @@ refDataBox st =
             [ HH.text "Reference Data" ]
         , case st.refBundle of
             NotAsked -> HH.div_ [ HH.text "No reference data yet", HH.br_ ]
-            Loading -> HH.div_ [ HH.text "Loading refernece data...", HH.br_ ]
+            Loading -> HH.div [ HP.classes [ HH.ClassName "is-flex", HH.ClassName "is-align-items-center" ] ]
+                [ HH.span
+                    [ HP.classes [ HH.ClassName "loader" ]
+                    , HP.attr (HH.AttrName "style") "width: 1.2em; height: 1.2em; margin-right: 0.5em;"
+                    ]
+                    []
+                , HH.text "Loading reference data\x2026"
+                ]
             Failure err -> HH.div_ [ HH.text $ "Error loading refernece bundle: " <> err, HH.br_ ]
             Success rb -> HH.div_
                 [ HH.text $ "Selected reference data with " <>
@@ -178,6 +185,7 @@ initialState = const
 
 handleAction :: forall output slots m. MonadAff m => Action -> H.HalogenM State Action slots output m Unit
 handleAction LoadRefData = do
+    H.modify_ _ { refBundle = Loading }
     f1 <- H.liftAff $ fetch "./assets/Joscha_HiRes_WestEurasia_weights_with_freqs.txt" {}
     f2 <- H.liftAff $ fetch "./assets/Joscha_HiRes_WestEurasia_evec_with_groups.tsv" {}
     f3 <- H.liftAff $ fetch "./assets/Joscha_HiRes_WestEurasia_parameters.json" {}
