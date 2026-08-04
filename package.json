@@ -7,10 +7,10 @@
     "spago": "^1.0.4"
   },
   "scripts": {
-    "build": "spago bundle --outfile public/app.js --bundle-type module",
+    "build": "spago bundle --outfile docs/app.js --bundle-type module",
     "test": "spago test",
     "repl": "spago repl",
-    "serve": "http-server public -c -1"
+    "serve": "http-server docs -c -1"
   },
   "dependencies": {
     "@observablehq/plot": "^0.6.17",
