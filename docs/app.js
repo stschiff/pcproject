@@ -16,12 +16,12 @@ var __copyProps = (to2, from4, except2, desc) => {
   }
   return to2;
 };
-var __toESM = (mod2, isNodeMode, target6) => (target6 = mod2 != null ? __create(__getProtoOf(mod2)) : {}, __copyProps(
+var __toESM = (mod2, isNodeMode, target7) => (target7 = mod2 != null ? __create(__getProtoOf(mod2)) : {}, __copyProps(
   // If the importer is in node compatibility mode or this is not an ESM
   // file that has been converted to a CommonJS file using a Babel-
   // compatible transform (i.e. "__esModule" has not been set), then set
   // "default" to the CommonJS "module.exports" for node compatibility.
-  isNodeMode || !mod2 || !mod2.__esModule ? __defProp(target6, "default", { value: mod2, enumerable: true }) : target6,
+  isNodeMode || !mod2 || !mod2.__esModule ? __defProp(target7, "default", { value: mod2, enumerable: true }) : target7,
   mod2
 ));
 
@@ -3831,14 +3831,14 @@ var require_main75 = __commonJS({
       return this._buffer.byteOffset;
     });
     setReadOnly4(Complex64Array.prototype, "BYTES_PER_ELEMENT", Complex64Array.BYTES_PER_ELEMENT);
-    setReadOnly4(Complex64Array.prototype, "copyWithin", function copyWithin(target6, start2) {
+    setReadOnly4(Complex64Array.prototype, "copyWithin", function copyWithin(target7, start2) {
       if (!isComplexArray(this)) {
         throw new TypeError("invalid invocation. `this` is not a complex number array.");
       }
       if (arguments.length === 2) {
-        this._buffer.copyWithin(target6 * 2, start2 * 2);
+        this._buffer.copyWithin(target7 * 2, start2 * 2);
       } else {
-        this._buffer.copyWithin(target6 * 2, start2 * 2, arguments[2] * 2);
+        this._buffer.copyWithin(target7 * 2, start2 * 2, arguments[2] * 2);
       }
       return this;
     });
@@ -5258,14 +5258,14 @@ var require_main78 = __commonJS({
       return this._buffer.byteOffset;
     });
     setReadOnly4(Complex128Array.prototype, "BYTES_PER_ELEMENT", Complex128Array.BYTES_PER_ELEMENT);
-    setReadOnly4(Complex128Array.prototype, "copyWithin", function copyWithin(target6, start2) {
+    setReadOnly4(Complex128Array.prototype, "copyWithin", function copyWithin(target7, start2) {
       if (!isComplexArray(this)) {
         throw new TypeError("invalid invocation. `this` is not a complex number array.");
       }
       if (arguments.length === 2) {
-        this._buffer.copyWithin(target6 * 2, start2 * 2);
+        this._buffer.copyWithin(target7 * 2, start2 * 2);
       } else {
-        this._buffer.copyWithin(target6 * 2, start2 * 2, arguments[2] * 2);
+        this._buffer.copyWithin(target7 * 2, start2 * 2, arguments[2] * 2);
       }
       return this;
     });
@@ -6513,14 +6513,14 @@ var require_main79 = __commonJS({
       return this._buffer.byteOffset;
     });
     setReadOnly4(BooleanArray.prototype, "BYTES_PER_ELEMENT", BooleanArray.BYTES_PER_ELEMENT);
-    setReadOnly4(BooleanArray.prototype, "copyWithin", function copyWithin(target6, start2) {
+    setReadOnly4(BooleanArray.prototype, "copyWithin", function copyWithin(target7, start2) {
       if (!isBooleanArray(this)) {
         throw new TypeError("invalid invocation. `this` is not a boolean array.");
       }
       if (arguments.length === 2) {
-        this._buffer.copyWithin(target6, start2);
+        this._buffer.copyWithin(target7, start2);
       } else {
-        this._buffer.copyWithin(target6, start2, arguments[2]);
+        this._buffer.copyWithin(target7, start2, arguments[2]);
       }
       return this;
     });
@@ -13235,14 +13235,14 @@ function clone2(source3) {
     return source3.map(clone2);
   }
   if (isObject(source3)) {
-    const target6 = /* @__PURE__ */ Object.create(null);
+    const target7 = /* @__PURE__ */ Object.create(null);
     const keys3 = Object.keys(source3);
     const klen = keys3.length;
     let k = 0;
     for (; k < klen; ++k) {
-      target6[keys3[k]] = clone2(source3[keys3[k]]);
+      target7[keys3[k]] = clone2(source3[keys3[k]]);
     }
-    return target6;
+    return target7;
   }
   return source3;
 }
@@ -13253,25 +13253,25 @@ function isValidKey(key) {
     "constructor"
   ].indexOf(key) === -1;
 }
-function _merger(key, target6, source3, options2) {
+function _merger(key, target7, source3, options2) {
   if (!isValidKey(key)) {
     return;
   }
-  const tval = target6[key];
+  const tval = target7[key];
   const sval = source3[key];
   if (isObject(tval) && isObject(sval)) {
     merge(tval, sval, options2);
   } else {
-    target6[key] = clone2(sval);
+    target7[key] = clone2(sval);
   }
 }
-function merge(target6, source3, options2) {
+function merge(target7, source3, options2) {
   const sources = isArray2(source3) ? source3 : [
     source3
   ];
   const ilen = sources.length;
-  if (!isObject(target6)) {
-    return target6;
+  if (!isObject(target7)) {
+    return target7;
   }
   options2 = options2 || {};
   const merger = options2.merger || _merger;
@@ -13283,26 +13283,26 @@ function merge(target6, source3, options2) {
     }
     const keys3 = Object.keys(current);
     for (let k = 0, klen = keys3.length; k < klen; ++k) {
-      merger(keys3[k], target6, current, options2);
+      merger(keys3[k], target7, current, options2);
     }
   }
-  return target6;
+  return target7;
 }
-function mergeIf(target6, source3) {
-  return merge(target6, source3, {
+function mergeIf(target7, source3) {
+  return merge(target7, source3, {
     merger: _mergerIf
   });
 }
-function _mergerIf(key, target6, source3) {
+function _mergerIf(key, target7, source3) {
   if (!isValidKey(key)) {
     return;
   }
-  const tval = target6[key];
+  const tval = target7[key];
   const sval = source3[key];
   if (isObject(tval) && isObject(sval)) {
     mergeIf(tval, sval);
-  } else if (!Object.prototype.hasOwnProperty.call(target6, key)) {
-    target6[key] = clone2(sval);
+  } else if (!Object.prototype.hasOwnProperty.call(target7, key)) {
+    target7[key] = clone2(sval);
   }
 }
 var keyResolvers = {
@@ -13409,13 +13409,13 @@ function almostWhole(x, epsilon) {
   const rounded = Math.round(x);
   return rounded - epsilon <= x && rounded + epsilon >= x;
 }
-function _setMinAndMaxByKey(array, target6, property) {
+function _setMinAndMaxByKey(array, target7, property) {
   let i2, ilen, value12;
   for (i2 = 0, ilen = array.length; i2 < ilen; i2++) {
     value12 = array[i2][property];
     if (!isNaN(value12)) {
-      target6.min = Math.min(target6.min, value12);
-      target6.max = Math.max(target6.max, value12);
+      target7.min = Math.min(target7.min, value12);
+      target7.max = Math.max(target7.max, value12);
     }
   }
 }
@@ -14072,11 +14072,11 @@ var Defaults = class {
         enumerable: true,
         get() {
           const local2 = this[privateName];
-          const target6 = targetScopeObject[targetName];
+          const target7 = targetScopeObject[targetName];
           if (isObject(local2)) {
-            return Object.assign({}, target6, local2);
+            return Object.assign({}, target7, local2);
           }
-          return valueOrDefault(local2, target6);
+          return valueOrDefault(local2, target7);
         },
         set(value12) {
           this[privateName] = value12;
@@ -14312,26 +14312,26 @@ function clipArea(ctx, area2) {
 function unclipArea(ctx) {
   ctx.restore();
 }
-function _steppedLineTo(ctx, previous, target6, flip3, mode) {
+function _steppedLineTo(ctx, previous, target7, flip3, mode) {
   if (!previous) {
-    return ctx.lineTo(target6.x, target6.y);
+    return ctx.lineTo(target7.x, target7.y);
   }
   if (mode === "middle") {
-    const midpoint = (previous.x + target6.x) / 2;
+    const midpoint = (previous.x + target7.x) / 2;
     ctx.lineTo(midpoint, previous.y);
-    ctx.lineTo(midpoint, target6.y);
+    ctx.lineTo(midpoint, target7.y);
   } else if (mode === "after" !== !!flip3) {
-    ctx.lineTo(previous.x, target6.y);
+    ctx.lineTo(previous.x, target7.y);
   } else {
-    ctx.lineTo(target6.x, previous.y);
+    ctx.lineTo(target7.x, previous.y);
   }
-  ctx.lineTo(target6.x, target6.y);
+  ctx.lineTo(target7.x, target7.y);
 }
-function _bezierCurveTo(ctx, previous, target6, flip3) {
+function _bezierCurveTo(ctx, previous, target7, flip3) {
   if (!previous) {
-    return ctx.lineTo(target6.x, target6.y);
+    return ctx.lineTo(target7.x, target7.y);
   }
-  ctx.bezierCurveTo(flip3 ? previous.cp1x : previous.cp2x, flip3 ? previous.cp1y : previous.cp2y, flip3 ? target6.cp2x : target6.cp1x, flip3 ? target6.cp2y : target6.cp1y, target6.x, target6.y);
+  ctx.bezierCurveTo(flip3 ? previous.cp1x : previous.cp2x, flip3 ? previous.cp1y : previous.cp2y, flip3 ? target7.cp2x : target7.cp1x, flip3 ? target7.cp2y : target7.cp1y, target7.x, target7.y);
 }
 function setRenderOpts(ctx, opts) {
   if (opts.translation) {
@@ -14544,24 +14544,24 @@ function _createResolver(scopes, prefixes = [
     /**
     * A trap for the delete operator.
     */
-    deleteProperty(target6, prop3) {
-      delete target6[prop3];
-      delete target6._keys;
+    deleteProperty(target7, prop3) {
+      delete target7[prop3];
+      delete target7._keys;
       delete scopes[0][prop3];
       return true;
     },
     /**
     * A trap for getting property values.
     */
-    get(target6, prop3) {
-      return _cached(target6, prop3, () => _resolveWithPrefixes(prop3, prefixes, scopes, target6));
+    get(target7, prop3) {
+      return _cached(target7, prop3, () => _resolveWithPrefixes(prop3, prefixes, scopes, target7));
     },
     /**
     * A trap for Object.getOwnPropertyDescriptor.
     * Also used by Object.hasOwnProperty.
     */
-    getOwnPropertyDescriptor(target6, prop3) {
-      return Reflect.getOwnPropertyDescriptor(target6._scopes[0], prop3);
+    getOwnPropertyDescriptor(target7, prop3) {
+      return Reflect.getOwnPropertyDescriptor(target7._scopes[0], prop3);
     },
     /**
     * A trap for Object.getPrototypeOf.
@@ -14572,22 +14572,22 @@ function _createResolver(scopes, prefixes = [
     /**
     * A trap for the in operator.
     */
-    has(target6, prop3) {
-      return getKeysFromAllScopes(target6).includes(prop3);
+    has(target7, prop3) {
+      return getKeysFromAllScopes(target7).includes(prop3);
     },
     /**
     * A trap for Object.getOwnPropertyNames and Object.getOwnPropertySymbols.
     */
-    ownKeys(target6) {
-      return getKeysFromAllScopes(target6);
+    ownKeys(target7) {
+      return getKeysFromAllScopes(target7);
     },
     /**
     * A trap for setting property values.
     */
-    set(target6, prop3, value12) {
-      const storage = target6._storage || (target6._storage = getTarget());
-      target6[prop3] = storage[prop3] = value12;
-      delete target6._keys;
+    set(target7, prop3, value12) {
+      const storage = target7._storage || (target7._storage = getTarget());
+      target7[prop3] = storage[prop3] = value12;
+      delete target7._keys;
       return true;
     }
   });
@@ -14607,23 +14607,23 @@ function _attachContext(proxy, context, subProxy, descriptorDefaults) {
     /**
     * A trap for the delete operator.
     */
-    deleteProperty(target6, prop3) {
-      delete target6[prop3];
+    deleteProperty(target7, prop3) {
+      delete target7[prop3];
       delete proxy[prop3];
       return true;
     },
     /**
     * A trap for getting property values.
     */
-    get(target6, prop3, receiver) {
-      return _cached(target6, prop3, () => _resolveWithContext(target6, prop3, receiver));
+    get(target7, prop3, receiver) {
+      return _cached(target7, prop3, () => _resolveWithContext(target7, prop3, receiver));
     },
     /**
     * A trap for Object.getOwnPropertyDescriptor.
     * Also used by Object.hasOwnProperty.
     */
-    getOwnPropertyDescriptor(target6, prop3) {
-      return target6._descriptors.allKeys ? Reflect.has(proxy, prop3) ? {
+    getOwnPropertyDescriptor(target7, prop3) {
+      return target7._descriptors.allKeys ? Reflect.has(proxy, prop3) ? {
         enumerable: true,
         configurable: true
       } : void 0 : Reflect.getOwnPropertyDescriptor(proxy, prop3);
@@ -14637,7 +14637,7 @@ function _attachContext(proxy, context, subProxy, descriptorDefaults) {
     /**
     * A trap for the in operator.
     */
-    has(target6, prop3) {
+    has(target7, prop3) {
       return Reflect.has(proxy, prop3);
     },
     /**
@@ -14649,9 +14649,9 @@ function _attachContext(proxy, context, subProxy, descriptorDefaults) {
     /**
     * A trap for setting property values.
     */
-    set(target6, prop3, value12) {
+    set(target7, prop3, value12) {
       proxy[prop3] = value12;
-      delete target6[prop3];
+      delete target7[prop3];
       return true;
     }
   });
@@ -14671,30 +14671,30 @@ function _descriptors(proxy, defaults2 = {
 }
 var readKey = (prefix, name16) => prefix ? prefix + _capitalize(name16) : name16;
 var needsSubResolver = (prop3, value12) => isObject(value12) && prop3 !== "adapters" && (Object.getPrototypeOf(value12) === null || value12.constructor === Object);
-function _cached(target6, prop3, resolve6) {
-  if (Object.prototype.hasOwnProperty.call(target6, prop3) || prop3 === "constructor") {
-    return target6[prop3];
+function _cached(target7, prop3, resolve6) {
+  if (Object.prototype.hasOwnProperty.call(target7, prop3) || prop3 === "constructor") {
+    return target7[prop3];
   }
   const value12 = resolve6();
-  target6[prop3] = value12;
+  target7[prop3] = value12;
   return value12;
 }
-function _resolveWithContext(target6, prop3, receiver) {
-  const { _proxy, _context, _subProxy, _descriptors: descriptors2 } = target6;
+function _resolveWithContext(target7, prop3, receiver) {
+  const { _proxy, _context, _subProxy, _descriptors: descriptors2 } = target7;
   let value12 = _proxy[prop3];
   if (isFunction(value12) && descriptors2.isScriptable(prop3)) {
-    value12 = _resolveScriptable(prop3, value12, target6, receiver);
+    value12 = _resolveScriptable(prop3, value12, target7, receiver);
   }
   if (isArray2(value12) && value12.length) {
-    value12 = _resolveArray(prop3, value12, target6, descriptors2.isIndexable);
+    value12 = _resolveArray(prop3, value12, target7, descriptors2.isIndexable);
   }
   if (needsSubResolver(prop3, value12)) {
     value12 = _attachContext(value12, _context, _subProxy && _subProxy[prop3], descriptors2);
   }
   return value12;
 }
-function _resolveScriptable(prop3, getValue, target6, receiver) {
-  const { _proxy, _context, _subProxy, _stack } = target6;
+function _resolveScriptable(prop3, getValue, target7, receiver) {
+  const { _proxy, _context, _subProxy, _stack } = target7;
   if (_stack.has(prop3)) {
     throw new Error("Recursion detected: " + Array.from(_stack).join("->") + "->" + prop3);
   }
@@ -14706,8 +14706,8 @@ function _resolveScriptable(prop3, getValue, target6, receiver) {
   }
   return value12;
 }
-function _resolveArray(prop3, value12, target6, isIndexable) {
-  const { _proxy, _context, _subProxy, _descriptors: descriptors2 } = target6;
+function _resolveArray(prop3, value12, target7, isIndexable) {
+  const { _proxy, _context, _subProxy, _descriptors: descriptors2 } = target7;
   if (typeof _context.index !== "undefined" && isIndexable(prop3)) {
     return value12[_context.index % value12.length];
   } else if (isObject(value12[0])) {
@@ -14774,11 +14774,11 @@ function subGetTarget(resolver, prop3, value12) {
   if (!(prop3 in parent2)) {
     parent2[prop3] = {};
   }
-  const target6 = parent2[prop3];
-  if (isArray2(target6) && isObject(value12)) {
+  const target7 = parent2[prop3];
+  if (isArray2(target7) && isObject(value12)) {
     return value12;
   }
-  return target6 || {};
+  return target7 || {};
 }
 function _resolveWithPrefixes(prop3, prefixes, scopes, proxy) {
   let value12;
@@ -14800,10 +14800,10 @@ function _resolve(key, scopes) {
     }
   }
 }
-function getKeysFromAllScopes(target6) {
-  let keys3 = target6._keys;
+function getKeysFromAllScopes(target7) {
+  let keys3 = target7._keys;
   if (!keys3) {
-    keys3 = target6._keys = resolveKeysFromAllScopes(target6._scopes);
+    keys3 = target7._keys = resolveKeysFromAllScopes(target7._scopes);
   }
   return keys3;
 }
@@ -15020,7 +15020,7 @@ function getPositionedStyle(styles, style2, suffix) {
   result2.height = result2.top + result2.bottom;
   return result2;
 }
-var useOffsetPos = (x, y, target6) => (x > 0 || y > 0) && (!target6 || !target6.shadowRoot);
+var useOffsetPos = (x, y, target7) => (x > 0 || y > 0) && (!target7 || !target7.shadowRoot);
 function getCanvasPosition(e, canvas2) {
   const touches = e.touches;
   const source3 = touches && touches.length ? touches[0] : e;
@@ -15721,8 +15721,8 @@ var interpolators = {
   }
 };
 var Animation = class {
-  constructor(cfg, target6, prop3, to2) {
-    const currentValue = target6[prop3];
+  constructor(cfg, target7, prop3, to2) {
+    const currentValue = target7[prop3];
     to2 = resolve([
       cfg.to,
       to2,
@@ -15740,7 +15740,7 @@ var Animation = class {
     this._start = Math.floor(Date.now() + (cfg.delay || 0));
     this._duration = this._total = Math.floor(cfg.duration);
     this._loop = !!cfg.loop;
-    this._target = target6;
+    this._target = target7;
     this._prop = prop3;
     this._from = from4;
     this._to = to2;
@@ -15849,25 +15849,25 @@ var Animations = class {
       });
     });
   }
-  _animateOptions(target6, values) {
+  _animateOptions(target7, values) {
     const newOptions = values.options;
-    const options2 = resolveTargetOptions(target6, newOptions);
+    const options2 = resolveTargetOptions(target7, newOptions);
     if (!options2) {
       return [];
     }
     const animations = this._createAnimations(options2, newOptions);
     if (newOptions.$shared) {
-      awaitAll(target6.options.$animations, newOptions).then(() => {
-        target6.options = newOptions;
+      awaitAll(target7.options.$animations, newOptions).then(() => {
+        target7.options = newOptions;
       }, () => {
       });
     }
     return animations;
   }
-  _createAnimations(target6, values) {
+  _createAnimations(target7, values) {
     const animatedProps = this._properties;
     const animations = [];
-    const running = target6.$animations || (target6.$animations = {});
+    const running = target7.$animations || (target7.$animations = {});
     const props = Object.keys(values);
     const date = Date.now();
     let i2;
@@ -15877,7 +15877,7 @@ var Animations = class {
         continue;
       }
       if (prop3 === "options") {
-        animations.push(...this._animateOptions(target6, values));
+        animations.push(...this._animateOptions(target7, values));
         continue;
       }
       const value12 = values[prop3];
@@ -15892,20 +15892,20 @@ var Animations = class {
         }
       }
       if (!cfg || !cfg.duration) {
-        target6[prop3] = value12;
+        target7[prop3] = value12;
         continue;
       }
-      running[prop3] = animation = new Animation(cfg, target6, prop3, value12);
+      running[prop3] = animation = new Animation(cfg, target7, prop3, value12);
       animations.push(animation);
     }
     return animations;
   }
-  update(target6, values) {
+  update(target7, values) {
     if (this._properties.size === 0) {
-      Object.assign(target6, values);
+      Object.assign(target7, values);
       return;
     }
-    const animations = this._createAnimations(target6, values);
+    const animations = this._createAnimations(target7, values);
     if (animations.length) {
       animator.add(this._chart, animations);
       return true;
@@ -15923,17 +15923,17 @@ function awaitAll(animations, properties) {
   }
   return Promise.all(running);
 }
-function resolveTargetOptions(target6, newOptions) {
+function resolveTargetOptions(target7, newOptions) {
   if (!newOptions) {
     return;
   }
-  let options2 = target6.options;
+  let options2 = target7.options;
   if (!options2) {
-    target6.options = newOptions;
+    target7.options = newOptions;
     return;
   }
   if (options2.$shared) {
-    target6.options = options2 = Object.assign({}, options2, {
+    target7.options = options2 = Object.assign({}, options2, {
       $shared: false,
       $animations: {}
     });
@@ -22295,8 +22295,8 @@ function setStyle(ctx, options2, style2 = options2) {
   ctx.lineWidth = valueOrDefault(style2.borderWidth, options2.borderWidth);
   ctx.strokeStyle = valueOrDefault(style2.borderColor, options2.borderColor);
 }
-function lineTo(ctx, previous, target6) {
-  ctx.lineTo(target6.x, target6.y);
+function lineTo(ctx, previous, target7) {
+  ctx.lineTo(target7.x, target7.y);
 }
 function getLineMethod(options2) {
   if (options2.stepped) {
@@ -23129,16 +23129,16 @@ var plugin_decimation = {
     cleanDecimatedData(chart);
   }
 };
-function _segments(line, target6, property) {
+function _segments(line, target7, property) {
   const segments = line.segments;
   const points = line.points;
-  const tpoints = target6.points;
+  const tpoints = target7.points;
   const parts = [];
   for (const segment of segments) {
     let { start: start2, end } = segment;
     end = _findSegmentEnd(start2, end, points);
     const bounds = _getBounds(property, points[start2], points[end], segment.loop);
-    if (!target6.segments) {
+    if (!target7.segments) {
       parts.push({
         source: segment,
         target: bounds,
@@ -23147,7 +23147,7 @@ function _segments(line, target6, property) {
       });
       continue;
     }
-    const targetSegments = _boundSegments(target6, bounds);
+    const targetSegments = _boundSegments(target7, bounds);
     for (const tgt of targetSegments) {
       const subBounds = _getBounds(property, tpoints[tgt.start], tpoints[tgt.end], tgt.loop);
       const fillSources = _boundSegment(segment, points, subBounds);
@@ -23255,7 +23255,7 @@ function _resolveTarget(sources, index5, propagate) {
   const visited = [
     index5
   ];
-  let target6;
+  let target7;
   if (!propagate) {
     return fill2;
   }
@@ -23263,15 +23263,15 @@ function _resolveTarget(sources, index5, propagate) {
     if (!isNumberFinite(fill2)) {
       return fill2;
     }
-    target6 = sources[fill2];
-    if (!target6) {
+    target7 = sources[fill2];
+    if (!target7) {
       return false;
     }
-    if (target6.visible) {
+    if (target7.visible) {
       return fill2;
     }
     visited.push(fill2);
-    fill2 = target6.fill;
+    fill2 = target7.fill;
   }
   return false;
 }
@@ -23280,9 +23280,9 @@ function _decodeFill(line, index5, count) {
   if (isObject(fill2)) {
     return isNaN(fill2.value) ? false : fill2;
   }
-  let target6 = parseFloat(fill2);
-  if (isNumberFinite(target6) && Math.floor(target6) === target6) {
-    return decodeTargetIndex(fill2[0], index5, target6, count);
+  let target7 = parseFloat(fill2);
+  if (isNumberFinite(target7) && Math.floor(target7) === target7) {
+    return decodeTargetIndex(fill2[0], index5, target7, count);
   }
   return [
     "origin",
@@ -23292,14 +23292,14 @@ function _decodeFill(line, index5, count) {
     "shape"
   ].indexOf(fill2) >= 0 && fill2;
 }
-function decodeTargetIndex(firstCh, index5, target6, count) {
+function decodeTargetIndex(firstCh, index5, target7, count) {
   if (firstCh === "-" || firstCh === "+") {
-    target6 = index5 + target6;
+    target7 = index5 + target7;
   }
-  if (target6 === index5 || target6 < 0 || target6 >= count) {
+  if (target7 === index5 || target7 < 0 || target7 >= count) {
     return false;
   }
-  return target6;
+  return target7;
 }
 function _getTargetPixel(fill2, scale) {
   let pixel = null;
@@ -23494,7 +23494,7 @@ function computeCircularBoundary(source3) {
   const length9 = scale.getLabels().length;
   const start2 = options2.reverse ? scale.max : scale.min;
   const value12 = _getTargetValue(fill2, scale, start2);
-  const target6 = [];
+  const target7 = [];
   if (options2.grid.circular) {
     const center = scale.getPointPositionForValue(0, start2);
     return new simpleArc({
@@ -23504,12 +23504,12 @@ function computeCircularBoundary(source3) {
     });
   }
   for (let i2 = 0; i2 < length9; ++i2) {
-    target6.push(scale.getPointPositionForValue(i2, value12));
+    target7.push(scale.getPointPositionForValue(i2, value12));
   }
-  return target6;
+  return target7;
 }
 function _drawfill(ctx, source3, area2) {
-  const target6 = _getTarget(source3);
+  const target7 = _getTarget(source3);
   const { chart, index: index5, line, scale, axis } = source3;
   const lineOpts = line.options;
   const fillOption = lineOpts.fill;
@@ -23517,11 +23517,11 @@ function _drawfill(ctx, source3, area2) {
   const { above = color2, below = color2 } = fillOption || {};
   const meta2 = chart.getDatasetMeta(index5);
   const clip = getDatasetClipArea(chart, meta2);
-  if (target6 && line.points.length) {
+  if (target7 && line.points.length) {
     clipArea(ctx, area2);
     doFill(ctx, {
       line,
-      target: target6,
+      target: target7,
       above,
       below,
       area: area2,
@@ -23533,16 +23533,16 @@ function _drawfill(ctx, source3, area2) {
   }
 }
 function doFill(ctx, cfg) {
-  const { line, target: target6, above, below, area: area2, scale, clip } = cfg;
+  const { line, target: target7, above, below, area: area2, scale, clip } = cfg;
   const property = line._loop ? "angle" : cfg.axis;
   ctx.save();
   let fillColor = below;
   if (below !== above) {
     if (property === "x") {
-      clipVertical(ctx, target6, area2.top);
+      clipVertical(ctx, target7, area2.top);
       fill(ctx, {
         line,
-        target: target6,
+        target: target7,
         color: above,
         scale,
         property,
@@ -23550,12 +23550,12 @@ function doFill(ctx, cfg) {
       });
       ctx.restore();
       ctx.save();
-      clipVertical(ctx, target6, area2.bottom);
+      clipVertical(ctx, target7, area2.bottom);
     } else if (property === "y") {
-      clipHorizontal(ctx, target6, area2.left);
+      clipHorizontal(ctx, target7, area2.left);
       fill(ctx, {
         line,
-        target: target6,
+        target: target7,
         color: below,
         scale,
         property,
@@ -23563,13 +23563,13 @@ function doFill(ctx, cfg) {
       });
       ctx.restore();
       ctx.save();
-      clipHorizontal(ctx, target6, area2.right);
+      clipHorizontal(ctx, target7, area2.right);
       fillColor = above;
     }
   }
   fill(ctx, {
     line,
-    target: target6,
+    target: target7,
     color: fillColor,
     scale,
     property,
@@ -23577,8 +23577,8 @@ function doFill(ctx, cfg) {
   });
   ctx.restore();
 }
-function clipVertical(ctx, target6, clipY) {
-  const { segments, points } = target6;
+function clipVertical(ctx, target7, clipY) {
+  const { segments, points } = target7;
   let first = true;
   let lineLoop = false;
   ctx.beginPath();
@@ -23593,7 +23593,7 @@ function clipVertical(ctx, target6, clipY) {
       ctx.lineTo(firstPoint.x, clipY);
       ctx.lineTo(firstPoint.x, firstPoint.y);
     }
-    lineLoop = !!target6.pathSegment(ctx, segment, {
+    lineLoop = !!target7.pathSegment(ctx, segment, {
       move: lineLoop
     });
     if (lineLoop) {
@@ -23602,12 +23602,12 @@ function clipVertical(ctx, target6, clipY) {
       ctx.lineTo(lastPoint.x, clipY);
     }
   }
-  ctx.lineTo(target6.first().x, clipY);
+  ctx.lineTo(target7.first().x, clipY);
   ctx.closePath();
   ctx.clip();
 }
-function clipHorizontal(ctx, target6, clipX) {
-  const { segments, points } = target6;
+function clipHorizontal(ctx, target7, clipX) {
+  const { segments, points } = target7;
   let first = true;
   let lineLoop = false;
   ctx.beginPath();
@@ -23622,7 +23622,7 @@ function clipHorizontal(ctx, target6, clipX) {
       ctx.lineTo(clipX, firstPoint.y);
       ctx.lineTo(firstPoint.x, firstPoint.y);
     }
-    lineLoop = !!target6.pathSegment(ctx, segment, {
+    lineLoop = !!target7.pathSegment(ctx, segment, {
       move: lineLoop
     });
     if (lineLoop) {
@@ -23631,16 +23631,16 @@ function clipHorizontal(ctx, target6, clipX) {
       ctx.lineTo(clipX, lastPoint.y);
     }
   }
-  ctx.lineTo(clipX, target6.first().y);
+  ctx.lineTo(clipX, target7.first().y);
   ctx.closePath();
   ctx.clip();
 }
 function fill(ctx, cfg) {
-  const { line, target: target6, property, color: color2, scale, clip } = cfg;
-  const segments = _segments(line, target6, property);
+  const { line, target: target7, property, color: color2, scale, clip } = cfg;
+  const segments = _segments(line, target7, property);
   for (const { source: src9, target: tgt, start: start2, end } of segments) {
     const { style: { backgroundColor = color2 } = {} } = src9;
-    const notShape = target6 !== true;
+    const notShape = target7 !== true;
     ctx.save();
     ctx.fillStyle = backgroundColor;
     clipBounds(ctx, scale, clip, notShape && _getBounds(property, start2, end));
@@ -23651,15 +23651,15 @@ function fill(ctx, cfg) {
       if (lineLoop) {
         ctx.closePath();
       } else {
-        interpolatedLineTo(ctx, target6, end, property);
+        interpolatedLineTo(ctx, target7, end, property);
       }
-      const targetLoop = !!target6.pathSegment(ctx, tgt, {
+      const targetLoop = !!target7.pathSegment(ctx, tgt, {
         move: lineLoop,
         reverse: true
       });
       loop2 = lineLoop && targetLoop;
       if (!loop2) {
-        interpolatedLineTo(ctx, target6, start2, property);
+        interpolatedLineTo(ctx, target7, start2, property);
       }
     }
     ctx.closePath();
@@ -23694,8 +23694,8 @@ function clipBounds(ctx, scale, clip, bounds) {
     ctx.clip();
   }
 }
-function interpolatedLineTo(ctx, target6, point, property) {
-  const interpolatedPoint = target6.interpolate(point, property);
+function interpolatedLineTo(ctx, target7, point, property) {
+  const interpolatedPoint = target7.interpolate(point, property);
   if (interpolatedPoint) {
     ctx.lineTo(interpolatedPoint.x, interpolatedPoint.y);
   }
@@ -28735,9 +28735,9 @@ function eventListener(fn) {
 function addEventListener2(type) {
   return function(listener) {
     return function(useCapture) {
-      return function(target6) {
+      return function(target7) {
         return function() {
-          return target6.addEventListener(type, listener, useCapture);
+          return target7.addEventListener(type, listener, useCapture);
         };
       };
     };
@@ -28746,9 +28746,9 @@ function addEventListener2(type) {
 function removeEventListener2(type) {
   return function(listener) {
     return function(useCapture) {
-      return function(target6) {
+      return function(target7) {
         return function() {
-          return target6.removeEventListener(type, listener, useCapture);
+          return target7.removeEventListener(type, listener, useCapture);
         };
       };
     };
@@ -31332,6 +31332,7 @@ var componentSlot = function() {
 var element2 = /* @__PURE__ */ function() {
   return element(Nothing.value);
 }();
+var footer = /* @__PURE__ */ element2("footer");
 var h12 = /* @__PURE__ */ element2("h1");
 var h22 = /* @__PURE__ */ element2("h2");
 var input = function(props) {
@@ -31339,8 +31340,11 @@ var input = function(props) {
 };
 var label = /* @__PURE__ */ element2("label");
 var p = /* @__PURE__ */ element2("p");
+var p_ = /* @__PURE__ */ p([]);
 var section = /* @__PURE__ */ element2("section");
 var span2 = /* @__PURE__ */ element2("span");
+var strong = /* @__PURE__ */ element2("strong");
+var strong_ = /* @__PURE__ */ strong([]);
 var div2 = /* @__PURE__ */ element2("div");
 var div_ = /* @__PURE__ */ div2([]);
 var canvas = function(props) {
@@ -31351,6 +31355,7 @@ var br = function(props) {
   return element2("br")(props)([]);
 };
 var br_ = /* @__PURE__ */ br([]);
+var a = /* @__PURE__ */ element2("a");
 
 // output/Halogen.HTML.Properties/index.js
 var unwrap2 = /* @__PURE__ */ unwrap();
@@ -31369,10 +31374,13 @@ var prop2 = function(dictIsProp) {
 };
 var prop1 = /* @__PURE__ */ prop2(isPropBoolean);
 var prop22 = /* @__PURE__ */ prop2(isPropString);
+var rel = /* @__PURE__ */ prop22("rel");
+var target = /* @__PURE__ */ prop22("target");
 var type_ = function(dictIsProp) {
   return prop2(dictIsProp)("type");
 };
 var multiple = /* @__PURE__ */ prop1("multiple");
+var href = /* @__PURE__ */ prop22("href");
 var classes = /* @__PURE__ */ function() {
   var $32 = prop22("className");
   var $33 = joinWith(" ");
@@ -32621,7 +32629,7 @@ function _target(e) {
 }
 
 // output/Web.Event.Event/index.js
-var target = function($3) {
+var target2 = function($3) {
   return toMaybe(_target($3));
 };
 
@@ -33102,7 +33110,7 @@ var handleAction2 = function(dictMonadAff) {
   var clearFileInput1 = clearFileInput(dictMonadAff);
   return function(v) {
     if (v instanceof GotGenoDataFileEvent) {
-      var mInputElem = bind22(target(v.value0))(fromEventTarget);
+      var mInputElem = bind22(target2(v.value0))(fromEventTarget);
       if (mInputElem instanceof Nothing) {
         return pure12(unit);
       }
@@ -36555,7 +36563,7 @@ var refDataBox = function(dictMonadAff) {
         return div_([text("Selected reference data with " + (show5(st.refBundle.value0.snpWeights.numSNPs) + (" SNPs for " + (show5(st.refBundle.value0.snpWeights.numPCs) + (" PCs and " + (show5(st.refBundle.value0.refPosData.numSamples) + " individuals")))))), br_]);
       }
       ;
-      throw new Error("Failed pattern match at App.Interface (line 100, column 11 - line 116, column 18): " + [st.refBundle.constructor.name]);
+      throw new Error("Failed pattern match at App.Interface (line 126, column 11 - line 142, column 18): " + [st.refBundle.constructor.name]);
     }()]);
   };
 };
@@ -36578,7 +36586,7 @@ var projectionMonitor = function(dictMonadAff) {
         return div_([text("Number of samples projected: " + show5(length(st.projectionResults.value0.projectionResults))), br_, text("Included SNPs: " + show5(st.projectionResults.value0.overlapReport.nrIncluded)), br_, text("Strand Ambiguous Removed: " + show5(st.projectionResults.value0.overlapReport.removedStrandAmbiguous)), br_, text("Inconsistent Removed: " + show5(st.projectionResults.value0.overlapReport.removedInconsistent)), br_, text("Flipped alleles: " + show5(st.projectionResults.value0.overlapReport.nrToBeFlipped))]);
       }
       ;
-      throw new Error("Failed pattern match at App.Interface (line 124, column 11 - line 141, column 18): " + [st.projectionResults.constructor.name]);
+      throw new Error("Failed pattern match at App.Interface (line 150, column 11 - line 167, column 18): " + [st.projectionResults.constructor.name]);
     }()]);
   };
 };
@@ -36773,7 +36781,12 @@ var handleAction3 = function(dictMonadAff) {
       });
     }
     ;
-    throw new Error("Failed pattern match at App.Interface (line 186, column 1 - line 186, column 107): " + [v.constructor.name]);
+    throw new Error("Failed pattern match at App.Interface (line 212, column 1 - line 212, column 107): " + [v.constructor.name]);
+  };
+};
+var externalLink = function(url2) {
+  return function(label5) {
+    return a([href(url2), target("_blank"), rel("noopener noreferrer")])([text(label5)]);
   };
 };
 var _userInputComponent = /* @__PURE__ */ function() {
@@ -36826,7 +36839,7 @@ var render5 = function(dictMonadAff) {
   var refChartBox1 = refChartBox(dictMonadAff);
   var projChartBox1 = projChartBox(dictMonadAff);
   return function(st) {
-    return section([classes(["section"])])([h12([classes(["title", "is-1"])])([text("PC Projection Tool")]), div2([classes(["columns"])])([div2([classes(["column"])])([refDataBox1(st)]), div2([classes(["column"])])([projectionMonitor1(st)]), div2([classes(["column"])])([slot2(_userInputComponent)(unit)(component1)(unit)(GotUserData.create)])]), div2([classes(["columns"])])([div2([classes(["column"])])([refChartBox1(st)]), div2([classes(["column"])])([projChartBox1(st)])])]);
+    return div_([section([classes(["section"])])([h12([classes(["title", "is-1"])])([text("PCproject")]), h22([classes(["subtitle", "is-4"])])([text("A PCA projection tool")]), div2([classes(["columns"])])([div2([classes(["column"])])([refDataBox1(st)]), div2([classes(["column"])])([projectionMonitor1(st)]), div2([classes(["column"])])([slot2(_userInputComponent)(unit)(component1)(unit)(GotUserData.create)])]), div2([classes(["columns"])])([div2([classes(["column"])])([refChartBox1(st)]), div2([classes(["column"])])([projChartBox1(st)])])]), footer([classes(["footer"])])([div2([classes(["content", "has-text-centered"])])([p_([strong_([text("Authors: ")]), text("Stephan Schiffels ("), externalLink("https://www.github.com/stschiff")("github.com/stschiff"), text("), Joscha Gretzinger")]), p_([strong_([text("References: ")]), br_, text("Reference data: "), externalLink("https://doi.org/10.1038/s41586-022-05247-2")("doi:10.1038/s41586-022-05247-2"), br_, text("Example data: "), externalLink("https://doi.org/10.1038/s41562-024-01888-7")("doi:10.1038/s41562-024-01888-7")])])])]);
   };
 };
 var component5 = function(dictMonadAff) {

@@ -75,20 +75,46 @@ component =
         }
     }
 
+externalLink :: forall action slots m. String -> String -> H.ComponentHTML action slots m
+externalLink url label =
+    HH.a [ HP.href url, HP.target "_blank", HP.rel "noopener noreferrer" ] [ HH.text label ]
+
 render :: forall m . (MonadAff m) => State -> H.ComponentHTML Action Slots m
 render st =
-    HH.section [ HP.classes [ HH.ClassName "section" ] ]
-        [ HH.h1 [ HP.classes [ HH.ClassName "title", HH.ClassName "is-1"] ]
-            [ HH.text "PC Projection Tool" ]
-        , HH.div [ HP.classes [ HH.ClassName "columns" ] ]
-            [ HH.div [ HP.classes [ HH.ClassName "column" ] ] [ refDataBox st ]
-            , HH.div [ HP.classes [ HH.ClassName "column" ] ] [ projectionMonitor st ]
-            , HH.div [ HP.classes [ HH.ClassName "column" ] ]
-                [ HH.slot _userInputComponent unit UserInputComponent.component unit GotUserData ]
+    HH.div_
+        [ HH.section [ HP.classes [ HH.ClassName "section" ] ]
+            [ HH.h1 [ HP.classes [ HH.ClassName "title", HH.ClassName "is-1"] ]
+                [ HH.text "PCproject" ]
+            , HH.h2 [ HP.classes [ HH.ClassName "subtitle", HH.ClassName "is-4" ] ]
+                [ HH.text "A PCA projection tool" ]
+            , HH.div [ HP.classes [ HH.ClassName "columns" ] ]
+                [ HH.div [ HP.classes [ HH.ClassName "column" ] ] [ refDataBox st ]
+                , HH.div [ HP.classes [ HH.ClassName "column" ] ] [ projectionMonitor st ]
+                , HH.div [ HP.classes [ HH.ClassName "column" ] ]
+                    [ HH.slot _userInputComponent unit UserInputComponent.component unit GotUserData ]
+                ]
+            , HH.div [ HP.classes [ HH.ClassName "columns" ] ]
+                [ HH.div [ HP.classes [ HH.ClassName "column" ] ] [ refChartBox st ]
+                , HH.div [ HP.classes [ HH.ClassName "column" ] ] [ projChartBox st ]
+                ]
             ]
-        , HH.div [ HP.classes [ HH.ClassName "columns" ] ]
-            [ HH.div [ HP.classes [ HH.ClassName "column" ] ] [ refChartBox st ]
-            , HH.div [ HP.classes [ HH.ClassName "column" ] ] [ projChartBox st ]
+        , HH.footer [ HP.classes [ HH.ClassName "footer" ] ]
+            [ HH.div [ HP.classes [ HH.ClassName "content", HH.ClassName "has-text-centered" ] ]
+                [ HH.p_
+                    [ HH.strong_ [ HH.text "Authors: " ]
+                    , HH.text "Stephan Schiffels ("
+                    , externalLink "https://www.github.com/stschiff" "github.com/stschiff"
+                    , HH.text "), Joscha Gretzinger"
+                    ]
+                , HH.p_
+                    [ HH.strong_ [ HH.text "References: " ], HH.br_
+                    , HH.text "Reference data: "
+                    , externalLink "https://doi.org/10.1038/s41586-022-05247-2" "doi:10.1038/s41586-022-05247-2"
+                    , HH.br_
+                    , HH.text "Example data: "
+                    , externalLink "https://doi.org/10.1038/s41562-024-01888-7" "doi:10.1038/s41562-024-01888-7"
+                    ]
+                ]
             ]
         ]
 
