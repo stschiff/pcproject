@@ -31914,8 +31914,8 @@ var render3 = function(dictMonadAff) {
     var toXY = function(sample2) {
       return apply3(map22(XY.create)(index(sample2.pcValues)(st.xPCindex - 1 | 0)))(index(sample2.pcValues)(st.yPCindex - 1 | 0));
     };
-    var projLabels = map111(function(sample2) {
-      return sample2.sampleID + (" (" + (sample2.popGroup + ")"));
+    var filteredSamples = filter(function(sample2) {
+      return sample2.nrSNPs > 2e4;
     })(st.projectedSamples);
     var projDataset = {
       barPercentage: defaultDataset.barPercentage,
@@ -31978,15 +31978,16 @@ var render3 = function(dictMonadAff) {
       xAxisID: defaultDataset.xAxisID,
       yAxisID: defaultDataset.yAxisID,
       label: "Projected samples",
-      data: mapMaybe(toXY)(filter(function(sample2) {
-        return sample2.nrSNPs > 2e4;
-      })(st.projectedSamples)),
+      data: mapMaybe(toXY)(filteredSamples),
       backgroundColor: single(css("black")),
       pointRadius: single(4),
       pointHoverRadius: single(5),
       order: new Just(0)
     };
-    var removedSamples = length(st.projectedSamples) - length(projDataset.data) | 0;
+    var projLabels = map111(function(sample2) {
+      return sample2.sampleID + (" (" + (sample2.popGroup + ")"));
+    })(filteredSamples);
+    var removedSamples = length(st.projectedSamples) - length(filteredSamples) | 0;
     var backgroundLabels = map111(function(sample2) {
       return sample2.popName;
     })(st.refPosData.samples);
@@ -32187,8 +32188,8 @@ var render3 = function(dictMonadAff) {
       }
     };
     return div_(append12(function() {
-      var $32 = removedSamples > 0;
-      if ($32) {
+      var $31 = removedSamples > 0;
+      if ($31) {
         return [text("(" + (show3(removedSamples) + " samples with <20000 SNPs not shown)"))];
       }
       ;

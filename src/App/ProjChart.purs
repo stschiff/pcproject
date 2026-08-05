@@ -79,15 +79,17 @@ render st =
         -- Projected samples all in one flat, undifferentiated dataset for now (no
         -- per-population coloring yet, since PLINK fam files carry only one label
         -- per individual, not a separate finer/coarser grouping like the reference data).
+
+        filteredSamples = Array.filter (\sample -> sample.nrSNPs > 20000) st.projectedSamples
         projDataset = defaultDataset
             { label = "Projected samples"
-            , data = (Array.mapMaybe toXY <<< Array.filter (\sample -> sample.nrSNPs > 20000)) $ st.projectedSamples
+            , data = (Array.mapMaybe toXY filteredSamples)
             , backgroundColor = single (css "black")
             , pointRadius = single 4.0
             , pointHoverRadius = single 5.0
             , order = Just 0
             }
-        projLabels = map (\sample -> sample.sampleID <> " (" <> sample.popGroup <> ")") st.projectedSamples
+        projLabels = map (\sample -> sample.sampleID <> " (" <> sample.popGroup <> ")") filteredSamples
 
         chartInput =
             { config : defaultConfig
@@ -112,7 +114,7 @@ render st =
                     })
                 }
             }
-        removedSamples = Array.length st.projectedSamples - Array.length projDataset.data
+        removedSamples = Array.length st.projectedSamples - Array.length filteredSamples
     in  HH.div_ $
         (if removedSamples > 0
         then [ HH.text $ "(" <> (show removedSamples) <> " samples with <20000 SNPs not shown)" ]
