@@ -31879,7 +31879,7 @@ var render2 = function(dictMonadAff) {
         })
       }
     };
-    return div_([slot_2(_chart)(unit)(component1)(chartInput)]);
+    return div2([attr2("style")("position: relative;")])([slot_2(_chart)(unit)(component1)(chartInput)]);
   };
 };
 var component2 = function(dictMonadAff) {
@@ -32194,7 +32194,7 @@ var render3 = function(dictMonadAff) {
       }
       ;
       return [];
-    }())([slot_3(_chart2)(unit)(component1)(chartInput)]));
+    }())([div2([attr2("style")("position: relative;")])([slot_3(_chart2)(unit)(component1)(chartInput)])]));
   };
 };
 var component3 = function(dictMonadAff) {

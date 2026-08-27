@@ -17,6 +17,7 @@ import Effect.Aff.Class (class MonadAff)
 import Foreign.Object (fromFoldable)
 import Halogen as H
 import Halogen.HTML as HH
+import Halogen.HTML.Properties as HP
 import Pca.RefPosData (RefPosData)
 import Type.Proxy (Proxy(..))
 
@@ -118,4 +119,7 @@ render st =
     in  HH.div_ $
         (if removedSamples > 0
         then [ HH.text $ "(" <> (show removedSamples) <> " samples with <20000 SNPs not shown)" ]
-        else []) <> [ HH.slot_ _chart unit HC.component chartInput ]
+        else []) <>
+        [ HH.div [ HP.attr (HH.AttrName "style") "position: relative;" ]
+            [ HH.slot_ _chart unit HC.component chartInput ]
+        ]

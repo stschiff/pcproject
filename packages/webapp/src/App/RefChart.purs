@@ -17,6 +17,7 @@ import Effect.Uncurried (EffectFn1)
 import Foreign.Object (fromFoldable)
 import Halogen as H
 import Halogen.HTML as HH
+import Halogen.HTML.Properties as HP
 import Pca.RefPosData (RefPosData)
 import Type.Proxy (Proxy(..))
 
@@ -77,4 +78,5 @@ render st =
                     })
                 }
             }
-    in  HH.div_ [ HH.slot_ _chart unit HC.component chartInput ]
+    in  HH.div [ HP.attr (HH.AttrName "style") "position: relative;" ]
+            [ HH.slot_ _chart unit HC.component chartInput ]
