@@ -1,8 +1,39 @@
 {
   "workspace": {
     "packages": {
-      "pcproject": {
-        "path": "./",
+      "genotype-io": {
+        "path": "packages/genotype-io",
+        "core": {
+          "dependencies": [
+            "arraybuffer-types",
+            "effect",
+            "prelude"
+          ]
+        },
+        "test": {
+          "dependencies": [
+            "console"
+          ]
+        }
+      },
+      "pca": {
+        "path": "packages/pca",
+        "core": {
+          "dependencies": [
+            "arraybuffer-types",
+            "effect",
+            "genotype-io",
+            "prelude"
+          ]
+        },
+        "test": {
+          "dependencies": [
+            "console"
+          ]
+        }
+      },
+      "webapp": {
+        "path": "packages/webapp",
         "core": {
           "dependencies": [
             "aff",
@@ -18,8 +49,10 @@
             "fetch-argonaut",
             "foldable-traversable",
             "foreign",
+            "genotype-io",
             "halogen",
             "maybe",
+            "pca",
             "prelude",
             "stringutils",
             "tuples",
@@ -31,7 +64,9 @@
           ]
         },
         "test": {
-          "dependencies": []
+          "dependencies": [
+            "console"
+          ]
         }
       }
     },

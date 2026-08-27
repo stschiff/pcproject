@@ -1,0 +1,10 @@
+package:
+  name: genotype-io
+  dependencies:
+    - arraybuffer-types
+    - effect
+    - prelude
+  test:
+    main: Test.GenotypeIO.Main
+    dependencies:
+      - console

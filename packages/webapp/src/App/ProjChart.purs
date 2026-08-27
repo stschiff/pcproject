@@ -17,7 +17,7 @@ import Effect.Aff.Class (class MonadAff)
 import Foreign.Object (fromFoldable)
 import Halogen as H
 import Halogen.HTML as HH
-import PCproject.RefPosData (RefPosData)
+import Pca.RefPosData (RefPosData)
 import Type.Proxy (Proxy(..))
 
 type ProjectedSample =

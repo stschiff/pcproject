@@ -1,0 +1,32 @@
+package:
+  name: webapp
+  dependencies:
+    - aff
+    - arraybuffer
+    - arraybuffer-types
+    - arrays
+    - chartjs
+    - chartjs-halogen
+    - effect
+    - either
+    - exceptions
+    - fetch
+    - fetch-argonaut
+    - foldable-traversable
+    - foreign
+    - genotype-io
+    - halogen
+    - maybe
+    - pca
+    - prelude
+    - stringutils
+    - tuples
+    - uint
+    - web-encoding
+    - web-events
+    - web-file
+    - web-html
+  test:
+    main: Test.Webapp.Main
+    dependencies:
+      - console

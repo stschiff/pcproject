@@ -1,29 +1,3 @@
-package:
-  name: "pcproject"
-  dependencies:
-    - aff
-    - arraybuffer
-    - arraybuffer-types
-    - arrays
-    - chartjs
-    - chartjs-halogen
-    - effect
-    - either
-    - exceptions
-    - fetch
-    - fetch-argonaut
-    - foldable-traversable
-    - foreign
-    - halogen
-    - maybe
-    - prelude
-    - stringutils
-    - tuples
-    - uint
-    - web-encoding
-    - web-events
-    - web-file
-    - web-html
 workspace:
   packageSet:
     registry: 77.2.0

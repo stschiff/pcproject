@@ -7,7 +7,7 @@
     "spago": "^1.0.4"
   },
   "scripts": {
-    "build": "spago bundle --outfile docs/app.js --bundle-type module",
+    "build": "spago bundle -p webapp --outfile ../../docs/app.js --bundle-type module",
     "test": "spago test",
     "repl": "spago repl",
     "serve": "http-server docs -c -1"

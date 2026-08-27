@@ -1,4 +1,4 @@
-module PCproject.RefPosData where
+module Pca.RefPosData where
 
 type SampleData =
   { sampleID :: String

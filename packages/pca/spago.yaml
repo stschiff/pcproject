@@ -1,0 +1,11 @@
+package:
+  name: pca
+  dependencies:
+    - arraybuffer-types
+    - effect
+    - prelude
+    - genotype-io
+  test:
+    main: Test.Pca.Main
+    dependencies:
+      - console

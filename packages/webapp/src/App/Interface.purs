@@ -26,12 +26,12 @@ import App.RefChart as RefChart
 import App.UserInputComponent as UserInputComponent
 import App.Utils (RemoteData(..))
 
-import PCproject.PCproject (ProjectionResult, projectSamples, PCAparams,
+import Pca.Projection (ProjectionResult, projectSamples, PCAparams,
         getOverlapMasks, reducePcWeights, extractAndTransposeGenotypes,
         OverlapMasks)
-import PCproject.PlinkData (PlinkData)
-import PCproject.RefPosData (RefPosData, readRefPosData)
-import PCproject.SnpWeights (SnpWeights, readSnpWeights)
+import GenotypeIO.Plink (PlinkData)
+import Pca.RefPosData (RefPosData, readRefPosData)
+import Pca.SnpWeights (SnpWeights, readSnpWeights)
 
 type ReferenceBundle = {
   snpWeights :: SnpWeights,

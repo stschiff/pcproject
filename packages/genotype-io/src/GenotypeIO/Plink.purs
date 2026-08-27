@@ -1,4 +1,4 @@
-module PCproject.PlinkData where
+module GenotypeIO.Plink where
 
 import Prelude
 

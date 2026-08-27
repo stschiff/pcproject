@@ -1,12 +1,12 @@
-module PCproject.PCproject where
+module Pca.Projection where
 
 import Data.ArrayBuffer.Types (Uint8Array, Float32Array)
 import Effect.Class (class MonadEffect, liftEffect)
 import Effect.Uncurried (EffectFn2, EffectFn4, EffectFn6, runEffectFn2, runEffectFn4, runEffectFn6)
 import Prelude
 
-import PCproject.PlinkData (PlinkBimData)
-import PCproject.SnpWeights (SnpWeights)
+import GenotypeIO.Plink (PlinkBimData)
+import Pca.SnpWeights (SnpWeights)
 
 type OverlapMasks = {
     snpWeightMask :: Uint8Array,

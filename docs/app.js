@@ -32624,6 +32624,110 @@ var fetch2 = function() {
   };
 };
 
+// output/GenotypeIO.Plink/foreign.js
+function readBimDataImpl(bimText) {
+  const lines = bimText.trim().split("\n");
+  const nrSNPs = lines.length;
+  let chromosomes = new Uint8Array(nrSNPs);
+  let positions2 = new Uint32Array(nrSNPs);
+  let snpIDs = new Array(nrSNPs);
+  let alleles1 = new Uint8Array(nrSNPs);
+  let alleles2 = new Uint8Array(nrSNPs);
+  for (let i2 = 0; i2 < nrSNPs; i2++) {
+    const fields = lines[i2].trim().split(/\s+/);
+    chromosomes[i2] = parseInt(fields[0]);
+    if (isNaN(chromosomes[i2]) || chromosomes[i2] < 1 || chromosomes[i2] > 25) {
+      throw new Error(`Invalid chromosome for SNP ${snpIDs[i2]}: ${fields[0]}`);
+    }
+    snpIDs[i2] = fields[1];
+    positions2[i2] = parseInt(fields[3]);
+    if (isNaN(positions2[i2])) {
+      throw new Error(`Invalid position for SNP ${snpIDs[i2]}: ${fields[3]}`);
+    }
+    alleles1[i2] = fields[4].charCodeAt(0);
+    alleles2[i2] = fields[5].charCodeAt(0);
+  }
+  console.log(`Loaded ${nrSNPs} SNPs from BIM file.`);
+  return { snpIDs, chromosomes, positions: positions2, alleles1, alleles2 };
+}
+function readFamDataImpl(famText) {
+  const lines = famText.trim().split("\n");
+  const nrSamples = lines.length;
+  let popNames = new Array(nrSamples);
+  let indNames = new Array(nrSamples);
+  for (let i2 = 0; i2 < nrSamples; i2++) {
+    const fields = lines[i2].trim().split(/\s+/);
+    popNames[i2] = fields[0];
+    indNames[i2] = fields[1];
+  }
+  console.log(`Loaded ${nrSamples} individuals from FAM file.`);
+  return { indNames, popNames };
+}
+function readBedDataImpl(bedArrayBuffer, numSnps, numInds) {
+  const bytes = new Uint8Array(bedArrayBuffer);
+  if (bytes.length < 3 || bytes[0] !== 108 || bytes[1] !== 27 || bytes[2] !== 1) {
+    throw new Error("Invalid .bed file: incorrect magic numbers");
+  }
+  let returnArray = new Uint8Array(numSnps * numInds);
+  let blockSize = Math.ceil(numInds / 4);
+  for (let i2 = 0; i2 < numSnps; i2++) {
+    for (let j = 0; j < numInds; j++) {
+      const byteIndex = 3 + i2 * blockSize + Math.floor(j / 4);
+      const bitOffset = j % 4 * 2;
+      const genotypeBits = bytes[byteIndex] >> bitOffset & 3;
+      switch (genotypeBits) {
+        case 0:
+          returnArray[i2 * numInds + j] = 0;
+          break;
+        // Homozygous reference
+        case 2:
+          returnArray[i2 * numInds + j] = 1;
+          break;
+        // Heterozygous
+        case 3:
+          returnArray[i2 * numInds + j] = 2;
+          break;
+        // Homozygous alternate
+        case 1:
+          returnArray[i2 * numInds + j] = 3;
+          break;
+      }
+    }
+  }
+  console.log(`Loaded ${numSnps * numInds} genotypes from BED file.`);
+  return returnArray;
+}
+
+// output/GenotypeIO.Plink/index.js
+var readFamData = function(dictMonadEffect) {
+  var liftEffect9 = liftEffect(dictMonadEffect);
+  return function(famContent) {
+    return liftEffect9(function() {
+      return readFamDataImpl(famContent);
+    });
+  };
+};
+var readBimData = function(dictMonadEffect) {
+  var liftEffect9 = liftEffect(dictMonadEffect);
+  return function(bimContent) {
+    return liftEffect9(function() {
+      return readBimDataImpl(bimContent);
+    });
+  };
+};
+var readBedData = function(dictMonadEffect) {
+  var liftEffect9 = liftEffect(dictMonadEffect);
+  return function(bedArrayBuffer) {
+    return function(numSnps) {
+      return function(numInds) {
+        return liftEffect9(function() {
+          return readBedDataImpl(bedArrayBuffer, numSnps, numInds);
+        });
+      };
+    };
+  };
+};
+
 // output/Web.Event.Event/foreign.js
 function _target(e) {
   return e.target;
@@ -32708,110 +32812,6 @@ var onClick = /* @__PURE__ */ function() {
     return $15(mouseHandler($16));
   };
 }();
-
-// output/PCproject.PlinkData/foreign.js
-function readBimDataImpl(bimText) {
-  const lines = bimText.trim().split("\n");
-  const nrSNPs = lines.length;
-  let chromosomes = new Uint8Array(nrSNPs);
-  let positions2 = new Uint32Array(nrSNPs);
-  let snpIDs = new Array(nrSNPs);
-  let alleles1 = new Uint8Array(nrSNPs);
-  let alleles2 = new Uint8Array(nrSNPs);
-  for (let i2 = 0; i2 < nrSNPs; i2++) {
-    const fields = lines[i2].trim().split(/\s+/);
-    chromosomes[i2] = parseInt(fields[0]);
-    if (isNaN(chromosomes[i2]) || chromosomes[i2] < 1 || chromosomes[i2] > 25) {
-      throw new Error(`Invalid chromosome for SNP ${snpIDs[i2]}: ${fields[0]}`);
-    }
-    snpIDs[i2] = fields[1];
-    positions2[i2] = parseInt(fields[3]);
-    if (isNaN(positions2[i2])) {
-      throw new Error(`Invalid position for SNP ${snpIDs[i2]}: ${fields[3]}`);
-    }
-    alleles1[i2] = fields[4].charCodeAt(0);
-    alleles2[i2] = fields[5].charCodeAt(0);
-  }
-  console.log(`Loaded ${nrSNPs} SNPs from BIM file.`);
-  return { snpIDs, chromosomes, positions: positions2, alleles1, alleles2 };
-}
-function readFamDataImpl(famText) {
-  const lines = famText.trim().split("\n");
-  const nrSamples = lines.length;
-  let popNames = new Array(nrSamples);
-  let indNames = new Array(nrSamples);
-  for (let i2 = 0; i2 < nrSamples; i2++) {
-    const fields = lines[i2].trim().split(/\s+/);
-    popNames[i2] = fields[0];
-    indNames[i2] = fields[1];
-  }
-  console.log(`Loaded ${nrSamples} individuals from FAM file.`);
-  return { indNames, popNames };
-}
-function readBedDataImpl(bedArrayBuffer, numSnps, numInds) {
-  const bytes = new Uint8Array(bedArrayBuffer);
-  if (bytes.length < 3 || bytes[0] !== 108 || bytes[1] !== 27 || bytes[2] !== 1) {
-    throw new Error("Invalid .bed file: incorrect magic numbers");
-  }
-  let returnArray = new Uint8Array(numSnps * numInds);
-  let blockSize = Math.ceil(numInds / 4);
-  for (let i2 = 0; i2 < numSnps; i2++) {
-    for (let j = 0; j < numInds; j++) {
-      const byteIndex = 3 + i2 * blockSize + Math.floor(j / 4);
-      const bitOffset = j % 4 * 2;
-      const genotypeBits = bytes[byteIndex] >> bitOffset & 3;
-      switch (genotypeBits) {
-        case 0:
-          returnArray[i2 * numInds + j] = 0;
-          break;
-        // Homozygous reference
-        case 2:
-          returnArray[i2 * numInds + j] = 1;
-          break;
-        // Heterozygous
-        case 3:
-          returnArray[i2 * numInds + j] = 2;
-          break;
-        // Homozygous alternate
-        case 1:
-          returnArray[i2 * numInds + j] = 3;
-          break;
-      }
-    }
-  }
-  console.log(`Loaded ${numSnps * numInds} genotypes from BED file.`);
-  return returnArray;
-}
-
-// output/PCproject.PlinkData/index.js
-var readFamData = function(dictMonadEffect) {
-  var liftEffect9 = liftEffect(dictMonadEffect);
-  return function(famContent) {
-    return liftEffect9(function() {
-      return readFamDataImpl(famContent);
-    });
-  };
-};
-var readBimData = function(dictMonadEffect) {
-  var liftEffect9 = liftEffect(dictMonadEffect);
-  return function(bimContent) {
-    return liftEffect9(function() {
-      return readBimDataImpl(bimContent);
-    });
-  };
-};
-var readBedData = function(dictMonadEffect) {
-  var liftEffect9 = liftEffect(dictMonadEffect);
-  return function(bedArrayBuffer) {
-    return function(numSnps) {
-      return function(numInds) {
-        return liftEffect9(function() {
-          return readBedDataImpl(bedArrayBuffer, numSnps, numInds);
-        });
-      };
-    };
-  };
-};
 
 // output/Web.Encoding.TextDecoder/foreign.js
 var newImpl4 = function(label5) {
@@ -36092,7 +36092,7 @@ var ndarray_default = dgels3;
 (0, import_lib9.default)(dgels_default, "ndarray", ndarray_default);
 var main_default = dgels_default;
 
-// output/PCproject.PCproject/foreign.js
+// output/Pca.Projection/foreign.js
 function getOverlapMasksImpl(sampleBimData, snpWeights) {
   const snpWeightMask = new Uint8Array(snpWeights.snpIDs.length);
   const plinkMask = new Uint8Array(sampleBimData.snpIDs.length);
@@ -36246,7 +36246,7 @@ function projectSamplesImpl(transposedGenotypeMatrix, pcWeights, frequencies, nu
   return ret;
 }
 
-// output/PCproject.PCproject/index.js
+// output/Pca.Projection/index.js
 var reducePcWeights = function(dictMonadEffect) {
   var liftEffect9 = liftEffect(dictMonadEffect);
   return function(snpWeights) {
@@ -36300,7 +36300,7 @@ var extractAndTransposeGenotypes = function(dictMonadEffect) {
   };
 };
 
-// output/PCproject.RefPosData/foreign.js
+// output/Pca.RefPosData/foreign.js
 function readRefPosData(content3) {
   const lines = content3.trim().split("\n");
   const numSamples = lines.length - 1;
@@ -36337,7 +36337,7 @@ function readRefPosData(content3) {
   return { samples, numSamples, numPCs };
 }
 
-// output/PCproject.SnpWeights/foreign.js
+// output/Pca.SnpWeights/foreign.js
 function readSnpWeights(snpWeightText) {
   const lines = snpWeightText.trim().split("\n");
   const numSNPs = lines.length;

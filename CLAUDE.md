@@ -13,51 +13,76 @@ absolute (`/app.js` resolves to the domain root, not `/pcproject/`)).
 ## Stack
 
 - **PureScript** (Halogen) compiled to a single JS module via Spago/esbuild.
-- `docs/` is both the GitHub Pages source folder and the `npm run serve`
-  target — `npm run build` writes `docs/app.js` directly, so there is no
-  separate dev/prod asset layout to keep in sync.
+- **Spago multi-package workspace** (`spago.yaml` at repo root holds only the
+  `workspace:`/package-set config; each real package lives under `packages/*`
+  with its own `spago.yaml`). This is groundwork for eventually publishing
+  pieces of this app as standalone npm packages (a `@popgen-toolbox` scope) —
+  see git history around the `refactor/monorepo-packages` branch for the
+  rationale.
+- `docs/` (repo root, **not** under `packages/`) is both the GitHub Pages
+  source folder and the `npm run serve` target — deliberately left outside
+  the package split because GitHub Pages' "source folder" setting only
+  supports repo-root or `/docs`, not arbitrary nested paths.
 - Charts via `chartjs` / `chartjs-halogen` (Chart.js wrapped for Halogen).
 
 ## Commands
 
-- `npm run build` — `spago bundle --outfile docs/app.js --bundle-type module`
+- `npm run build` — `spago bundle -p webapp --outfile ../../docs/app.js
+  --bundle-type module` (the `--outfile` path is relative to the *selected
+  package's* directory, `packages/webapp`, hence `../../`)
 - `npm run serve` — `http-server docs -c -1` (serves the same folder GitHub
   Pages serves, so this is a reliable local preview of the deployed site)
-- `npm test` — `spago test`
+- `npm test` — `spago test` (runs the (currently placeholder) test suite for
+  every package in the workspace)
 - `npm run repl` — `spago repl`
+- `spago build` (no `-p`) builds all three workspace packages; `spago build
+  -p <name>` / `spago test -p <name>` scope to one.
 
-After any change under `src/`, run `npm run build` before `npm run serve` —
-`docs/app.js` is a committed build artifact, not generated on the fly.
+After any change under `packages/*/src`, run `npm run build` before `npm run
+serve` — `docs/app.js` is a committed build artifact, not generated on the fly.
 
-## Source layout (`src/`)
+## Package layout (`packages/`)
 
-- `Main.purs` — entry point, mounts `App.Interface.component` into the page body.
-- `App/Interface.purs` — root Halogen component. Loads the reference PCA
-  bundle on init (`LoadRefData`), holds uploaded user data, and triggers
-  `RunProjection` whenever both are present. Owns the three-column layout
-  (reference data box / projection monitor / user upload) and the two chart
-  boxes below it.
-- `App/UserInputComponent.purs` — file upload widget (PLINK `.fam`/`.bim`/`.bed`
-  triplet) and the "Load Example Data" button, which fetches a bundled example
-  triplet from `docs/assets/` instead of requiring a user upload.
-- `App/RefChart.purs` / `App/RefChart.js` — scatter plot of reference
-  population samples (Chart.js), grouped/colored by `popGroup`.
-- `App/ProjChart.purs` — scatter plot overlaying projected user samples (black)
-  on top of a grayed-out reference layer; filters out samples with fewer than
-  20000 overlapping SNPs.
-- `App/Utils.purs` — `RemoteData e a` (`NotAsked | Loading | Failure e | Success a`),
-  used throughout to drive loading/error UI state.
-- `PCproject/PlinkData.purs` (+ `.js`) — binary parsers for `.bed`/`.bim`/`.fam`.
-- `PCproject/SnpWeights.purs` / `RefPosData.purs` — parsers for the reference
-  PCA bundle: per-SNP PC weights/frequencies, and reference sample coordinates.
-- `PCproject/PCproject.purs` (+ `.js`) — the actual math: matching SNPs
-  between the user's data and the reference weights (`getOverlapMasks`,
-  handling strand ambiguity and allele flips), then projecting genotypes onto
-  the PCs (`projectSamples`).
+Three Spago packages, each environment-agnostic unless noted:
+
+- **`genotype-io`** — `GenotypeIO.Plink` (+ `.js`): binary parsers for
+  `.bed`/`.bim`/`.fam`. Pure functions over strings/`ArrayBuffer`s, no
+  browser/DOM/network dependency — usable from Node or the browser alike.
+- **`pca`** — depends on `genotype-io`. `Pca.SnpWeights` / `Pca.RefPosData`
+  (parsers for the reference PCA bundle: per-SNP PC weights/frequencies,
+  reference sample coordinates) and `Pca.Projection` (the actual math:
+  `getOverlapMasks` matches SNPs between user data and reference weights,
+  handling strand ambiguity and allele flips; then `projectSamples` projects
+  genotypes onto the PCs). Also has no browser-specific dependency — this is
+  the intended reusable "core."
+- **`webapp`** — the Halogen UI (only package allowed to depend on
+  `halogen`/`chartjs`/DOM). Depends on both `genotype-io` and `pca`.
+  - `src/Main.purs` — entry point, mounts `App.Interface.component` into the
+    page body.
+  - `src/App/Interface.purs` — root Halogen component. Loads the reference
+    PCA bundle on init (`LoadRefData`), holds uploaded user data, and
+    triggers `RunProjection` whenever both are present. Owns the
+    three-column layout (reference data box / projection monitor / user
+    upload) and the two chart boxes below it.
+  - `src/App/UserInputComponent.purs` — file upload widget (PLINK
+    `.fam`/`.bim`/`.bed` triplet) and the "Load Example Data" button, which
+    fetches a bundled example triplet from `docs/assets/` instead of
+    requiring a user upload.
+  - `src/App/RefChart.purs` / `RefChart.js` — scatter plot of reference
+    population samples (Chart.js), grouped/colored by `popGroup`.
+  - `src/App/ProjChart.purs` — scatter plot overlaying projected user
+    samples (black) on top of a grayed-out reference layer; filters out
+    samples with fewer than 20000 overlapping SNPs.
+  - `src/App/Utils.purs` — `RemoteData e a` (`NotAsked | Loading | Failure e
+    | Success a`), used throughout to drive loading/error UI state.
 
 PureScript modules with FFI pair a `.purs` file with a same-named `.js` file
 holding the JS implementation (binary parsing, typed-array math) — check the
-`.js` file when a `.purs` file only has `foreign import` declarations.
+`.js` file when a `.purs` file only has `foreign import` declarations. Module
+names follow each package's own namespace (`GenotypeIO.*`, `Pca.*`) rather
+than the old flat `PCproject.*` namespace from before the package split; the
+app's own UI modules keep the `App.*` namespace since they aren't a published
+library.
 
 ## Data flow
 

@@ -1,4 +1,4 @@
-module PCproject.SnpWeights where
+module Pca.SnpWeights where
 
 import Data.ArrayBuffer.Types (Float32Array, Uint32Array, Uint8Array)
 
