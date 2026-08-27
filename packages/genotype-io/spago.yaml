@@ -1,5 +1,5 @@
 package:
-  name: genotype-io
+  name: popgen-genotype-io
   dependencies:
     - arraybuffer-types
     - effect

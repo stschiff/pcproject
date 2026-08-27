@@ -1,7 +1,7 @@
 {
   "workspace": {
     "packages": {
-      "genotype-io": {
+      "popgen-genotype-io": {
         "path": "packages/genotype-io",
         "core": {
           "dependencies": [
@@ -16,13 +16,13 @@
           ]
         }
       },
-      "pca": {
+      "popgen-pca": {
         "path": "packages/pca",
         "core": {
           "dependencies": [
             "arraybuffer-types",
             "effect",
-            "genotype-io",
+            "popgen-genotype-io",
             "prelude"
           ]
         },
@@ -49,10 +49,10 @@
             "fetch-argonaut",
             "foldable-traversable",
             "foreign",
-            "genotype-io",
             "halogen",
             "maybe",
-            "pca",
+            "popgen-genotype-io",
+            "popgen-pca",
             "prelude",
             "stringutils",
             "tuples",

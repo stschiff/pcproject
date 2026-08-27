@@ -43,12 +43,21 @@ serve` — `docs/app.js` is a committed build artifact, not generated on the fly
 
 ## Package layout (`packages/`)
 
-Three Spago packages, each environment-agnostic unless noted:
+Three Spago packages, each environment-agnostic unless noted. Folder names
+under `packages/` stay short (`genotype-io`, `pca`); the `spago.yaml`
+`package: name:` field for the two publishable library packages carries the
+`popgen-` prefix instead (`popgen-genotype-io`, `popgen-pca`) — Pursuit has
+no npm-style `@scope/name` mechanism, so the shared-namespace signal has to
+live in the package name itself. `webapp` isn't published, so it keeps a
+plain name. Use the prefixed name with `spago build -p`/`spago test -p` and
+in other packages' `dependencies:` lists.
 
-- **`genotype-io`** — `GenotypeIO.Plink` (+ `.js`): binary parsers for
-  `.bed`/`.bim`/`.fam`. Pure functions over strings/`ArrayBuffer`s, no
-  browser/DOM/network dependency — usable from Node or the browser alike.
-- **`pca`** — depends on `genotype-io`. `Pca.SnpWeights` / `Pca.RefPosData`
+- **`genotype-io`** (published as `popgen-genotype-io`) — `GenotypeIO.Plink`
+  (+ `.js`): binary parsers for `.bed`/`.bim`/`.fam`. Pure functions over
+  strings/`ArrayBuffer`s, no browser/DOM/network dependency — usable from
+  Node or the browser alike.
+- **`pca`** (published as `popgen-pca`) — depends on `popgen-genotype-io`.
+  `Pca.SnpWeights` / `Pca.RefPosData`
   (parsers for the reference PCA bundle: per-SNP PC weights/frequencies,
   reference sample coordinates) and `Pca.Projection` (the actual math:
   `getOverlapMasks` matches SNPs between user data and reference weights,

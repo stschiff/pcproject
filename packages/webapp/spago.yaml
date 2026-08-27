@@ -14,10 +14,10 @@ package:
     - fetch-argonaut
     - foldable-traversable
     - foreign
-    - genotype-io
     - halogen
     - maybe
-    - pca
+    - popgen-genotype-io
+    - popgen-pca
     - prelude
     - stringutils
     - tuples

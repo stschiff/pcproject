@@ -1,10 +1,10 @@
 package:
-  name: pca
+  name: popgen-pca
   dependencies:
     - arraybuffer-types
     - effect
     - prelude
-    - genotype-io
+    - popgen-genotype-io
   test:
     main: Test.Pca.Main
     dependencies:
