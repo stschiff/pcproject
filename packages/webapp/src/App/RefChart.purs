@@ -18,7 +18,7 @@ import Foreign.Object (fromFoldable)
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Properties as HP
-import Pca.RefPosData (RefPosData)
+import PCA (RefPosData)
 import Type.Proxy (Proxy(..))
 
 foreign import tooltipLabelImpl :: Array (Array String) -> EffectFn1 TooltipItem String

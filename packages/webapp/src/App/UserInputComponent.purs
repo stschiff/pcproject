@@ -23,7 +23,7 @@ import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
-import GenotypeIO.Plink (PlinkData, readBimData, readFamData, readBedData)
+import GenotypeIO (PlinkData, readBimData, readFamData, readBedData)
 import Web.Encoding.TextDecoder as TextDecoder
 import Web.Encoding.UtfLabel as UtfLabel
 import Web.Event.Event as WE
@@ -215,13 +215,13 @@ handleAction (GotGenoDataFileEvent ev) = do
                 [bedFile] -> do
                   H.modify_ (\_ -> FromUserUpload fileNames Loading)
                   -- Read the files asynchronously using makeAff
-                  famResult <- liftAff $ attempt (readFileAsArrayBufferAff famFile >>= arrayBufferToString >>= readFamData)
-                  bimResult <- liftAff $ attempt (readFileAsArrayBufferAff bimFile >>= arrayBufferToString >>= readBimData)
+                  famResult <- liftAff $ attempt (readFileAsArrayBufferAff famFile >>= arrayBufferToString >>= (liftEffect <<< readFamData))
+                  bimResult <- liftAff $ attempt (readFileAsArrayBufferAff bimFile >>= arrayBufferToString >>= (liftEffect <<< readBimData))
                   case Tuple famResult bimResult of
                     Tuple (Right fam) (Right bim) -> do
                       let numInds = length fam.indNames
                       let numSNPs = length bim.snpIDs
-                      bedResult <- liftAff $ attempt (readFileAsArrayBufferAff bedFile >>= \bedContent -> readBedData bedContent numSNPs numInds)
+                      bedResult <- liftAff $ attempt (readFileAsArrayBufferAff bedFile >>= \bedContent -> liftEffect $ readBedData bedContent numSNPs numInds)
                       case bedResult of
                         Left err -> H.modify_ (\_ -> FromUserUpload fileNames (Failure $ "Error reading .bed file: " <> show err))
                         Right bed -> do
@@ -242,13 +242,13 @@ handleAction RequestSampleData = do
     bedFetch <- H.liftAff $ fetch "./assets/2024_Gretzinger_EarlyCelts.bed" {}
     if famFetch.ok && bimFetch.ok && bedFetch.ok
         then do
-            famResult <- H.liftAff $ attempt (famFetch.text >>= readFamData)
-            bimResult <- H.liftAff $ attempt (bimFetch.text >>= readBimData)
+            famResult <- H.liftAff $ attempt (famFetch.text >>= (liftEffect <<< readFamData))
+            bimResult <- H.liftAff $ attempt (bimFetch.text >>= (liftEffect <<< readBimData))
             case Tuple famResult bimResult of
                 Tuple (Right fam) (Right bim) -> do
                     let numInds = length fam.indNames
                     let numSNPs = length bim.snpIDs
-                    bedResult <- H.liftAff $ attempt (bedFetch.arrayBuffer >>= \bedContent -> readBedData bedContent numSNPs numInds)
+                    bedResult <- H.liftAff $ attempt (bedFetch.arrayBuffer >>= \bedContent -> liftEffect $ readBedData bedContent numSNPs numInds)
                     case bedResult of
                         Left err -> H.modify_ (\_ -> FromExampleData (Failure $ "Error reading .bed file: " <> show err))
                         Right bed -> do

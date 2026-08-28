@@ -1,6 +1,9 @@
 {
   "name": "pcproject",
   "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
   "devDependencies": {
     "parcel": "2.7.0",
     "purescript": "^0.15.4",

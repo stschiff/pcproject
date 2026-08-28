@@ -1,0 +1,12 @@
+{
+  "name": "@popgen-toolbox/genotype-io",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "dist/index.js",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "spago bundle -p popgen-genotype-io --module GenotypeIO --outfile dist/index.js --bundle-type module"
+  }
+}

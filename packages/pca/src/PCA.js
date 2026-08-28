@@ -1,6 +1,6 @@
 import dgels from '@rreusser/blapack/lapack/base/dgels';
 
-function getOverlapMasksImpl(sampleBimData, snpWeights) {
+export function getOverlapMasksImpl(sampleBimData, snpWeights) {
     const snpWeightMask = new Uint8Array(snpWeights.snpIDs.length);
     const plinkMask = new Uint8Array(sampleBimData.snpIDs.length);
     const flipMask = new Uint8Array(sampleBimData.snpIDs.length);
@@ -81,7 +81,7 @@ function complement(a) {
     }
 }
 
-function reducePcWeightsImpl(snpWeights, overlap) {
+export function reducePcWeightsImpl(snpWeights, overlap) {
     if (snpWeights.snpIDs.length == overlap.nrIncluded) {
         return snpWeights; // no reduction needed
     } else {
@@ -108,7 +108,7 @@ function reducePcWeightsImpl(snpWeights, overlap) {
     }
 }
 
-function extractAndTransposeGenotypesImpl(plinkBedDat, numSNPs, numInds, overlap) {
+export function extractAndTransposeGenotypesImpl(plinkBedDat, numSNPs, numInds, overlap) {
     const newGenotypeMatrix = new Uint8Array(numInds * overlap.nrIncluded); // we transpose the output
     let reducedIndex = 0;
     for(let i = 0; i < numSNPs; i++) {
@@ -132,7 +132,7 @@ function flip(geno) {
         return 2 - geno;
 }
 
-function projectSamplesImpl(transposedGenotypeMatrix, pcWeights, frequencies,
+export function projectSamplesImpl(transposedGenotypeMatrix, pcWeights, frequencies,
                         numInds, numPCs, { nScale, yScale, eigenValues }) {
     let ret = [];
     const numSNPs = frequencies.length;
@@ -170,4 +170,76 @@ function projectSamplesImpl(transposedGenotypeMatrix, pcWeights, frequencies,
     return ret;
 }
 
-export { getOverlapMasksImpl, reducePcWeightsImpl, extractAndTransposeGenotypesImpl, projectSamplesImpl };
+export function readRefPosData(content) {
+    const lines = content.trim().split('\n');
+    const numSamples = lines.length - 1;
+    let samples = new Array(numSamples);
+    const numFields = lines[1].trim().split(/\s+/).length;
+    const numPCs = numFields - 3;
+    if (numPCs < 1) {
+        throw new Error(`Expected at least 4 columns per line (sampleID, PCs, popName and popGroup), but found ${numFields} in the first line.`);
+    }
+    for (let i = 0; i < numSamples; i++) {
+        const fields = lines[i + 1].trim().split(/\s+/);
+        if (fields.length !== numFields) {
+            throw new Error(`Inconsistent number of columns in line ${i + 2}: expected ${numFields}, found ${fields.length}`);
+        }
+        samples[i] = {
+            sampleID: fields[0],
+            popName: fields[1],
+            popGroup: fields[numFields - 1],
+            pcValues: new Array(numPCs)
+        };
+        if (i < 10) {
+            console.log(samples[i]);
+        }
+        for (let j = 0; j < numPCs; j++) {
+            samples[i].pcValues[j] = parseFloat(fields[2 + j]);
+            if (isNaN(samples[i].pcValues[j])) {
+                throw new Error(`Invalid PC value for sample ${samples[i].sampleID} PC${j + 1}: ${fields[1 + j]}`);
+            }
+        }
+    }
+    console.log(`First sample: ${samples[0]}`);
+    console.log(`First sample: ${samples[0].sampleID}, PCs: ${samples[0].pcValues.join(', ')}, popName: ${samples[0].popName}, popGroup: ${samples[0].popGroup}`);
+    console.log(`Loaded ${numSamples} samples with ${numPCs} PCs from reference position file.`);
+    return { samples, numSamples, numPCs };
+}
+
+export function readSnpWeights(snpWeightText) {
+    const lines = snpWeightText.trim().split('\n');
+    const numSNPs = lines.length;
+    let snpIDs = new Array(numSNPs);
+    const chromosomes = new Uint8Array(numSNPs);
+    const positions = new Uint32Array(numSNPs);
+    const alleles1 = new Uint8Array(numSNPs);
+    const alleles2 = new Uint8Array(numSNPs);
+    const firstLineFields = lines[0].trim().split(/\s+/);
+    if (firstLineFields.length < 7) {
+        throw new Error(`For SnpWeights expected at least 7 columns per line (snpIDs, chrom, pos, allele1, allele2, and at least one PC and one frequency), but found ${firstLineFields.length} in the first line.`);
+    }
+    const numPCs = firstLineFields.length - 6;
+    const pcWeights = new Float32Array(numSNPs * numPCs);
+    const frequencies = new Float32Array(numSNPs);
+    for (let i = 0; i < numSNPs; i++) {
+        const fields = lines[i].trim().split(/\s+/);
+        snpIDs[i] = fields[0];
+        chromosomes[i] = parseInt(fields[1]);
+        positions[i] = parseInt(fields[2]);
+        alleles1[i] = fields[3].charCodeAt(0);
+        alleles2[i] = fields[4].charCodeAt(0);
+        if (fields.length !== numPCs + 6) {
+            throw new Error(`Inconsistent number of columns in line ${i + 1}:
+                                expected ${numPCs + 6}, found ${fields.length}`);
+        }
+        for (let j = 0; j < numPCs; j++) {
+            pcWeights[i * numPCs + j] = parseFloat(fields[5 + j]);
+            if (isNaN(pcWeights[i * numPCs + j])) {
+                throw new Error(`Invalid weight for SNP ${snpIDs[i]} PC${j + 1}: ${fields[5 + j]}`);
+            }
+        }
+        frequencies[i] = parseFloat(fields[fields.length - 1]);
+    }
+    console.log(`Loaded ${numSNPs} SNPs with ${numPCs} PCs from weight file.`);
+    return { snpIDs, chromosomes, positions, alleles1, alleles2, pcWeights, frequencies, numSNPs, numPCs };
+}
