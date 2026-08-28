@@ -5,6 +5,7 @@ module PCA
   , SampleData
   , RefPosData
   , SnpWeights
+  , ReferenceBundle
   , getOverlapMasks
   , reducePcWeights
   , extractAndTransposeGenotypes
@@ -52,6 +53,12 @@ type RefPosData =
     { samples :: Array SampleData
     , numSamples :: Int
     , numPCs :: Int
+    }
+
+type ReferenceBundle =
+    { snpWeights :: SnpWeights
+    , refPosData :: RefPosData
+    , pcaParams :: PCAparams
     }
 
 type SnpWeights =

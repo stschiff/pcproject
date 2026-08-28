@@ -11,8 +11,6 @@ import Effect.Aff (makeAff, nonCanceler)
 import Effect.Aff.Class (class MonadAff, liftAff)
 import Effect.Class (liftEffect)
 -- import Effect.Console (log)
-import Fetch (fetch)
-import Fetch.Argonaut.Json (fromJson)
 import Halogen as H
 import Halogen.HTML as HH
 -- import Halogen.HTML.Events as HE
@@ -26,16 +24,11 @@ import App.RefChart as RefChart
 import App.UserInputComponent as UserInputComponent
 import App.Utils (RemoteData(..))
 
-import PCA (ProjectionResult, projectSamples, PCAparams,
+import PCA (ProjectionResult, projectSamples, ReferenceBundle,
         getOverlapMasks, reducePcWeights, extractAndTransposeGenotypes,
-        OverlapMasks, RefPosData, readRefPosData, SnpWeights, readSnpWeights)
+        OverlapMasks)
+import PCA.Assets (PanelRef, defaultFetcher, loadReferenceBundle)
 import GenotypeIO (PlinkData)
-
-type ReferenceBundle = {
-  snpWeights :: SnpWeights,
-  refPosData :: RefPosData,
-  pcaParams :: PCAparams
-}
 
 type ProjectionBundle = {
   projectionResults :: Array ProjectionResult,
@@ -207,27 +200,23 @@ initialState = const
     , userData : Nothing
     }
 
+currentPanel :: PanelRef
+currentPanel =
+    { name: "Joscha_HiRes_WestEurasia"
+    , weightsUrl: "./assets/Joscha_HiRes_WestEurasia_weights_with_freqs.txt"
+    , evecUrl: "./assets/Joscha_HiRes_WestEurasia_evec_with_groups.tsv"
+    , paramsUrl: "./assets/Joscha_HiRes_WestEurasia_parameters.json"
+    }
+
 handleAction :: forall output slots m. MonadAff m => Action -> H.HalogenM State Action slots output m Unit
 handleAction LoadRefData = do
     H.modify_ _ { refBundle = Loading }
-    f1 <- H.liftAff $ fetch "./assets/Joscha_HiRes_WestEurasia_weights_with_freqs.txt" {}
-    f2 <- H.liftAff $ fetch "./assets/Joscha_HiRes_WestEurasia_evec_with_groups.tsv" {}
-    f3 <- H.liftAff $ fetch "./assets/Joscha_HiRes_WestEurasia_parameters.json" {}
-    if f1.ok
-        then if f2.ok
-            then if f3.ok
-                then do
-                    snpWeights <- readSnpWeights <$> H.liftAff f1.text
-                    refPosData <- readRefPosData <$> H.liftAff f2.text
-                    pcaParams <- H.liftAff $ fromJson f3.json
-                    H.modify_ _ { refBundle = Success { snpWeights, refPosData, pcaParams } }
-                    handleAction RunProjection
-                else
-                    H.modify_ _ { refBundle = Failure "Failed to load PCA parameters file"}
-            else
-                H.modify_ _ { refBundle = Failure "Failed to load reference position data file"}
-        else
-            H.modify_ _ { refBundle = Failure "Failed to load weight data file"}
+    result <- H.liftAff $ loadReferenceBundle defaultFetcher currentPanel
+    case result of
+        Left err -> H.modify_ _ { refBundle = Failure err }
+        Right rb -> do
+            H.modify_ _ { refBundle = Success rb }
+            handleAction RunProjection
 
 handleAction (GotUserData pd) = do
     H.modify_ _ { userData = Just pd }

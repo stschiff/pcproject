@@ -1,9 +1,16 @@
 package:
   name: popgen-pca
   dependencies:
+    - aff
+    - argonaut-codecs
+    - argonaut-core
     - arraybuffer-types
     - effect
+    - either
+    - exceptions
+    - fetch
     - prelude
+    - transformers
     - popgen-genotype-io
   test:
     main: Test.Pca.Main
