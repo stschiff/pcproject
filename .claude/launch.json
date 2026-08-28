@@ -4,8 +4,8 @@
     {
       "name": "serve",
       "runtimeExecutable": "npx",
-      "runtimeArgs": ["http-server", "docs", "-c-1", "-p", "8126"],
-      "port": 8126
+      "runtimeArgs": ["http-server", "docs", "-c-1", "-p", "8080"],
+      "port": 8080
     }
   ]
 }

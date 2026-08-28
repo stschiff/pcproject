@@ -237,9 +237,9 @@ handleAction (GotGenoDataFileEvent ev) = do
 handleAction RequestSampleData = do
     H.modify_ (\_ -> FromExampleData Loading)
     clearFileInput
-    famFetch <- H.liftAff $ fetch "./assets/2024_Gretzinger_EarlyCelts.fam" {}
-    bimFetch <- H.liftAff $ fetch "./assets/2024_Gretzinger_EarlyCelts.bim" {}
-    bedFetch <- H.liftAff $ fetch "./assets/2024_Gretzinger_EarlyCelts.bed" {}
+    famFetch <- H.liftAff $ fetch "https://assets.stephanschiffels.de/testData/2024_Gretzinger_EarlyCelts.fam" {}
+    bimFetch <- H.liftAff $ fetch "https://assets.stephanschiffels.de/testData/2024_Gretzinger_EarlyCelts.bim" {}
+    bedFetch <- H.liftAff $ fetch "https://assets.stephanschiffels.de/testData/2024_Gretzinger_EarlyCelts.bed" {}
     if famFetch.ok && bimFetch.ok && bedFetch.ok
         then do
             famResult <- H.liftAff $ attempt (famFetch.text >>= (liftEffect <<< readFamData))

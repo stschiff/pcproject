@@ -9,6 +9,7 @@ package:
     - either
     - exceptions
     - fetch
+    - ordered-collections
     - prelude
     - transformers
     - popgen-genotype-io

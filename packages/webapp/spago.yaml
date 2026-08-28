@@ -15,6 +15,7 @@ package:
     - foreign
     - halogen
     - maybe
+    - ordered-collections
     - popgen-genotype-io
     - popgen-pca
     - prelude

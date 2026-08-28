@@ -24,10 +24,12 @@ import App.RefChart as RefChart
 import App.UserInputComponent as UserInputComponent
 import App.Utils (RemoteData(..))
 
+import Data.Map as Map
+
 import PCA (ProjectionResult, projectSamples, ReferenceBundle,
         getOverlapMasks, reducePcWeights, extractAndTransposeGenotypes,
         OverlapMasks)
-import PCA.Assets (PanelRef, defaultFetcher, loadReferenceBundle)
+import PCA.Assets (defaultFetcher, loadReferenceBundle, panels)
 import GenotypeIO (PlinkData)
 
 type ProjectionBundle = {
@@ -200,23 +202,21 @@ initialState = const
     , userData : Nothing
     }
 
-currentPanel :: PanelRef
-currentPanel =
-    { name: "Joscha_HiRes_WestEurasia"
-    , weightsUrl: "./assets/Joscha_HiRes_WestEurasia_weights_with_freqs.txt"
-    , evecUrl: "./assets/Joscha_HiRes_WestEurasia_evec_with_groups.tsv"
-    , paramsUrl: "./assets/Joscha_HiRes_WestEurasia_parameters.json"
-    }
+selectedPanelKey :: String
+selectedPanelKey = "WestEurasia_HiRes"
 
 handleAction :: forall output slots m. MonadAff m => Action -> H.HalogenM State Action slots output m Unit
 handleAction LoadRefData = do
     H.modify_ _ { refBundle = Loading }
-    result <- H.liftAff $ loadReferenceBundle defaultFetcher currentPanel
-    case result of
-        Left err -> H.modify_ _ { refBundle = Failure err }
-        Right rb -> do
-            H.modify_ _ { refBundle = Success rb }
-            handleAction RunProjection
+    case Map.lookup selectedPanelKey panels of
+        Nothing -> H.modify_ _ { refBundle = Failure $ "Unknown reference panel: " <> selectedPanelKey }
+        Just panel -> do
+            result <- H.liftAff $ loadReferenceBundle defaultFetcher panel
+            case result of
+                Left err -> H.modify_ _ { refBundle = Failure err }
+                Right rb -> do
+                    H.modify_ _ { refBundle = Success rb }
+                    handleAction RunProjection
 
 handleAction (GotUserData pd) = do
     H.modify_ _ { userData = Just pd }

@@ -3,6 +3,7 @@ module PCA.Assets
   , AssetFetcher
   , defaultFetcher
   , loadReferenceBundle
+  , panels
   ) where
 
 import Prelude
@@ -11,6 +12,9 @@ import Control.Monad.Error.Class (throwError)
 import Data.Argonaut.Decode (decodeJson, printJsonDecodeError)
 import Data.Argonaut.Decode.Parser (parseJson)
 import Data.Either (Either(..), either)
+import Data.Map (Map)
+import Data.Map as Map
+import Data.Tuple (Tuple(..))
 import Effect.Aff (Aff, try)
 import Effect.Exception (error, message)
 import Fetch (fetch)
@@ -60,3 +64,18 @@ loadReferenceBundle fetcher panel = do
   pure case result of
     Left err -> Left (message err)
     Right rb -> Right rb
+
+-- | Known hosted PCA reference panels, keyed by name. Add an entry here
+-- | whenever a new panel is published to the assets host - this is the one
+-- | place consumers (webapp, future CLI) look panels up by name from.
+panels :: Map String PanelRef
+panels = Map.fromFoldable
+  [ Tuple "WestEurasia_HiRes"
+      { name: "WestEurasia_HiRes"
+      , weightsUrl: assetsBaseUrl <> "pcproject/WestEurasia_HiRes/Joscha_HiRes_WestEurasia_weights_with_freqs.txt"
+      , evecUrl: assetsBaseUrl <> "pcproject/WestEurasia_HiRes/Joscha_HiRes_WestEurasia_evec_with_groups.tsv"
+      , paramsUrl: assetsBaseUrl <> "pcproject/WestEurasia_HiRes/Joscha_HiRes_WestEurasia_parameters.json"
+      }
+  ]
+  where
+  assetsBaseUrl = "https://assets.stephanschiffels.de/"

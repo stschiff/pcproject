@@ -28,6 +28,7 @@
             "either",
             "exceptions",
             "fetch",
+            "ordered-collections",
             "popgen-genotype-io",
             "prelude",
             "transformers"
@@ -57,6 +58,7 @@
             "foreign",
             "halogen",
             "maybe",
+            "ordered-collections",
             "popgen-genotype-io",
             "popgen-pca",
             "prelude",

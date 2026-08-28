@@ -33230,9 +33230,9 @@ var handleAction2 = function(dictMonadAff) {
         return new FromExampleData(Loading.value);
       }))(function() {
         return discard22(clearFileInput1)(function() {
-          return bind12(liftAff2(fetch3("./assets/2024_Gretzinger_EarlyCelts.fam")({})))(function(famFetch) {
-            return bind12(liftAff2(fetch3("./assets/2024_Gretzinger_EarlyCelts.bim")({})))(function(bimFetch) {
-              return bind12(liftAff2(fetch3("./assets/2024_Gretzinger_EarlyCelts.bed")({})))(function(bedFetch) {
+          return bind12(liftAff2(fetch3("https://assets.stephanschiffels.de/testData/2024_Gretzinger_EarlyCelts.fam")({})))(function(famFetch) {
+            return bind12(liftAff2(fetch3("https://assets.stephanschiffels.de/testData/2024_Gretzinger_EarlyCelts.bim")({})))(function(bimFetch) {
+              return bind12(liftAff2(fetch3("https://assets.stephanschiffels.de/testData/2024_Gretzinger_EarlyCelts.bed")({})))(function(bedFetch) {
                 var $135 = famFetch.ok && (bimFetch.ok && bedFetch.ok);
                 if ($135) {
                   return bind12(liftAff2(attempt(bind32(famFetch.text)(function($152) {
@@ -36391,13 +36391,21 @@ var decodeJson2 = /* @__PURE__ */ decodeJson(/* @__PURE__ */ decodeRecord(/* @__
 })()())());
 var fetch4 = /* @__PURE__ */ fetch2()()(/* @__PURE__ */ toCoreRequestOptionsRowRo()()(toCoreRequestOptionsHelpe));
 var show5 = /* @__PURE__ */ show(showInt);
+var panels = /* @__PURE__ */ function() {
+  return fromFoldable6(ordString)(foldableArray)([new Tuple("WestEurasia_HiRes", {
+    name: "WestEurasia_HiRes",
+    weightsUrl: "https://assets.stephanschiffels.de/pcproject/WestEurasia_HiRes/Joscha_HiRes_WestEurasia_weights_with_freqs.txt",
+    evecUrl: "https://assets.stephanschiffels.de/pcproject/WestEurasia_HiRes/Joscha_HiRes_WestEurasia_evec_with_groups.tsv",
+    paramsUrl: "https://assets.stephanschiffels.de/pcproject/WestEurasia_HiRes/Joscha_HiRes_WestEurasia_parameters.json"
+  })]);
+}();
 var loadReferenceBundle = function(fetcher) {
   return function(panel) {
     return bind9($$try4(bind9(fetcher(panel.weightsUrl))(function(weightsText) {
       return bind9(fetcher(panel.evecUrl))(function(evecText) {
         return bind9(fetcher(panel.paramsUrl))(function(paramsText) {
-          return bind9(either(function($53) {
-            return throwError2(error(printJsonDecodeError($53)));
+          return bind9(either(function($55) {
+            return throwError2(error(printJsonDecodeError($55)));
           })(pure8)(bind13(parseJson(paramsText))(decodeJson2)))(function(pcaParams) {
             return pure8({
               snpWeights: readSnpWeights(weightsText),
@@ -36417,7 +36425,7 @@ var loadReferenceBundle = function(fetcher) {
           return new Right(result2.value0);
         }
         ;
-        throw new Error("Failed pattern match at PCA.Assets (line 60, column 8 - line 62, column 25): " + [result2.constructor.name]);
+        throw new Error("Failed pattern match at PCA.Assets (line 64, column 8 - line 66, column 25): " + [result2.constructor.name]);
       }());
     });
   };
@@ -36516,6 +36524,7 @@ var toEventTarget2 = unsafeCoerce2;
 var show6 = /* @__PURE__ */ show(showInt);
 var discard4 = /* @__PURE__ */ discard(discardUnit)(bindHalogenM);
 var modify_5 = /* @__PURE__ */ modify_2(monadStateHalogenM);
+var lookup6 = /* @__PURE__ */ lookup2(ordString);
 var bind14 = /* @__PURE__ */ bind(bindHalogenM);
 var get4 = /* @__PURE__ */ get(monadStateHalogenM);
 var slot_4 = /* @__PURE__ */ slot_();
@@ -36572,6 +36581,7 @@ var toProjectedSamples = function(pd) {
     })(zipWith(Tuple.create)(pd.famData.indNames)(pd.famData.popNames))(results);
   };
 };
+var selectedPanelKey = "WestEurasia_HiRes";
 var refDataBox = function(dictMonadAff) {
   return function(st) {
     return div2([classes(["box"])])([h22([classes(["title", "is-4"])])([text("Reference Data")]), function() {
@@ -36591,7 +36601,7 @@ var refDataBox = function(dictMonadAff) {
         return div_([text("Selected reference data with " + (show6(st.refBundle.value0.snpWeights.numSNPs) + (" SNPs for " + (show6(st.refBundle.value0.snpWeights.numPCs) + (" PCs and " + (show6(st.refBundle.value0.refPosData.numSamples) + " individuals")))))), br_]);
       }
       ;
-      throw new Error("Failed pattern match at App.Interface (line 117, column 11 - line 133, column 18): " + [st.refBundle.constructor.name]);
+      throw new Error("Failed pattern match at App.Interface (line 119, column 11 - line 135, column 18): " + [st.refBundle.constructor.name]);
     }()]);
   };
 };
@@ -36614,7 +36624,7 @@ var projectionMonitor = function(dictMonadAff) {
         return div_([text("Number of samples projected: " + show6(length(st.projectionResults.value0.projectionResults))), br_, text("Included SNPs: " + show6(st.projectionResults.value0.overlapReport.nrIncluded)), br_, text("Strand Ambiguous Removed: " + show6(st.projectionResults.value0.overlapReport.removedStrandAmbiguous)), br_, text("Inconsistent Removed: " + show6(st.projectionResults.value0.overlapReport.removedInconsistent)), br_, text("Flipped alleles: " + show6(st.projectionResults.value0.overlapReport.nrToBeFlipped))]);
       }
       ;
-      throw new Error("Failed pattern match at App.Interface (line 141, column 11 - line 158, column 18): " + [st.projectionResults.constructor.name]);
+      throw new Error("Failed pattern match at App.Interface (line 143, column 11 - line 160, column 18): " + [st.projectionResults.constructor.name]);
     }()]);
   };
 };
@@ -36634,17 +36644,6 @@ var initialState4 = /* @__PURE__ */ function() {
     userData: Nothing.value
   });
 }();
-var externalLink = function(url2) {
-  return function(label5) {
-    return a([href(url2), target("_blank"), rel("noopener noreferrer")])([text(label5)]);
-  };
-};
-var currentPanel = {
-  name: "Joscha_HiRes_WestEurasia",
-  weightsUrl: "./assets/Joscha_HiRes_WestEurasia_weights_with_freqs.txt",
-  evecUrl: "./assets/Joscha_HiRes_WestEurasia_evec_with_groups.tsv",
-  paramsUrl: "./assets/Joscha_HiRes_WestEurasia_parameters.json"
-};
 var handleAction3 = function(dictMonadAff) {
   var monadAffHalogenM2 = monadAffHalogenM(dictMonadAff);
   var liftAff2 = liftAff(monadAffHalogenM2);
@@ -36653,67 +36652,87 @@ var handleAction3 = function(dictMonadAff) {
   return function(v) {
     if (v instanceof LoadRefData) {
       return discard4(modify_5(function(v1) {
-        var $66 = {};
-        for (var $67 in v1) {
-          if ({}.hasOwnProperty.call(v1, $67)) {
-            $66[$67] = v1[$67];
+        var $69 = {};
+        for (var $70 in v1) {
+          if ({}.hasOwnProperty.call(v1, $70)) {
+            $69[$70] = v1[$70];
           }
           ;
         }
         ;
-        $66.refBundle = Loading.value;
-        return $66;
+        $69.refBundle = Loading.value;
+        return $69;
       }))(function() {
-        return bind14(liftAff2(loadReferenceBundle(defaultFetcher)(currentPanel)))(function(result2) {
-          if (result2 instanceof Left) {
-            return modify_5(function(v1) {
-              var $70 = {};
-              for (var $71 in v1) {
-                if ({}.hasOwnProperty.call(v1, $71)) {
-                  $70[$71] = v1[$71];
-                }
-                ;
+        var v1 = lookup6(selectedPanelKey)(panels);
+        if (v1 instanceof Nothing) {
+          return modify_5(function(v2) {
+            var $73 = {};
+            for (var $74 in v2) {
+              if ({}.hasOwnProperty.call(v2, $74)) {
+                $73[$74] = v2[$74];
               }
               ;
-              $70.refBundle = new Failure(result2.value0);
-              return $70;
-            });
-          }
-          ;
-          if (result2 instanceof Right) {
-            return discard4(modify_5(function(v1) {
-              var $74 = {};
-              for (var $75 in v1) {
-                if ({}.hasOwnProperty.call(v1, $75)) {
-                  $74[$75] = v1[$75];
+            }
+            ;
+            $73.refBundle = new Failure("Unknown reference panel: " + selectedPanelKey);
+            return $73;
+          });
+        }
+        ;
+        if (v1 instanceof Just) {
+          return bind14(liftAff2(loadReferenceBundle(defaultFetcher)(v1.value0)))(function(result2) {
+            if (result2 instanceof Left) {
+              return modify_5(function(v2) {
+                var $77 = {};
+                for (var $78 in v2) {
+                  if ({}.hasOwnProperty.call(v2, $78)) {
+                    $77[$78] = v2[$78];
+                  }
+                  ;
                 }
                 ;
-              }
-              ;
-              $74.refBundle = new Success(result2.value0);
-              return $74;
-            }))(function() {
-              return handleAction3(dictMonadAff)(RunProjection.value);
-            });
-          }
-          ;
-          throw new Error("Failed pattern match at App.Interface (line 215, column 5 - line 219, column 39): " + [result2.constructor.name]);
-        });
+                $77.refBundle = new Failure(result2.value0);
+                return $77;
+              });
+            }
+            ;
+            if (result2 instanceof Right) {
+              return discard4(modify_5(function(v2) {
+                var $81 = {};
+                for (var $82 in v2) {
+                  if ({}.hasOwnProperty.call(v2, $82)) {
+                    $81[$82] = v2[$82];
+                  }
+                  ;
+                }
+                ;
+                $81.refBundle = new Success(result2.value0);
+                return $81;
+              }))(function() {
+                return handleAction3(dictMonadAff)(RunProjection.value);
+              });
+            }
+            ;
+            throw new Error("Failed pattern match at App.Interface (line 215, column 13 - line 219, column 47): " + [result2.constructor.name]);
+          });
+        }
+        ;
+        throw new Error("Failed pattern match at App.Interface (line 211, column 5 - line 219, column 47): " + [v1.constructor.name]);
       });
     }
     ;
     if (v instanceof GotUserData) {
       return discard4(modify_5(function(v1) {
-        var $78 = {};
-        for (var $79 in v1) {
-          if ({}.hasOwnProperty.call(v1, $79)) {
-            $78[$79] = v1[$79];
+        var $86 = {};
+        for (var $87 in v1) {
+          if ({}.hasOwnProperty.call(v1, $87)) {
+            $86[$87] = v1[$87];
           }
           ;
         }
         ;
-        $78.userData = new Just(v.value0);
-        return $78;
+        $86.userData = new Just(v.value0);
+        return $86;
       }))(function() {
         return handleAction3(dictMonadAff)(RunProjection.value);
       });
@@ -36724,16 +36743,16 @@ var handleAction3 = function(dictMonadAff) {
         var v1 = new Tuple(st.refBundle, st.userData);
         if (v1.value0 instanceof Success && v1.value1 instanceof Just) {
           return discard4(modify_5(function(v2) {
-            var $83 = {};
-            for (var $84 in v2) {
-              if ({}.hasOwnProperty.call(v2, $84)) {
-                $83[$84] = v2[$84];
+            var $91 = {};
+            for (var $92 in v2) {
+              if ({}.hasOwnProperty.call(v2, $92)) {
+                $91[$92] = v2[$92];
               }
               ;
             }
             ;
-            $83.projectionResults = Loading.value;
-            return $83;
+            $91.projectionResults = Loading.value;
+            return $91;
           }))(function() {
             return discard4(nextAnimationFrame1)(function() {
               return discard4(nextAnimationFrame1)(function() {
@@ -36742,19 +36761,19 @@ var handleAction3 = function(dictMonadAff) {
                     return bind14(liftEffect10(extractAndTransposeGenotypes(v1.value1.value0.bedData)(v1.value1.value0.numSNPs)(v1.value1.value0.numIndividuals)(overlap)))(function(genotypes) {
                       return bind14(liftEffect10(projectSamples(genotypes)(reducedSnpWeights.pcWeights)(reducedSnpWeights.frequencies)(v1.value1.value0.numIndividuals)(reducedSnpWeights.numPCs)(v1.value0.value0.pcaParams)))(function(pResults) {
                         return modify_5(function(v2) {
-                          var $86 = {};
-                          for (var $87 in v2) {
-                            if ({}.hasOwnProperty.call(v2, $87)) {
-                              $86[$87] = v2[$87];
+                          var $94 = {};
+                          for (var $95 in v2) {
+                            if ({}.hasOwnProperty.call(v2, $95)) {
+                              $94[$95] = v2[$95];
                             }
                             ;
                           }
                           ;
-                          $86.projectionResults = new Success({
+                          $94.projectionResults = new Success({
                             projectionResults: pResults,
                             overlapReport: overlap
                           });
-                          return $86;
+                          return $94;
                         });
                       });
                     });
@@ -36766,21 +36785,26 @@ var handleAction3 = function(dictMonadAff) {
         }
         ;
         return modify_5(function(v2) {
-          var $93 = {};
-          for (var $94 in v2) {
-            if ({}.hasOwnProperty.call(v2, $94)) {
-              $93[$94] = v2[$94];
+          var $101 = {};
+          for (var $102 in v2) {
+            if ({}.hasOwnProperty.call(v2, $102)) {
+              $101[$102] = v2[$102];
             }
             ;
           }
           ;
-          $93.projectionResults = NotAsked.value;
-          return $93;
+          $101.projectionResults = NotAsked.value;
+          return $101;
         });
       });
     }
     ;
-    throw new Error("Failed pattern match at App.Interface (line 211, column 1 - line 211, column 107): " + [v.constructor.name]);
+    throw new Error("Failed pattern match at App.Interface (line 208, column 1 - line 208, column 107): " + [v.constructor.name]);
+  };
+};
+var externalLink = function(url2) {
+  return function(label5) {
+    return a([href(url2), target("_blank"), rel("noopener noreferrer")])([text(label5)]);
   };
 };
 var _userInputComponent = /* @__PURE__ */ function() {
@@ -36986,7 +37010,7 @@ var initDriverState = function(component7) {
 // output/Halogen.Aff.Driver.Eval/index.js
 var traverse_4 = /* @__PURE__ */ traverse_(applicativeEffect)(foldableMaybe);
 var bindFlipped7 = /* @__PURE__ */ bindFlipped(bindMaybe);
-var lookup6 = /* @__PURE__ */ lookup2(ordSubscriptionId);
+var lookup7 = /* @__PURE__ */ lookup2(ordSubscriptionId);
 var bind15 = /* @__PURE__ */ bind(bindAff);
 var liftEffect7 = /* @__PURE__ */ liftEffect(monadEffectAff);
 var discard6 = /* @__PURE__ */ discard(discardUnit);
@@ -37016,7 +37040,7 @@ var unsubscribe3 = function(sid) {
     return function __do2() {
       var v = read(ref3)();
       var subs = read(v.subscriptions)();
-      return traverse_4(unsubscribe)(bindFlipped7(lookup6(sid))(subs))();
+      return traverse_4(unsubscribe)(bindFlipped7(lookup7(sid))(subs))();
     };
   };
 };
