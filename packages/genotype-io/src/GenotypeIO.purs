@@ -1,4 +1,12 @@
-module GenotypeIO where
+module GenotypeIO
+  ( PlinkBimData
+  , PlinkFamData
+  , PlinkBedData
+  , PlinkData
+  , readBimData
+  , readFamData
+  , readBedData
+  ) where
 
 import Data.ArrayBuffer.Types (ArrayBuffer, Uint32Array, Uint8Array)
 import Effect (Effect)

@@ -52,18 +52,31 @@ live in the package name itself. `webapp` isn't published, so it keeps a
 plain name. Use the prefixed name with `spago build -p`/`spago test -p` and
 in other packages' `dependencies:` lists.
 
-- **`genotype-io`** (published as `popgen-genotype-io`) — `GenotypeIO.Plink`
-  (+ `.js`): binary parsers for `.bed`/`.bim`/`.fam`. Pure functions over
+- **`genotype-io`** (published as `popgen-genotype-io`, npm package
+  `@popgen-toolbox/genotype-io`) — single module `GenotypeIO` (+ `.js`):
+  binary parsers for `.bed`/`.bim`/`.fam`. Pure functions over
   strings/`ArrayBuffer`s, no browser/DOM/network dependency — usable from
   Node or the browser alike.
-- **`pca`** (published as `popgen-pca`) — depends on `popgen-genotype-io`.
-  `Pca.SnpWeights` / `Pca.RefPosData`
-  (parsers for the reference PCA bundle: per-SNP PC weights/frequencies,
-  reference sample coordinates) and `Pca.Projection` (the actual math:
-  `getOverlapMasks` matches SNPs between user data and reference weights,
-  handling strand ambiguity and allele flips; then `projectSamples` projects
-  genotypes onto the PCs). Also has no browser-specific dependency — this is
-  the intended reusable "core."
+- **`pca`** (published as `popgen-pca`, npm package `@popgen-toolbox/pca`) —
+  depends on `popgen-genotype-io`. Single module `PCA` (+ `.js`): SNP-weights
+  and reference-position parsing (per-SNP PC weights/frequencies, reference
+  sample coordinates) plus the actual projection math — `getOverlapMasks`
+  matches SNPs between user data and reference weights, handling strand
+  ambiguity and allele flips; `projectSamples` projects genotypes onto the
+  PCs, using `@rreusser/blapack` (LAPACK `dgels`) for the underlying
+  least-squares solve. Also has no browser-specific dependency — this is the
+  intended reusable "core."
+  - Each npm package's own `package.json` has a `build` script:
+    `spago bundle -p <spago-name> --module <ModuleName> --outfile dist/index.js
+    --bundle-type module`. The `--module` flag is required here (unlike
+    `webapp`'s build, which finds its `Main` entry point automatically) —
+    without it, `spago bundle` doesn't scope to the selected package at all
+    and can silently pull in unrelated or even stale compiled modules from
+    elsewhere in the workspace's shared `output/` directory. If a module gets
+    renamed, double check `--module` still matches exactly: on a
+    case-insensitive filesystem (default on macOS) a stale differently-cased
+    `output/` directory from before the rename can silently satisfy a
+    now-wrong `--module` argument instead of failing to resolve.
 - **`webapp`** — the Halogen UI (only package allowed to depend on
   `halogen`/`chartjs`/DOM). Depends on both `genotype-io` and `pca`.
   - `src/Main.purs` — entry point, mounts `App.Interface.component` into the

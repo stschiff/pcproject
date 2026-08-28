@@ -1,4 +1,17 @@
-module PCA where
+module PCA
+  ( OverlapMasks
+  , ProjectionResult
+  , PCAparams
+  , SampleData
+  , RefPosData
+  , SnpWeights
+  , getOverlapMasks
+  , reducePcWeights
+  , extractAndTransposeGenotypes
+  , projectSamples
+  , readRefPosData
+  , readSnpWeights
+  ) where
 
 import Data.ArrayBuffer.Types (Uint8Array, Uint32Array, Float32Array)
 import Effect.Uncurried (EffectFn2, EffectFn4, EffectFn6, runEffectFn2, runEffectFn4, runEffectFn6)
