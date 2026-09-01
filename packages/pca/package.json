@@ -7,9 +7,6 @@
     "dist"
   ],
   "scripts": {
-    "build": "spago bundle -p popgen-pca --module PCA --outfile dist/index.js --bundle-type module"
-  },
-  "dependencies": {
-    "@popgen-toolbox/genotype-io": "^0.1.0"
+    "build": "spago bundle -p popgen-pca --module PCA.Interop --outfile dist/index.js --bundle-type module"
   }
 }
