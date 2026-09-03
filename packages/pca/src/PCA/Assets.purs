@@ -11,12 +11,12 @@ import Prelude
 import Control.Monad.Error.Class (throwError)
 import Data.Argonaut.Decode (decodeJson, printJsonDecodeError)
 import Data.Argonaut.Decode.Parser (parseJson)
-import Data.Either (Either(..), either)
+import Data.Either (either)
 import Data.Map (Map)
 import Data.Map as Map
 import Data.Tuple (Tuple(..))
-import Effect.Aff (Aff, try)
-import Effect.Exception (error, message)
+import Effect.Aff (Aff)
+import Effect.Exception (error)
 import Fetch (fetch)
 
 import PCA (ReferenceBundle, readRefPosData, readSnpWeights)
@@ -48,22 +48,24 @@ defaultFetcher url = do
     else throwError $ error $
       "Failed to fetch " <> url <> " (HTTP " <> show response.status <> ")"
 
-loadReferenceBundle :: AssetFetcher -> PanelRef -> Aff (Either String ReferenceBundle)
+-- | Fails the Aff (via throwError) on any fetch or parse error, rather than
+-- | returning an Either - use `try`/`attempt` at the call site if you need
+-- | to branch on success/failure, matching the rest of this codebase (see
+-- | App.UserInputComponent's use of `attempt`). This also means PCA.Interop
+-- | gets a rejected Promise for free via Promise.Aff.fromAff, with no
+-- | Either to unwrap on the JS side.
+loadReferenceBundle :: AssetFetcher -> PanelRef -> Aff ReferenceBundle
 loadReferenceBundle fetcher panel = do
-  result <- try do
-    weightsText <- fetcher panel.weightsUrl
-    evecText <- fetcher panel.evecUrl
-    paramsText <- fetcher panel.paramsUrl
-    pcaParams <- either (throwError <<< error <<< printJsonDecodeError) pure
-      (parseJson paramsText >>= decodeJson)
-    pure
-      { snpWeights: readSnpWeights weightsText
-      , refPosData: readRefPosData evecText
-      , pcaParams
-      }
-  pure case result of
-    Left err -> Left (message err)
-    Right rb -> Right rb
+  weightsText <- fetcher panel.weightsUrl
+  evecText <- fetcher panel.evecUrl
+  paramsText <- fetcher panel.paramsUrl
+  pcaParams <- either (throwError <<< error <<< printJsonDecodeError) pure
+    (parseJson paramsText >>= decodeJson)
+  pure
+    { snpWeights: readSnpWeights weightsText
+    , refPosData: readRefPosData evecText
+    , pcaParams
+    }
 
 -- | Known hosted PCA reference panels, keyed by name. Add an entry here
 -- | whenever a new panel is published to the assets host - this is the one

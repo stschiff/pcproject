@@ -7,9 +7,10 @@ import Data.Either (Either(..))
 import Data.Maybe (Maybe(..))
 import Data.Tuple (Tuple(..))
 import Data.Tuple.Nested ((/\))
-import Effect.Aff (makeAff, nonCanceler)
+import Effect.Aff (attempt, makeAff, nonCanceler)
 import Effect.Aff.Class (class MonadAff, liftAff)
 import Effect.Class (liftEffect)
+import Effect.Exception (message)
 -- import Effect.Console (log)
 import Halogen as H
 import Halogen.HTML as HH
@@ -211,9 +212,9 @@ handleAction LoadRefData = do
     case Map.lookup selectedPanelKey panels of
         Nothing -> H.modify_ _ { refBundle = Failure $ "Unknown reference panel: " <> selectedPanelKey }
         Just panel -> do
-            result <- H.liftAff $ loadReferenceBundle defaultFetcher panel
+            result <- H.liftAff $ attempt (loadReferenceBundle defaultFetcher panel)
             case result of
-                Left err -> H.modify_ _ { refBundle = Failure err }
+                Left err -> H.modify_ _ { refBundle = Failure (message err) }
                 Right rb -> do
                     H.modify_ _ { refBundle = Success rb }
                     handleAction RunProjection

@@ -21,18 +21,14 @@ import { panels, loadReferenceBundle } from "@popgen-toolbox/pca";
 
 console.log(Object.keys(panels)); // e.g. ["WestEurasia_HiRes"]
 
-const result = await loadReferenceBundle(panels["WestEurasia_HiRes"]);
-if (result.constructor.name === "Left") {
-  throw new Error(result.value0); // load failed - value0 is the error message
-}
-const ref = result.value0; // { snpWeights, refPosData, pcaParams }
+const ref = await loadReferenceBundle(panels["WestEurasia_HiRes"]);
+// ref = { snpWeights, refPosData, pcaParams }
 ```
 
 `loadReferenceBundle` returns a real `Promise` directly, awaitable as
-normal - no extra `()` needed. It resolves to an `Either`-shaped value (a
-PureScript convention) rather than rejecting the promise on failure, so
-check `result.constructor.name` before using it: `"Left"` means it failed
-(message in `.value0`), `"Right"` means `.value0` is the loaded bundle.
+normal - no extra `()` needed. A failed load rejects the promise like any
+other JS async call, so wrap it in `try`/`catch` (or `.catch()`) if you want
+to handle that case instead of letting it propagate.
 
 ## Full pipeline: projecting your own data
 
@@ -49,8 +45,7 @@ const numSNPs = bim.snpIDs.length;
 const numInds = fam.indNames.length;
 const bed = readBedData(bedBuffer, numSNPs, numInds);
 
-const result = await loadReferenceBundle(panels["WestEurasia_HiRes"]);
-const ref = result.value0; // see note above about checking Left/Right first
+const ref = await loadReferenceBundle(panels["WestEurasia_HiRes"]);
 
 const overlap = getOverlapMasks(bim, ref.snpWeights);
 const reduced = reducePcWeights(ref.snpWeights, overlap);

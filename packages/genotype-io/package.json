@@ -8,6 +8,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "spago bundle -p popgen-genotype-io --module GenotypeIO.Interop --outfile dist/index.js --bundle-type module"
+    "build": "spago bundle -p popgen-genotype-io --module GenotypeIO.Interop --outfile dist/index.js --bundle-type module",
+    "prepublishOnly": "npm run build"
   }
 }

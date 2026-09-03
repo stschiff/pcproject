@@ -24,7 +24,6 @@ module PCA.Interop
   ) where
 
 import Data.ArrayBuffer.Types (Float32Array, Uint8Array)
-import Data.Either (Either)
 import Data.Map as Map
 import Data.Tuple (Tuple)
 import Effect.Uncurried (EffectFn1, EffectFn2, EffectFn4, EffectFn6,
@@ -47,10 +46,12 @@ panels :: Object PanelRef
 panels = Object.fromFoldable (Map.toUnfoldable Assets.panels :: Array (Tuple String PanelRef))
 
 -- | Loads a panel with the default fetcher. `await loadReferenceBundle(panel)`
--- | from JS - no trailing `()`, it hands back the Promise directly. Custom
--- | AssetFetchers (e.g. a caching layer) aren't exposed here - use
--- | PCA.Assets directly from PureScript for that.
-loadReferenceBundle :: EffectFn1 PanelRef (Promise (Either String ReferenceBundle))
+-- | from JS - no trailing `()`, and the Promise rejects on failure (catch it
+-- | with try/catch or .catch(), same as any other JS async call) rather than
+-- | resolving to a Left/Right value to unwrap. Custom AssetFetchers (e.g. a
+-- | caching layer) aren't exposed here - use PCA.Assets directly from
+-- | PureScript for that.
+loadReferenceBundle :: EffectFn1 PanelRef (Promise ReferenceBundle)
 loadReferenceBundle = mkEffectFn1 \panel -> fromAff (Assets.loadReferenceBundle Assets.defaultFetcher panel)
 
 getOverlapMasks :: EffectFn2 PlinkBimData SnpWeights OverlapMasks

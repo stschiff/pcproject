@@ -1,6 +1,6 @@
 {
   "name": "@popgen-toolbox/pca",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "license": "MIT",
   "type": "module",
   "main": "dist/index.js",
@@ -8,6 +8,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "spago bundle -p popgen-pca --module PCA.Interop --outfile dist/index.js --bundle-type module"
+    "build": "spago bundle -p popgen-pca --module PCA.Interop --outfile dist/index.js --bundle-type module",
+    "prepublishOnly": "npm run build"
   }
 }
