@@ -4,6 +4,39 @@
     <meta charset="UTF-8" />
     <title>PCproject</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css">
+    <style>
+      .box-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+      }
+      .help-toggle summary {
+        list-style: none;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 1.5em;
+        height: 1.5em;
+        border-radius: 50%;
+        border: 1px solid #b5b5b5;
+        font-size: 0.85rem;
+        font-weight: bold;
+        color: #7a7a7a;
+        user-select: none;
+      }
+      .help-toggle summary::-webkit-details-marker {
+        display: none;
+      }
+      .help-toggle summary::marker {
+        content: "";
+      }
+      .help-toggle p {
+        margin-top: 0.5rem;
+        font-size: 0.9rem;
+        max-width: 260px;
+      }
+    </style>
   </head>
 
   <body>

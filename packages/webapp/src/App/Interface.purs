@@ -2,9 +2,11 @@ module App.Interface where
 
 import Prelude
 
-import Data.Array (length, zipWith)
+import Data.Array (length, zipWith, (!!))
 import Data.Either (Either(..))
-import Data.Maybe (Maybe(..))
+import Data.Maybe (Maybe(..), fromMaybe)
+import Data.String.Common (joinWith, replaceAll)
+import Data.String.Pattern (Pattern(..), Replacement(..))
 import Data.Tuple (Tuple(..))
 import Data.Tuple.Nested ((/\))
 import Effect.Aff (attempt, makeAff, nonCanceler)
@@ -14,12 +16,13 @@ import Effect.Exception (message)
 -- import Effect.Console (log)
 import Halogen as H
 import Halogen.HTML as HH
--- import Halogen.HTML.Events as HE
+import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 import Type.Proxy (Proxy(..))
 import Web.HTML (window)
 import Web.HTML.Window (requestAnimationFrame)
 
+import App.Download (downloadCSV)
 import App.ProjChart as ProjChart
 import App.RefChart as RefChart
 import App.UserInputComponent as UserInputComponent
@@ -27,7 +30,7 @@ import App.Utils (RemoteData(..))
 
 import Data.Map as Map
 
-import PCA (ProjectionResult, projectSamples, ReferenceBundle,
+import PCA (ProjectionResult, projectSamples, ReferenceBundle, RefPosData,
         getOverlapMasks, reducePcWeights, extractAndTransposeGenotypes,
         OverlapMasks)
 import PCA.Assets (defaultFetcher, loadReferenceBundle, panels)
@@ -48,6 +51,8 @@ data Action
   = LoadRefData
   | GotUserData PlinkData
   | RunProjection
+  | DownloadRefPositions
+  | DownloadProjectedPositions
 
 type Slots = ( refChart :: forall q o . H.Slot q o Unit
              , projChart :: forall q o . H.Slot q o Unit
@@ -133,14 +138,36 @@ refDataBox st =
                     show rb.snpWeights.numSNPs <> " SNPs for " <>
                     show rb.snpWeights.numPCs <> " PCs and " <>
                     show rb.refPosData.numSamples <> " individuals", HH.br_
+                , HH.button
+                    [ HP.classes [ HH.ClassName "button", HH.ClassName "is-small", HH.ClassName "mt-2" ]
+                    , HE.onClick (\_ -> DownloadRefPositions)
+                    ]
+                    [ HH.text "Download reference PC1/PC2 positions (CSV)" ]
                 ]
         ]
 
 projectionMonitor :: forall slots m . (MonadAff m) => State -> H.ComponentHTML Action slots m
 projectionMonitor st =
     HH.div [ HP.classes [ HH.ClassName "box" ] ]
-        [ HH.h2 [ HP.classes [ HH.ClassName "title", HH.ClassName "is-4" ] ]
-            [ HH.text "Projection Monitor" ]
+        [ HH.div [ HP.classes [ HH.ClassName "box-header" ] ]
+            [ HH.h2 [ HP.classes [ HH.ClassName "title", HH.ClassName "is-4" ] ]
+                [ HH.text "Projection Monitor" ]
+            , HH.details [ HP.classes [ HH.ClassName "help-toggle" ] ]
+                [ HH.summary_ [ HH.text "?" ]
+                , HH.p_
+                    [ HH.text
+                        "Your loaded SNPs are matched against the reference panel's \
+                        \SNPs by chromosome position. \"Included SNPs\" is the overlap \
+                        \actually used for projection. \"Strand ambiguous\" SNPs (A/T or \
+                        \C/G) are dropped because their strand can't be resolved from \
+                        \alleles alone. \"Inconsistent\" SNPs have alleles that don't \
+                        \match either orientation of the reference and are dropped too. \
+                        \\"Flipped alleles\" counts SNPs read on the opposite strand from \
+                        \the reference, which are automatically corrected rather than \
+                        \dropped."
+                    ]
+                ]
+            ]
         , case st.projectionResults of
             NotAsked -> HH.text "No projection performed yet"
             Loading -> HH.div [ HP.classes [ HH.ClassName "is-flex", HH.ClassName "is-align-items-center" ] ]
@@ -173,7 +200,7 @@ refChartBox st =
             _ -> HH.text ""
         ]
 
-projChartBox :: forall action m . (MonadAff m) => State -> H.ComponentHTML action Slots m
+projChartBox :: forall m . (MonadAff m) => State -> H.ComponentHTML Action Slots m
 projChartBox st =
     HH.div [ HP.classes [ HH.ClassName "box" ] ]
         [ HH.h2 [ HP.classes [ HH.ClassName "title", HH.ClassName "is-4" ] ]
@@ -186,6 +213,11 @@ projChartBox st =
                     , xPCindex: rb.pcaParams.defaultX
                     , yPCindex: rb.pcaParams.defaultY
                     }
+                , HH.button
+                    [ HP.classes [ HH.ClassName "button", HH.ClassName "is-small", HH.ClassName "mt-2" ]
+                    , HE.onClick (\_ -> DownloadProjectedPositions)
+                    ]
+                    [ HH.text "Download projected PC1/PC2 positions (CSV)" ]
                 ]
             _ -> HH.text "Projection results chart will be displayed here after running the projection."
         ]
@@ -195,6 +227,39 @@ toProjectedSamples pd results =
     zipWith (\(Tuple sampleID popGroup) pr -> { sampleID, popGroup, pcValues: pr.pcCoordinates, nrSNPs: pr.nonMissingCount })
         (zipWith Tuple pd.famData.indNames pd.famData.popNames)
         results
+
+-- Escapes a field for CSV: wraps it in quotes (doubling any embedded quotes)
+-- whenever it contains a comma, quote, or newline.
+csvField :: String -> String
+csvField s =
+    if contains "," || contains "\"" || contains "\n"
+        then "\"" <> replaceAll (Pattern "\"") (Replacement "\"\"") s <> "\""
+        else s
+    where
+    contains pat = s /= replaceAll (Pattern pat) (Replacement "") s
+
+pcAt :: Int -> Array Number -> String
+pcAt idx pcValues = fromMaybe "" (show <$> (pcValues !! idx))
+
+refPositionsCSV :: RefPosData -> String
+refPositionsCSV rd =
+    joinWith "\n" $ [ "sampleID,population,group,PC1,PC2" ] <>
+        map row rd.samples
+    where
+    row s = joinWith ","
+        [ csvField s.sampleID, csvField s.popName, csvField s.popGroup
+        , pcAt 0 s.pcValues, pcAt 1 s.pcValues
+        ]
+
+projectedPositionsCSV :: Array ProjChart.ProjectedSample -> String
+projectedPositionsCSV samples =
+    joinWith "\n" $ [ "sampleID,group,PC1,PC2" ] <>
+        map row samples
+    where
+    row s = joinWith ","
+        [ csvField s.sampleID, csvField s.popGroup
+        , pcAt 0 s.pcValues, pcAt 1 s.pcValues
+        ]
 
 initialState :: forall input. input -> State
 initialState = const
@@ -237,6 +302,20 @@ handleAction RunProjection = do
                 pd.numIndividuals reducedSnpWeights.numPCs rb.pcaParams
             H.modify_ _ { projectionResults = Success { projectionResults: pResults, overlapReport: overlap } }
         _ -> H.modify_ _ { projectionResults = NotAsked }
+
+handleAction DownloadRefPositions = do
+    st <- H.get
+    case st.refBundle of
+        Success rb -> liftEffect $ downloadCSV "reference_positions.csv" (refPositionsCSV rb.refPosData)
+        _ -> pure unit
+
+handleAction DownloadProjectedPositions = do
+    st <- H.get
+    case st.userData /\ st.projectionResults of
+        Just pd /\ Success pr ->
+            liftEffect $ downloadCSV "projected_positions.csv"
+                (projectedPositionsCSV (toProjectedSamples pd pr.projectionResults))
+        _ -> pure unit
 
 -- This is just a hack for now, to make sure the spinner starts running while the synchronous projection computation runs.
 nextAnimationFrame :: forall m. MonadAff m => m Unit

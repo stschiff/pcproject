@@ -19,11 +19,11 @@ import Effect.Class (liftEffect, class MonadEffect)
 import Effect.Exception (error)
 import Fetch (fetch)
 import Foreign (unsafeFromForeign)
+import GenotypeIO (PlinkData, readBimData, readFamData, readBedData)
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
-import GenotypeIO (PlinkData, readBimData, readFamData, readBedData)
 import Web.Encoding.TextDecoder as TextDecoder
 import Web.Encoding.UtfLabel as UtfLabel
 import Web.Event.Event as WE
@@ -103,8 +103,26 @@ initialState _ = NoData
 render :: forall slots m . (MonadAff m) => State -> H.ComponentHTML Action slots m
 render st =
     HH.div [ HP.classes [ HH.ClassName "box" ] ]
-        [ HH.h2 [ HP.classes [ HH.ClassName "title", HH.ClassName "is-4" ] ]
-            [ HH.text "User Data" ]
+        [ HH.div [ HP.classes [ HH.ClassName "box-header" ] ]
+            [ HH.h2 [ HP.classes [ HH.ClassName "title", HH.ClassName "is-4" ] ]
+                [ HH.text "User Data" ]
+            , HH.details [ HP.classes [ HH.ClassName "help-toggle" ] ]
+                [ HH.summary_ [ HH.text "?" ]
+                , HH.p_
+                    [ HH.text "Select a PLINK 1 binary "
+                    , HH.code_ [ HH.text ".fam" ]
+                    , HH.text "/"
+                    , HH.code_ [ HH.text ".bim" ]
+                    , HH.text "/"
+                    , HH.code_ [ HH.text ".bed" ]
+                    , HH.text
+                        " triplet (select all three files at once) with matching \
+                        \filenames aside from the extension. Or click \"Load Example \
+                        \Data\" to try the tool with a bundled ancient-DNA dataset instead."
+                    , HH.strong_ [ HH.text "Full privacy: Your data never leaves your browser." ]
+                    ]
+                ]
+            ]
         , HH.div [ HP.classes [ HH.ClassName "field" ] ] [ uploadControl st ]
         , HH.p [ HP.classes [ HH.ClassName "has-text-weight-bold", HH.ClassName "has-text-centered" ] ]
             [ HH.text "OR" ]
@@ -122,9 +140,8 @@ render st =
               , HH.br_
               ]
             FromExampleData pd -> HH.div_
-                [ HH.text "Using example data"
-                , case pd of
-                    NotAsked -> HH.text "No data loaded yet"
+                [ case pd of
+                    NotAsked -> HH.text "Using example data"
                     Loading -> HH.text "Loading example data..."
                     Failure err -> HH.text $ "Error loading example data: " <> err
                     Success plinkData -> HH.text $ "Loaded example data with " <>
