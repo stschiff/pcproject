@@ -36576,9 +36576,9 @@ var show5 = /* @__PURE__ */ show(showInt);
 var panels = /* @__PURE__ */ function() {
   return fromFoldable6(ordString)(foldableArray)([new Tuple("WestEurasia_HiRes", {
     name: "WestEurasia_HiRes",
-    weightsUrl: "https://assets.stephanschiffels.de/pcproject/WestEurasia_HiRes/Joscha_HiRes_WestEurasia_weights_with_freqs.txt",
-    evecUrl: "https://assets.stephanschiffels.de/pcproject/WestEurasia_HiRes/Joscha_HiRes_WestEurasia_evec_with_groups.tsv",
-    paramsUrl: "https://assets.stephanschiffels.de/pcproject/WestEurasia_HiRes/Joscha_HiRes_WestEurasia_parameters.json"
+    weightsUrl: "https://assets.stephanschiffels.de/pcproject/WestEurasia_HiRes/WestEurasia_HiRes_weights_with_freqs.txt",
+    evecUrl: "https://assets.stephanschiffels.de/pcproject/WestEurasia_HiRes/WestEurasia_HiRes_evec_with_groups.tsv",
+    paramsUrl: "https://assets.stephanschiffels.de/pcproject/WestEurasia_HiRes/WestEurasia_HiRes_parameters.json"
   })]);
 }();
 var loadReferenceBundle = function(fetcher) {

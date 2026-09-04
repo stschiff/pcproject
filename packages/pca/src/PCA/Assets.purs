@@ -74,9 +74,9 @@ panels :: Map String PanelRef
 panels = Map.fromFoldable
   [ Tuple "WestEurasia_HiRes"
       { name: "WestEurasia_HiRes"
-      , weightsUrl: assetsBaseUrl <> "pcproject/WestEurasia_HiRes/Joscha_HiRes_WestEurasia_weights_with_freqs.txt"
-      , evecUrl: assetsBaseUrl <> "pcproject/WestEurasia_HiRes/Joscha_HiRes_WestEurasia_evec_with_groups.tsv"
-      , paramsUrl: assetsBaseUrl <> "pcproject/WestEurasia_HiRes/Joscha_HiRes_WestEurasia_parameters.json"
+      , weightsUrl: assetsBaseUrl <> "pcproject/WestEurasia_HiRes/WestEurasia_HiRes_weights_with_freqs.txt"
+      , evecUrl: assetsBaseUrl <> "pcproject/WestEurasia_HiRes/WestEurasia_HiRes_evec_with_groups.tsv"
+      , paramsUrl: assetsBaseUrl <> "pcproject/WestEurasia_HiRes/WestEurasia_HiRes_parameters.json"
       }
   ]
   where
