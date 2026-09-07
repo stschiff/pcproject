@@ -19,9 +19,9 @@ npm install @popgen-toolbox/pca
 ```js
 import { panels, loadReferenceBundle } from "@popgen-toolbox/pca";
 
-console.log(Object.keys(panels)); // e.g. ["WestEurasia_HiRes"]
+console.log(Object.keys(panels)); // e.g. ["Europe_HiRes"]
 
-const ref = await loadReferenceBundle(panels["WestEurasia_HiRes"]);
+const ref = await loadReferenceBundle(panels["Europe_HiRes"]);
 // ref = { snpWeights, refPosData, pcaParams }
 ```
 
@@ -45,7 +45,7 @@ const numSNPs = bim.snpIDs.length;
 const numInds = fam.indNames.length;
 const bed = readBedData(bedBuffer, numSNPs, numInds);
 
-const ref = await loadReferenceBundle(panels["WestEurasia_HiRes"]);
+const ref = await loadReferenceBundle(panels["Europe_HiRes"]);
 
 const overlap = getOverlapMasks(bim, ref.snpWeights);
 const reduced = reducePcWeights(ref.snpWeights, overlap);
@@ -58,7 +58,7 @@ const projected = projectSamples(genotypes, reduced.pcWeights, reduced.frequenci
 
 Every function above is a plain, directly-callable JS function - no
 currying, no trailing `()` (except `await` on the one Promise-returning
-call). Verified end-to-end against the published `WestEurasia_HiRes` panel
+call). Verified end-to-end against the published `Europe_HiRes` panel
 and a 35-sample test dataset: 413,151 overlapping SNPs, 10 PCs, all 35
 samples projected.
 

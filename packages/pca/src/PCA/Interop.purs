@@ -41,7 +41,7 @@ import PCA.Assets (AssetFetcher, PanelRef)
 import PCA.Assets as Assets
 
 -- | Same panels as PCA.Assets.panels, as a plain JS object keyed by name
--- | (e.g. `panels["WestEurasia_HiRes"]`) instead of an opaque Data.Map.
+-- | (e.g. `panels["Europe_HiRes"]`) instead of an opaque Data.Map.
 panels :: Object PanelRef
 panels = Object.fromFoldable (Map.toUnfoldable Assets.panels :: Array (Tuple String PanelRef))
 

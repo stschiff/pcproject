@@ -72,11 +72,11 @@ loadReferenceBundle fetcher panel = do
 -- | place consumers (webapp, future CLI) look panels up by name from.
 panels :: Map String PanelRef
 panels = Map.fromFoldable
-  [ Tuple "WestEurasia_HiRes"
-      { name: "WestEurasia_HiRes"
-      , weightsUrl: assetsBaseUrl <> "pcproject/WestEurasia_HiRes/WestEurasia_HiRes_weights_with_freqs.txt"
-      , evecUrl: assetsBaseUrl <> "pcproject/WestEurasia_HiRes/WestEurasia_HiRes_evec_with_groups.tsv"
-      , paramsUrl: assetsBaseUrl <> "pcproject/WestEurasia_HiRes/WestEurasia_HiRes_parameters.json"
+  [ Tuple "Europe_HiRes"
+      { name: "Europe_HiRes"
+      , weightsUrl: assetsBaseUrl <> "pcproject/Europe_HiRes/Europe_HiRes_weights_with_freqs.txt"
+      , evecUrl: assetsBaseUrl <> "pcproject/Europe_HiRes/Europe_HiRes_evec_with_groups.tsv"
+      , paramsUrl: assetsBaseUrl <> "pcproject/Europe_HiRes/Europe_HiRes_parameters.json"
       }
   ]
   where

@@ -36574,11 +36574,11 @@ var decodeJson2 = /* @__PURE__ */ decodeJson(/* @__PURE__ */ decodeRecord(/* @__
 var fetch4 = /* @__PURE__ */ fetch2()()(/* @__PURE__ */ toCoreRequestOptionsRowRo()()(toCoreRequestOptionsHelpe));
 var show5 = /* @__PURE__ */ show(showInt);
 var panels = /* @__PURE__ */ function() {
-  return fromFoldable6(ordString)(foldableArray)([new Tuple("WestEurasia_HiRes", {
-    name: "WestEurasia_HiRes",
-    weightsUrl: "https://assets.stephanschiffels.de/pcproject/WestEurasia_HiRes/WestEurasia_HiRes_weights_with_freqs.txt",
-    evecUrl: "https://assets.stephanschiffels.de/pcproject/WestEurasia_HiRes/WestEurasia_HiRes_evec_with_groups.tsv",
-    paramsUrl: "https://assets.stephanschiffels.de/pcproject/WestEurasia_HiRes/WestEurasia_HiRes_parameters.json"
+  return fromFoldable6(ordString)(foldableArray)([new Tuple("Europe_HiRes", {
+    name: "Europe_HiRes",
+    weightsUrl: "https://assets.stephanschiffels.de/pcproject/Europe_HiRes/Europe_HiRes_weights_with_freqs.txt",
+    evecUrl: "https://assets.stephanschiffels.de/pcproject/Europe_HiRes/Europe_HiRes_evec_with_groups.tsv",
+    paramsUrl: "https://assets.stephanschiffels.de/pcproject/Europe_HiRes/Europe_HiRes_parameters.json"
   })]);
 }();
 var loadReferenceBundle = function(fetcher) {
@@ -36770,7 +36770,7 @@ var toProjectedSamples = function(pd) {
     })(zipWith(Tuple.create)(pd.famData.indNames)(pd.famData.popNames))(results);
   };
 };
-var selectedPanelKey = "WestEurasia_HiRes";
+var selectedPanelKey = "Europe_HiRes";
 var refDataBox = function(dictMonadAff) {
   return function(st) {
     return div2([classes(["box"])])([h22([classes(["title", "is-4"])])([text("Reference Data")]), function() {

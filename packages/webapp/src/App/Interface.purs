@@ -269,7 +269,7 @@ initialState = const
     }
 
 selectedPanelKey :: String
-selectedPanelKey = "WestEurasia_HiRes"
+selectedPanelKey = "Europe_HiRes"
 
 handleAction :: forall output slots m. MonadAff m => Action -> H.HalogenM State Action slots output m Unit
 handleAction LoadRefData = do
